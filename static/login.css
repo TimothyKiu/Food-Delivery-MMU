@@ -1,10 +1,9 @@
 .logindiv {
   font-family : "Comic Sans MS";
   position: absolute;
-  top: 50%;
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
-
 
 }
 
@@ -12,7 +11,10 @@
     position: absolute;
     right:100%
 }
-
+.loginboxes {
+    width:400px;
+    height:15px;
+}
 button[name="submitbutton"]{
     font-family : "Comic Sans MS";
     color : blue;
