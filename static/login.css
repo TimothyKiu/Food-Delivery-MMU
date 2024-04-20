@@ -5,9 +5,19 @@
   left: 50%;
   transform: translate(-50%, -50%);
 
+
+}
+
+.boxtitles {
+    position: absolute;
+    right:100%
 }
 
 button[name="submitbutton"]{
     font-family : "Comic Sans MS";
     color : blue;
+    position: absolute;
+    right: 50%;
+    width:100px;
+    height:50px
 }
