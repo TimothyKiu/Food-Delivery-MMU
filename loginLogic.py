@@ -21,27 +21,28 @@ class loginLogic:
             #Request from the html button with the name 'username'
             username = request.form['username']
             password = request.form['password']
+            
+            #submitbutton is the submit button's value in html
+            if 'submitbutton':
+                if username in users and users[username] == password:
+                    #Redirect using the function name, NOT the app.route(/example)
+                    return redirect(url_for("successlogin", login_failed=False))
 
+                else:
+                    # session['firstAttempt'] = True
+                    # session['loginAttempts'] += 1
 
-            if username in users and users[username] == password:
-                #Redirect using the function name, NOT the app.route(/example)
-                return redirect(url_for("successlogin", login_failed=False))
+                    cursor = db.cursor()
+                    query = "INSERT INTO clicks (click_id, username) VALUES (%s, %s)"
+                    cursor.execute(query, (42069, username,))
 
-            else:
-                session['firstAttempt'] = True
-                session['loginAttempts'] += 1
+                    # query1 = "INSERT INTO clicks (url) VALUES (%s)"
+                    # cursor.execute(query1, (username,))
 
-                cursor = db.cursor()
-                query = "INSERT INTO clicks (click_id, username) VALUES (%s, %s)"
-                cursor.execute(query, (42069, username,))
+                    db.commit()
+                    cursor.close()
 
-                # query1 = "INSERT INTO clicks (url) VALUES (%s)"
-                # cursor.execute(query1, (username,))
-
-                db.commit()
-                cursor.close()
-
-                return redirect(url_for('login', login_failed=True))
+                    return redirect(url_for('login', login_failed=True))
 
         else:
             # Check if login failed from query parameter
