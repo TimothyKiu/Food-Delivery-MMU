@@ -9,9 +9,7 @@
 </head>
 <body>
     <h2>Log in</h2>
-
-
-
+    <div id="output"></div>
 
 <!--    {% if secondAttempt %}-->
 <!--        <p style="color: red;">Did your fingers slip?</p>-->
@@ -41,5 +39,34 @@
         <button type="submit" name="submitbutton" value="submitbutton">Login</button>
     </form>
     <a href="/html">Back to Page 1</a>
+    <button id="colorButton" class="button">Change Color</button>
+
+    <script>
+    // Pass Flask variable to JavaScript
+        //Ignore the red lines, thats just jinja doin it's thing
+        const loginFailed = {{ login_failed|tojson|safe }};
+        let loginFailedCounter = 0;
+
+        // Access HTML elements
+        const counterDisplayer = document.getElementById("output");
+        const button1 = document.getElementById('colorButton');
+        const buttonLogin = document.getElementById('submitbutton');
+
+        // Set the text content of the div
+        counterDisplayer.textContent = loginFailedCounter;
+
+        // Add event listener to the login button
+        buttonLogin.addEventListener('click', () => {
+            if(loginFailed === true){
+                loginFailedCounter = loginFailedCounter + 1;
+            }
+        });
+
+        // Add event listener to the color change button
+        button1.addEventListener('click', () => {
+            const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            button1.style.background = randomColor;
+        });
+    </script>
 </body>
 </html>
