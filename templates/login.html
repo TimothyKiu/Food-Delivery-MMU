@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/login.css">
+
+    <title>Login Page</title>
+</head>
+<body>
+    <h2>Log in</h2>
+
+
+
+
+<!--    {% if secondAttempt %}-->
+<!--        <p style="color: red;">Did your fingers slip?</p>-->
+<!--    {% endif %}-->
+
+<!--    {% if thirdAttempt %}-->
+<!--        <p style="color: red;">Are you trying to guess a random password? >:(</p>-->
+<!--    {% endif %}-->
+
+<!--    {% if fourthAttempt %}-->
+<!--        <p style="color: red;">Good luck then...</p>-->
+<!--    {% endif %}-->
+
+    <form action="/login" method="post" class="logindiv">
+        {% if not login_failed %}
+            <p style="color: blue;">Enter your username and password!</p>
+        {% endif %}
+        {% if login_failed%}
+            <p style="color: red;">Login failed. Please check your username and password.</p>
+        {% endif %}
+
+        <label for="username" class="boxtitles">Username:</label>
+        <input type="text" id="username" name="username"  required><br><br>
+
+        <label for="password" class="boxtitles" >Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        <button type="submit" name="submitbutton" value="submitbutton">Login</button>
+    </form>
+    <a href="/html">Back to Page 1</a>
+</body>
+</html>
