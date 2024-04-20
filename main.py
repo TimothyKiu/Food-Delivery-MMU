@@ -25,7 +25,6 @@ users = {'john': 'password',
          'bomboman': 'fentanyllover123'
          }
 
-
 @app.route('/successlogin')
 def successlogin():
     return render_template('successlogin.html')
@@ -40,9 +39,6 @@ def login():
 def index():
     #Draw the website template from the folder!
     return render_template('html.html')
-
-
-
 
 @app.route('/createaccount')
 def createAccount():
