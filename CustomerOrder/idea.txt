@@ -1,0 +1,17 @@
+User: - create account, delete account, login, logout, user ratings
+Customer – view menu, add/remove from shopping cart/remarks/select location
+Runner - Accept order, confirm order
+
+Note: Menu is now in the customer page, and is interactive, it works like a tally 
+counter for each item
+Extra features: - Deliver fees depends on weather and distance, notify user when 
+runner is 5 mins away, live runner location
+
+Timothy: Login page, user features
+Chan: Customer ordering page
+Keyon: Runner accept order page, extra features
+
+可以参照有间面馆
+1. 可选择不要的
+2. 店家收到的是整理好的清单
+
