@@ -11,18 +11,6 @@
     <h2>Log in</h2>
     <div id="output"></div>
 
-<!--    {% if secondAttempt %}-->
-<!--        <p style="color: red;">Did your fingers slip?</p>-->
-<!--    {% endif %}-->
-
-<!--    {% if thirdAttempt %}-->
-<!--        <p style="color: red;">Are you trying to guess a random password? >:(</p>-->
-<!--    {% endif %}-->
-
-<!--    {% if fourthAttempt %}-->
-<!--        <p style="color: red;">Good luck then...</p>-->
-<!--    {% endif %}-->
-
     <form action="/login" method="post" class="logindiv">
         {% if not login_failed %}
             <p style="color: blue;">Enter your username and password!</p>
@@ -34,7 +22,7 @@
         <label for="username" class="boxtitles">Username:</label>
         <input type="text" id="username" name="username" class="loginboxes" required><br><br>
 
-        <label for="password" class="boxtitles" >Password:</label>
+        <label for="password" class="boxtitles">Password:</label>
         <input type="password" id="password" name="password" class="loginboxes" required><br><br>
         <button type="submit" id="submitter1">Login</button>
     </form>
@@ -43,19 +31,13 @@
     <button id="colorButton" class="button">Change Color</button>
 
     <script>
-        // SOURCES:
-        // 1) Arabic man's localstoragejson https://www.youtube.com/watch?v=Qf7LRZjOWd8&ab_channel=AbdullahAlSawalmeh
-
     // Pass Flask variable to JavaScript
-        //Ignore the red lines, thats just jinja2 doin it's thing
         const loginFailed = {{ login_failed|tojson|safe }};
-        if (localStorage.getItem('submits' === null)){
-            localStorage.setItem('submits', JSON.stringify([]));
+        if (localStorage.getItem('loginFailedCounter') === null) {
+            //loginfailedcounter initialized with 0
+            localStorage.setItem('loginFailedCounter', '0');
         }
-        let loginFailedCounter = JSON.parse(localStorage.getItem('submits'))
-
-
-        let loginPressed = false;
+        let loginFailedCounter = parseInt(localStorage.getItem('loginFailedCounter'));
 
         // Access HTML elements
         const counterDisplayer = document.getElementById("output");
@@ -63,12 +45,11 @@
         const buttonLogin = document.getElementById('submitter1');
 
         // Add event listener to the color change button
-        //Counter displayer will only show once you click
         buttonLogin.addEventListener('click', () => {
             const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
             buttonLogin.style.background = randomColor;
-            loginFailedCounter.push(1);
-            counterDisplayer.textContent = loginFailedCounter.length;
+            loginFailedCounter += 1;
+            counterDisplayer.textContent = loginFailedCounter;
             localStorage.setItem('loginFailedCounter', loginFailedCounter.toString());
         });
     </script>
