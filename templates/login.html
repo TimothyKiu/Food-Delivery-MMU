@@ -43,13 +43,18 @@
     <button id="colorButton" class="button">Change Color</button>
 
     <script>
+        // SOURCES:
+        // 1) Arabic man's localstoragejson https://www.youtube.com/watch?v=Qf7LRZjOWd8&ab_channel=AbdullahAlSawalmeh
+
     // Pass Flask variable to JavaScript
         //Ignore the red lines, thats just jinja2 doin it's thing
         const loginFailed = {{ login_failed|tojson|safe }};
-        let loginFailedCounter = JSON.parse(localStorage.getItem('loginFailedCounter'));
-        if (!Array.isArray(loginFailedCounter)) {
-            loginFailedCounter = [];
+        if (localStorage.getItem('submits' === null)){
+            localStorage.setItem('submits', JSON.stringify([]));
         }
+        let loginFailedCounter = JSON.parse(localStorage.getItem('submits'))
+
+
         let loginPressed = false;
 
         // Access HTML elements
@@ -58,13 +63,13 @@
         const buttonLogin = document.getElementById('submitter1');
 
         // Add event listener to the color change button
+        //Counter displayer will only show once you click
         buttonLogin.addEventListener('click', () => {
             const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
             buttonLogin.style.background = randomColor;
             loginFailedCounter.push(1);
             counterDisplayer.textContent = loginFailedCounter.length;
-
-            localStorage.setItem('loginFailedCounter', JSON.stringify(loginFailedCounter));
+            localStorage.setItem('loginFailedCounter', loginFailedCounter.toString());
         });
     </script>
 </body>
