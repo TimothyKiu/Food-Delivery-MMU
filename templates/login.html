@@ -31,7 +31,12 @@
     <button id="colorButton" class="button">Change Color</button>
 
     <script>
-    // Pass Flask variable to JavaScript
+        //Sources
+        //1) Arabic man's localstorage json saving
+        // Link: https://www.youtube.com/watch?v=Qf7LRZjOWd8&ab_channel=AbdullahAlSawalmeh
+
+
+        // Ignore the red lines, it's just js not recognizing jinja2
         const loginFailed = {{ login_failed|tojson|safe }};
         if (localStorage.getItem('loginFailedCounter') === null) {
             //loginfailedcounter initialized with 0
@@ -44,12 +49,13 @@
         const button1 = document.getElementById('colorButton');
         const buttonLogin = document.getElementById('submitter1');
 
-        // Add event listener to the color change button
+        // Color changing is experimental, just to see if it works
         buttonLogin.addEventListener('click', () => {
             const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
             buttonLogin.style.background = randomColor;
             loginFailedCounter += 1;
             counterDisplayer.textContent = loginFailedCounter;
+            // stringify it so that json can save it
             localStorage.setItem('loginFailedCounter', loginFailedCounter.toString());
         });
     </script>
