@@ -45,22 +45,24 @@
     // Pass Flask variable to JavaScript
         //Ignore the red lines, thats just jinja doin it's thing
         const loginFailed = {{ login_failed|tojson|safe }};
-        let loginFailedCounter = 0;
+        let loginFailedCounter = 1;
+        let loginPressed = false;
+
 
         // Access HTML elements
         const counterDisplayer = document.getElementById("output");
         const button1 = document.getElementById('colorButton');
         const buttonLogin = document.getElementById('submitbutton');
 
-        // Set the text content of the div
-        counterDisplayer.textContent = loginFailedCounter;
-
         // Add event listener to the login button
-        buttonLogin.addEventListener('click', () => {
-            if(loginFailed === true){
-                loginFailedCounter = loginFailedCounter + 1;
-            }
+        buttonLogin.addEventListener('submit', () => {
+            loginPressed = true
         });
+        if (loginPressed && loginFailed) {
+            loginFailedCounter++;
+        }
+
+        
 
         // Add event listener to the color change button
         button1.addEventListener('click', () => {
