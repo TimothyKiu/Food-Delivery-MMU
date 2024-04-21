@@ -40,10 +40,10 @@ def register():
 
 #Do not use self variables, flask does not like it..
 #This is where the template will be stored in the url
-@app.route('/html')
+@app.route('/frontpage')
 def index():
     #Draw the website template from the folder!
-    return render_template('html.html')
+    return render_template('frontpage.html')
 
 @app.route('/createaccount')
 def createAccount():
