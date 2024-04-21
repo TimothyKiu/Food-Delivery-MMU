@@ -46,7 +46,10 @@
     // Pass Flask variable to JavaScript
         //Ignore the red lines, thats just jinja2 doin it's thing
         const loginFailed = {{ login_failed|tojson|safe }};
-        loginFailedCounter = [];
+        let loginFailedCounter = JSON.parse(localStorage.getItem('loginFailedCounter'));
+        if (!Array.isArray(loginFailedCounter)) {
+            loginFailedCounter = [];
+        }
         let loginPressed = false;
 
         // Access HTML elements
@@ -56,13 +59,12 @@
 
         // Add event listener to the color change button
         buttonLogin.addEventListener('click', () => {
-            if(loginFailed){
+            const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            buttonLogin.style.background = randomColor;
+            loginFailedCounter.push(1);
+            counterDisplayer.textContent = loginFailedCounter.length;
 
-                const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
-                buttonLogin.style.background = randomColor;
-                loginFailedCounter.push(1);
-                counterDisplayer.textContent = loginFailedCounter.length;
-            }
+            localStorage.setItem('loginFailedCounter', JSON.stringify(loginFailedCounter));
         });
     </script>
 </body>
