@@ -35,10 +35,21 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if request.method == 'POST':
+        # Request from the html button with the name 'username'
+        usernamereg = request.form['usernamereg']
+        password = request.form['passwordreg']
 
-    return "wip"
 
-#Do not use self variables, flask does not like it..
+        if usernamereg in users:
+            # Redirect using the function name, NOT the app.route(/example)
+            return redirect(url_for("successlogin", login_failed=True))
+        else:
+            return render_template('register.html',register_failed=False)
+
+    return render_template('register.html')
+
+#DO NOT STORE SESSION VARIABLES AS SELF
 #This is where the template will be stored in the url
 @app.route('/frontpage')
 def index():

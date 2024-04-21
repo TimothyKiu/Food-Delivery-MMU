@@ -14,21 +14,19 @@ class loginLogic:
             #Request from the html button with the name 'username'
             username = request.form['username']
             password = request.form['password']
-            
-            #submitbutton is the submit button's value in html
-            if 'submitbutton':
-                if username in users and users[username] == password:
-                    #Redirect using the function name, NOT the app.route(/example)
-                    return redirect(url_for("successlogin", login_failed=False))
 
-                else:
-                    cursor = db.cursor()
-                    query = "INSERT INTO clicks (click_id, username) VALUES (%s, %s)"
-                    cursor.execute(query, (42069, username,))
-                    db.commit()
-                    cursor.close()
+            if username in users and users[username] == password:
+                #Redirect using the function name, NOT the app.route(/example)
+                return redirect(url_for("accountcreatedsuccess", login_failed=False))
 
-                    return render_template('login.html',login_failed=True)
+            else:
+                cursor = db.cursor()
+                query = "INSERT INTO clicks (click_id, username) VALUES (%s, %s)"
+                cursor.execute(query, (42069, username,))
+                db.commit()
+                cursor.close()
+
+                return render_template('login.html',login_failed=True)
         else:
             # Check if login failed from query parameter
             login_failed = request.args.get('login_failed', False)
