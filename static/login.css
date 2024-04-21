@@ -15,7 +15,7 @@
     width:400px;
     height:15px;
 }
-button[name="submitbutton"]{
+button[id="submitter1"]{
     font-family : "Comic Sans MS";
     color : blue;
     position: absolute;
