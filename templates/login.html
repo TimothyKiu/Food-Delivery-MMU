@@ -36,38 +36,33 @@
 
         <label for="password" class="boxtitles" >Password:</label>
         <input type="password" id="password" name="password" class="loginboxes" required><br><br>
-        <button type="submit" name="submitbutton" value="submitbutton">Login</button>
+        <button type="submit" id="submitter1">Login</button>
     </form>
     <a href="/html">Back to Page 1</a>
+
     <button id="colorButton" class="button">Change Color</button>
 
     <script>
     // Pass Flask variable to JavaScript
-        //Ignore the red lines, thats just jinja doin it's thing
+        //Ignore the red lines, thats just jinja2 doin it's thing
         const loginFailed = {{ login_failed|tojson|safe }};
-        let loginFailedCounter = 1;
+        loginFailedCounter = [];
         let loginPressed = false;
-
 
         // Access HTML elements
         const counterDisplayer = document.getElementById("output");
         const button1 = document.getElementById('colorButton');
-        const buttonLogin = document.getElementById('submitbutton');
-
-        // Add event listener to the login button
-        buttonLogin.addEventListener('submit', () => {
-            loginPressed = true
-        });
-        if (loginPressed && loginFailed) {
-            loginFailedCounter++;
-        }
-
-        
+        const buttonLogin = document.getElementById('submitter1');
 
         // Add event listener to the color change button
-        button1.addEventListener('click', () => {
-            const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
-            button1.style.background = randomColor;
+        buttonLogin.addEventListener('click', () => {
+            if(loginFailed){
+
+                const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+                buttonLogin.style.background = randomColor;
+                loginFailedCounter.push(1);
+                counterDisplayer.textContent = loginFailedCounter.length;
+            }
         });
     </script>
 </body>
