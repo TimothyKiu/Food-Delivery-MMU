@@ -50,13 +50,16 @@
         const buttonLogin = document.getElementById('submitter1');
 
         // Color changing is experimental, just to see if it works
-        buttonLogin.addEventListener('click', () => {
-            const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
-            buttonLogin.style.background = randomColor;
-            loginFailedCounter += 1;
+        buttonLogin.addEventListener('submit', () => {
+            if(loginFailed) {
+                const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+                buttonLogin.style.background = randomColor;
+                loginFailedCounter += 1;
+                counterDisplayer.textContent = loginFailedCounter;
+                // stringify it so that json can save it
+                localStorage.setItem('loginFailedCounter', loginFailedCounter.toString());
+            }
             counterDisplayer.textContent = loginFailedCounter;
-            // stringify it so that json can save it
-            localStorage.setItem('loginFailedCounter', loginFailedCounter.toString());
         });
     </script>
 </body>

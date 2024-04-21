@@ -33,6 +33,11 @@ def login():
     loginlogic1 = loginLogic()
     return loginlogic1.login(session, users, db)
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+
+    return "wip"
+
 #Do not use self variables, flask does not like it..
 #This is where the template will be stored in the url
 @app.route('/html')
