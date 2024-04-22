@@ -3,7 +3,7 @@ from flask import Flask,render_template, request, redirect, url_for, session
 
 from loginLogic import loginLogic
 
-
+import json
 import mysql.connector
 
 db = mysql.connector.connect(
@@ -25,6 +25,7 @@ users = {'john': 'password',
          'bomboman': 'fentanyllover123'
          }
 
+
 @app.route('/successlogin')
 def successlogin():
     return render_template('successlogin.html')
@@ -35,17 +36,29 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    session.setdefault('nametaken', False)
+
     if request.method == 'POST':
         # Request from the html button with the name 'username'
         usernamereg = request.form['usernamereg']
-        password = request.form['passwordreg']
+        passwordreg = request.form['passwordreg']
 
+        #dumps is the stringify but for python
+        stringpassword = json.dumps(passwordreg)
 
-        if usernamereg in users:
-            # Redirect using the function name, NOT the app.route(/example)
-            return redirect(url_for("successlogin", login_failed=True))
+        if not(usernamereg in users):
+            if stringpassword.length() >= 6:
+                session['nametaken'] = False
+                # Redirect using the function name, NOT the app.route(/example)
+                cursor = db.cursor()
+                query = "INSERT INTO registeredAccounts (user_name, user_password) VALUES (%s, %s)"
+                cursor.execute(query, (stringpassword, usernamereg,))
+                db.commit()
+                cursor.close()
+                return redirect(url_for("successlogin"))
         else:
-            return render_template('register.html',register_failed=False)
+            session['nametaken'] = True
+            return render_template('register.html', nametakenHTML=session.get('nametaken'))
 
     return render_template('register.html')
 
