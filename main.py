@@ -33,7 +33,7 @@ def successlogin():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     loginlogic1 = loginLogic()
-    return loginlogic1.login(session, users, db)
+    return loginlogic1.login(session, users, db, mycursor)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
