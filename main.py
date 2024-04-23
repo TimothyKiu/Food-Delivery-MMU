@@ -6,6 +6,7 @@ from loginLogic import loginLogic
 import json
 import mysql.connector
 
+
 db = mysql.connector.connect(
     host="localhost",
     user='root',
@@ -44,10 +45,8 @@ def register():
         passwordreg = request.form['passwordreg']
         confirmpasswordreg = request.form['confirmpasswordreg']
 
-
-
         if not(usernamereg in users):
-            if len(passwordreg) >= 6 and (passwordreg == confirmpasswordreg) :
+            if len(passwordreg) >= 6 and (passwordreg == confirmpasswordreg):
                 session['nametaken'] = False
                 cursor = db.cursor()
                 query = "INSERT INTO mysql.registeredAccounts (user_name, user_password) VALUES (%s, %s)"

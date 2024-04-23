@@ -1,0 +1,11 @@
+Features
+
+1)Saving data using json local storage [JAVASCRIPT]
+Link: https://www.youtube.com/watch?v=Qf7LRZjOWd8&ab_channel=AbdullahAlSawalmeh
+
+
+
+
+Bug fixes
+1) Installed wrong mysql connector
+https://stackoverflow.com/questions/50557234/authentication-plugin-caching-sha2-password-is-not-supported
