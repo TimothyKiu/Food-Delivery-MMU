@@ -42,19 +42,20 @@ def register():
         # Request from the html button with the name 'username'
         usernamereg = request.form['usernamereg']
         passwordreg = request.form['passwordreg']
+        confirmpasswordreg = request.form['confirmpasswordreg']
 
-        #dumps is the stringify but for python
-        stringpassword = json.dumps(passwordreg)
+
 
         if not(usernamereg in users):
-            if stringpassword.length() >= 6:
+            if len(passwordreg) >= 6 and (passwordreg == confirmpasswordreg) :
                 session['nametaken'] = False
-                # Redirect using the function name, NOT the app.route(/example)
                 cursor = db.cursor()
-                query = "INSERT INTO registeredAccounts (user_name, user_password) VALUES (%s, %s)"
-                cursor.execute(query, (stringpassword, usernamereg,))
+                query = "INSERT INTO mysql.registeredAccounts (user_name, user_password) VALUES (%s, %s)"
+                cursor.execute(query, (usernamereg, passwordreg,))
                 db.commit()
                 cursor.close()
+
+                # Redirect using the function name, NOT the app.route(/example)
                 return redirect(url_for("successlogin"))
         else:
             session['nametaken'] = True
@@ -62,7 +63,7 @@ def register():
 
     return render_template('register.html')
 
-#DO NOT STORE SESSION VARIABLES AS SELF
+#DO NOT STORE SESSION VARIABLES AS SELF VARIABLES
 #This is where the template will be stored in the url
 @app.route('/frontpage')
 def index():
