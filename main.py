@@ -37,11 +37,13 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    session.setdefault('nametaken', False)
-    session.setdefault('passproperlength', True)
-    session.setdefault('passSameWithConfirm', True)
+
 
     if request.method == 'POST':
+        session.setdefault('nametaken', False)
+        session.setdefault('passproperlength', True)
+        session.setdefault('passSameWithConfirm', True)
+
         # Request from the html button with the name 'username'
         usernamereg = request.form['usernamereg']
         passwordreg = request.form['passwordreg']
@@ -57,7 +59,7 @@ def register():
                 cursor.close()
 
                 # Redirect using the function name, NOT the app.route(/example)
-                return redirect(url_for("successlogin", passproperlength=True),)
+                return redirect(url_for("successlogin", passproperlength=session.get('passproperlength', False)),)
 
             # if len(passwordreg) < 6 or len(passwordreg) > 10:
             #     return render_template('register.html', passproperlength=False)
