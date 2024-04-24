@@ -37,11 +37,12 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    session.setdefault('nametaken', False)
+    session.setdefault('passproperlength', True)
+    session.setdefault('passSameWithConfirm', True)
 
     if request.method == 'POST':
-        session.setdefault('nametaken', False)
-        session.setdefault('passproperlength', True)
-        session.setdefault('passSameWithConfirm', True)
+
 
         # Request from the html button with the name 'username'
         usernamereg = request.form['usernamereg']
@@ -60,7 +61,8 @@ def register():
                 # Redirect using the function name, NOT the app.route(/example)
                 session['passproperlength'] = True
                 session['passSameWithConfirm'] = True
-                return redirect(url_for("successlogin", passproperlength=session.get('passproperlength')),)
+                return redirect(url_for("successlogin", passproperlength=session.get('passproperlength')),
+                                                                 confirmpasswordreg=session.get('passSameWithConfirm'))
 
             if len(passwordreg) < 6 or len(passwordreg) > 10:
                 session['passproperlength'] = False
