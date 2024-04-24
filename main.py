@@ -37,12 +37,12 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    session.setdefault('nametaken', False)
-    session.setdefault('passproperlength', True)
-    session.setdefault('passSameWithConfirm', True)
+    # session.setdefault('nametaken', False)
+    # session.setdefault('passproperlength', True)
+    # session.setdefault('passSameWithConfirm', True)
+
 
     if request.method == 'POST':
-
 
         # Request from the html button with the name 'username'
         usernamereg = request.form['usernamereg']
@@ -59,20 +59,21 @@ def register():
                 cursor.close()
 
                 # Redirect using the function name, NOT the app.route(/example)
-                session['passproperlength'] = True
-                session['passSameWithConfirm'] = True
-                return redirect(url_for("successlogin", passproperlength=session.get('passproperlength')),
-                                                                 confirmpasswordreg=session.get('passSameWithConfirm'))
+                # session['passproperlength'] = True
+                # session['passSameWithConfirm'] = True
+                return redirect(url_for("successlogin", passproperlength=True,
+                                                                 confirmpasswordreg=True))
 
             if len(passwordreg) < 6 or len(passwordreg) > 10:
-                session['passproperlength'] = False
+                # session['passproperlength'] = False
                 print("Password not proper length")
                 #RUNS FINE!
-                return render_template('register.html', passproperlength=session.get('passproperlength'))
-            elif (not(passwordreg == confirmpasswordreg)):
-                session['passSameWithConfirm'] = False
+                return render_template('register.html', passproperlength=False)
+
+            if (not(passwordreg == confirmpasswordreg)):
+                # session['passSameWithConfirm'] = False
                 print("Password not same")
-                return render_template('register.html', passSameWithConfirm=session.get('passSameWithConfirm'))
+                return render_template('register.html', passSameWithConfirm=False)
 
         else:
             return render_template('register.html')
@@ -80,10 +81,10 @@ def register():
         return render_template('register.html')
 
     else:
-        # Retrieve session variables for rendering the template
-        passproperlength = session.get('passproperlength')
-        passSameWithConfirm = session.get('passSameWithConfirm')
+        passproperlength = request.args.get('passproperlength', True)
+        passSameWithConfirm = request.args.get('passSameWithConfirm', True)
         # passSameWithConfirm = session.get('passSameWithConfirm')
+        # DO NOT STORE THESE AS SESSION VARIABLES, SINCE ITS MERELY COSMETIC
         return render_template('register.html',
                                passproperlength=passproperlength,
                                passSameWithConfirm=passSameWithConfirm)
