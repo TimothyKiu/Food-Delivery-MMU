@@ -42,7 +42,6 @@ def register():
     # session.setdefault('passSameWithConfirm', True)
 
     if request.method == 'POST':
-
         # Request from the html button with the name 'username'
         usernamereg = request.form['usernamereg']
         passwordreg = request.form['passwordreg']
@@ -62,22 +61,25 @@ def register():
                 # session['passSameWithConfirm'] = True
                 return redirect(url_for("successlogin", passproperlength=True,
                                                                  passSameWithConfirm=True))
+            else:
+                #BUG FOUND! ONLY ONE RETURN STATEMENT CAN BE RETURNED!!!!
+                if (len(passwordreg) < 6 or len(passwordreg) > 10) and (not (passwordreg == confirmpasswordreg)):
+                    print('Both')
+                    return render_template('register.html', passproperlength=False, passSameWithConfirm=False)
 
-            if len(passwordreg) < 6 or len(passwordreg) > 10:
-                # session['passproperlength'] = False
-                print("Password not proper length")
-                #RUNS FINE!
-                return render_template('register.html', passproperlength=False)
+                #BUG: BOTH CONDITIONS CANT RUN AT THE SAME TIME
+                if len(passwordreg) < 6 or len(passwordreg) > 10:
+                    # session['passproperlength'] = False
+                    print("Password not proper length")
+                    #RUNS FINE!
+                    return render_template('register.html', passproperlength=False)
 
-            if (not(passwordreg == confirmpasswordreg)):
-                # session['passSameWithConfirm'] = False
-                print("Password not same")
-                return render_template('register.html', passSameWithConfirm=False)
+                if(not(passwordreg == confirmpasswordreg)):
+                    # session['passSameWithConfirm'] = False
+                    print("Password not same")
+                    return render_template('register.html', passSameWithConfirm=False)
 
-        else:
-            return render_template('register.html')
 
-        return render_template('register.html')
 
     else:
         passproperlength = request.args.get('passproperlength', True)
