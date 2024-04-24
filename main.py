@@ -38,7 +38,6 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 
-
     if request.method == 'POST':
         session.setdefault('nametaken', False)
         session.setdefault('passproperlength', True)
@@ -59,17 +58,28 @@ def register():
                 cursor.close()
 
                 # Redirect using the function name, NOT the app.route(/example)
-                return redirect(url_for("successlogin", passproperlength=session.get('passproperlength', False)),)
+                session['passproperlength'] = True
+                session['passSameWithConfirm'] = True
+                return redirect(url_for("successlogin", passproperlength=session.get('passproperlength')),)
 
-            # if len(passwordreg) < 6 or len(passwordreg) > 10:
-            #     return render_template('register.html', passproperlength=False)
+            if len(passwordreg) < 6 or len(passwordreg) > 10:
+                session['passproperlength'] = False
+                return render_template('register.html', passproperlength=session.get('passproperlength'))
             # if not(passwordreg == confirmpasswordreg):
             #     return render_template('register.html', passSameWithConfirm=False)
 
         else:
             return render_template('register.html')
 
-    return render_template('register.html')
+        return render_template('register.html')
+
+    else:
+        # Retrieve session variables for rendering the template
+        passproperlength = session.get('passproperlength')
+        # passSameWithConfirm = session.get('passSameWithConfirm')
+        return render_template('register.html',
+                               passproperlength=passproperlength)
+                               # passSameWithConfirm=passSameWithConfirm)
 
     # else:
     #     passproperlength = request.args.get('passproperlength', True)
@@ -82,7 +92,7 @@ def register():
 
 #DO NOT STORE SESSION VARIABLES AS SELF VARIABLES
 #This is where the template will be stored in the url
-@app.route('/frontpage')
+
 def index():
     #Draw the website template from the folder!
     return render_template('frontpage.html')
