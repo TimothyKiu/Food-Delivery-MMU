@@ -16,6 +16,7 @@
         <label for="confirmpasswordreg">Confirm password:</label>
         <input type="password" id="confirmpasswordreg" name="confirmpasswordreg" required><br><br>
         <p class="tinytexts">Password be must 6 or more characters</p>
+        <div id="incorrectTextType"></div>
 
 
 
@@ -23,21 +24,21 @@
     </form>
 
 <script>
-    {#const passProperLength = {{ passproperlength|tojson|safe }};#}
-    {#const passNotSame =  {{ passSameWithConfirm|tojson|safe }};#}
-    {##}
-    {#const incorrectInputTexts = document.getElementById('incorrectTextType');#}
-    {##}
-    {#if(!passProperLength && !passNotSame){#}
-    {#    incorrectInputTexts.textContent = "-Inappropiate password length \n -Password is not same with confirmation"#}
-    {#} else {#}
-    {#    if (!passProperLength) {#}
-    {#        incorrectInputTexts.textContent = "-Inappropriate password length";#}
-    {#    }#}
-    {#    if (!passNotSame) {#}
-    {#        incorrectInputTexts.textContent = "-Password is not same with confirmation";#}
-    {#    }#}
-    {#}#}
+    const passProperLength = {{ passproperlength }}
+    const passNotSame =  {{ passSameWithConfirm }};
+
+    const incorrectInputTexts = document.getElementById('incorrectTextType');
+
+    if(!passProperLength && !passNotSame){
+        incorrectInputTexts.textContent = "-Inappropiate password length \n -Password is not same with confirmation"
+    } else {
+        if (!passProperLength) {
+            incorrectInputTexts.textContent = "-Inappropriate password length";
+        }
+        if (!passNotSame) {
+            incorrectInputTexts.textContent = "-Password is not same with confirmation";
+        }
+    }
 
 </script>
 </body>

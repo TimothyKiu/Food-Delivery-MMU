@@ -32,8 +32,6 @@
 
     <script>
 
-
-
         // Ignore the red lines, it's just js not recognizing jinja2
         const loginFailed = {{ login_failed|tojson|safe }};
         if (localStorage.getItem('loginFailedCounter') === null) {

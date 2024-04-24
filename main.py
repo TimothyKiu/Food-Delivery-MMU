@@ -64,9 +64,13 @@ def register():
 
             if len(passwordreg) < 6 or len(passwordreg) > 10:
                 session['passproperlength'] = False
+                print("Password not proper length")
+                #RUNS FINE!
                 return render_template('register.html', passproperlength=session.get('passproperlength'))
-            # if not(passwordreg == confirmpasswordreg):
-            #     return render_template('register.html', passSameWithConfirm=False)
+            elif (not(passwordreg == confirmpasswordreg)):
+                session['passSameWithConfirm'] = False
+                print("Password not same")
+                return render_template('register.html', passSameWithConfirm=session.get('passSameWithConfirm'))
 
         else:
             return render_template('register.html')
@@ -76,9 +80,11 @@ def register():
     else:
         # Retrieve session variables for rendering the template
         passproperlength = session.get('passproperlength')
+        passSameWithConfirm = session.get('passSameWithConfirm')
         # passSameWithConfirm = session.get('passSameWithConfirm')
         return render_template('register.html',
-                               passproperlength=passproperlength)
+                               passproperlength=passproperlength,
+                               passSameWithConfirm=passSameWithConfirm)
                                # passSameWithConfirm=passSameWithConfirm)
 
     # else:
