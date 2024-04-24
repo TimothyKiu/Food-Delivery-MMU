@@ -1,5 +1,5 @@
 from urllib import request
-from flask import Flask,render_template, request, redirect, url_for, session
+from flask import Flask,render_template, request, redirect, url_for, session, jsonify
 
 from loginLogic import loginLogic
 
@@ -38,6 +38,8 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     session.setdefault('nametaken', False)
+    session.setdefault('passproperlength', True)
+    session.setdefault('passSameWithConfirm', True)
 
     if request.method == 'POST':
         # Request from the html button with the name 'username'
@@ -55,12 +57,26 @@ def register():
                 cursor.close()
 
                 # Redirect using the function name, NOT the app.route(/example)
-                return redirect(url_for("successlogin"))
+                return redirect(url_for("successlogin", passproperlength=True),)
+
+            # if len(passwordreg) < 6 or len(passwordreg) > 10:
+            #     return render_template('register.html', passproperlength=False)
+            # if not(passwordreg == confirmpasswordreg):
+            #     return render_template('register.html', passSameWithConfirm=False)
+
         else:
-            session['nametaken'] = True
-            return render_template('register.html', nametakenHTML=session.get('nametaken'))
+            return render_template('register.html')
 
     return render_template('register.html')
+
+    # else:
+    #     passproperlength = request.args.get('passproperlength', True)
+    #     passSameWithConfirm = request.args.get('passSameWithConfirm', True)
+    #     #                                                     this is to convert python variable into html format variable
+    #     return render_template('register.html',
+    #                        passproperlength=passproperlength,
+    #                        passSameWithConfirm=passSameWithConfirm
+    #                        )
 
 #DO NOT STORE SESSION VARIABLES AS SELF VARIABLES
 #This is where the template will be stored in the url

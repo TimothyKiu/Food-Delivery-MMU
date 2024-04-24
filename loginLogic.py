@@ -14,10 +14,6 @@ class loginLogic:
             username = request.form['username']
             password = request.form['password']
 
-            SQLUsername = "x"
-            SQLPassword = "y"
-
-
             # Prepare the SQL query with placeholders
             query = "SELECT user_name, user_password FROM mysql.registeredAccounts WHERE user_name = %s AND user_password = %s"
 
