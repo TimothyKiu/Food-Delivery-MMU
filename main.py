@@ -59,36 +59,35 @@ def register():
                 # Redirect using the function name, NOT the app.route(/example)
                 # session['passproperlength'] = True
                 # session['passSameWithConfirm'] = True
-                return redirect(url_for("successlogin", passproperlength=True,
-                                                                 passSameWithConfirm=True))
+                return redirect(url_for("successlogin"))
             else:
                 #BUG FOUND! ONLY ONE RETURN STATEMENT CAN BE RETURNED!!!!
                 if (len(passwordreg) < 6 or len(passwordreg) > 10) and (not (passwordreg == confirmpasswordreg)):
                     print('Both')
-                    return render_template('register.html', passproperlength=False, passSameWithConfirm=False)
+                    return render_template('register.html', bothfalse=True)
 
                 #BUG: BOTH CONDITIONS CANT RUN AT THE SAME TIME
-                if len(passwordreg) < 6 or len(passwordreg) > 10:
+                elif len(passwordreg) < 6 or len(passwordreg) > 10:
                     # session['passproperlength'] = False
                     print("Password not proper length")
                     #RUNS FINE!
-                    return render_template('register.html', passproperlength=False)
+                    return render_template('register.html', passnotproperlength=True)
 
-                if(not(passwordreg == confirmpasswordreg)):
+                elif(not(passwordreg == confirmpasswordreg)):
                     # session['passSameWithConfirm'] = False
                     print("Password not same")
-                    return render_template('register.html', passSameWithConfirm=False)
-
-
+                    return render_template('register.html', passnotsame=True)
 
     else:
-        passproperlength = request.args.get('passproperlength', True)
-        passSameWithConfirm = request.args.get('passSameWithConfirm', True)
+        passnotproperlength = request.args.get('passnotproperlength', False)
+        passnotsame = request.args.get('passnotsame', False)
+        bothfalse = request.args.get('passSameWithConfirm', False)
         # passSameWithConfirm = session.get('passSameWithConfirm')
         # DO NOT STORE THESE AS SESSION VARIABLES, SINCE ITS MERELY COSMETIC
         return render_template('register.html',
-                               passproperlength=passproperlength,
-                               passSameWithConfirm=passSameWithConfirm)
+                               passproperlength=passnotproperlength,
+                               passnotsame=passnotsame,
+                               bothfalse=bothfalse)
                                # passSameWithConfirm=passSameWithConfirm)
 
 

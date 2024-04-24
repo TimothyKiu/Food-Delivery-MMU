@@ -18,12 +18,17 @@
         <p class="tinytexts">Password be must 6 or more characters</p>
 {#        <div id="incorrectTextType"></div>#}
 
-        {% if not passproperlength  %}
+        {% if bothfalse %}
+            <p style="color: red;">Inappropriate password length and incorrect password</p>
+
+        {% endif %}
+
+        {% if passnotproperlength  %}
             <p style="color: red;">Inappropriate password length.</p>
 
         {% endif %}
 
-        {% if not passSameWithConfirm  %}
+        {% if passnotsame  %}
             <p style="color: red;">Password is not the same as the confirmed password.</p>
 
         {% endif %}
