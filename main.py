@@ -37,13 +37,11 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    session.setdefault('nametaken', False)
-    session.setdefault('passproperlength', True)
-    session.setdefault('passSameWithConfirm', True)
+    # session.setdefault('nametaken', False)
+    # session.setdefault('passproperlength', True)
+    # session.setdefault('passSameWithConfirm', True)
 
     if request.method == 'POST':
-
-
         # Request from the html button with the name 'username'
         usernamereg = request.form['usernamereg']
         passwordreg = request.form['passwordreg']
@@ -59,35 +57,40 @@ def register():
                 cursor.close()
 
                 # Redirect using the function name, NOT the app.route(/example)
-                session['passproperlength'] = True
-                session['passSameWithConfirm'] = True
-                return redirect(url_for("successlogin", passproperlength=session.get('passproperlength')),
-                                                                 confirmpasswordreg=session.get('passSameWithConfirm'))
+                # session['passproperlength'] = True
+                # session['passSameWithConfirm'] = True
+                return redirect(url_for("successlogin", passproperlength=True,
+                                                                 passSameWithConfirm=True))
+            else:
+                #BUG FOUND! ONLY ONE RETURN STATEMENT CAN BE RETURNED!!!!
+                if (len(passwordreg) < 6 or len(passwordreg) > 10) and (not (passwordreg == confirmpasswordreg)):
+                    print('Both')
+                    return render_template('register.html', passproperlength=False, passSameWithConfirm=False)
 
-            if len(passwordreg) < 6 or len(passwordreg) > 10:
-                session['passproperlength'] = False
-                print("Password not proper length")
-                #RUNS FINE!
-                return render_template('register.html', passproperlength=session.get('passproperlength'))
-            elif (not(passwordreg == confirmpasswordreg)):
-                session['passSameWithConfirm'] = False
-                print("Password not same")
-                return render_template('register.html', passSameWithConfirm=session.get('passSameWithConfirm'))
+                #BUG: BOTH CONDITIONS CANT RUN AT THE SAME TIME
+                if len(passwordreg) < 6 or len(passwordreg) > 10:
+                    # session['passproperlength'] = False
+                    print("Password not proper length")
+                    #RUNS FINE!
+                    return render_template('register.html', passproperlength=False)
 
-        else:
-            return render_template('register.html')
+                if(not(passwordreg == confirmpasswordreg)):
+                    # session['passSameWithConfirm'] = False
+                    print("Password not same")
+                    return render_template('register.html', passSameWithConfirm=False)
 
-        return render_template('register.html')
+
 
     else:
-        # Retrieve session variables for rendering the template
-        passproperlength = session.get('passproperlength')
-        passSameWithConfirm = session.get('passSameWithConfirm')
+        passproperlength = request.args.get('passproperlength', True)
+        passSameWithConfirm = request.args.get('passSameWithConfirm', True)
         # passSameWithConfirm = session.get('passSameWithConfirm')
+        # DO NOT STORE THESE AS SESSION VARIABLES, SINCE ITS MERELY COSMETIC
         return render_template('register.html',
                                passproperlength=passproperlength,
                                passSameWithConfirm=passSameWithConfirm)
                                # passSameWithConfirm=passSameWithConfirm)
+
 
     # else:
     #     passproperlength = request.args.get('passproperlength', True)
