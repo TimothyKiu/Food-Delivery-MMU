@@ -41,7 +41,6 @@ def register():
     # session.setdefault('passproperlength', True)
     # session.setdefault('passSameWithConfirm', True)
 
-
     if request.method == 'POST':
 
         # Request from the html button with the name 'username'
@@ -62,7 +61,7 @@ def register():
                 # session['passproperlength'] = True
                 # session['passSameWithConfirm'] = True
                 return redirect(url_for("successlogin", passproperlength=True,
-                                                                 confirmpasswordreg=True))
+                                                                 passSameWithConfirm=True))
 
             if len(passwordreg) < 6 or len(passwordreg) > 10:
                 # session['passproperlength'] = False
@@ -89,6 +88,7 @@ def register():
                                passproperlength=passproperlength,
                                passSameWithConfirm=passSameWithConfirm)
                                # passSameWithConfirm=passSameWithConfirm)
+
 
     # else:
     #     passproperlength = request.args.get('passproperlength', True)

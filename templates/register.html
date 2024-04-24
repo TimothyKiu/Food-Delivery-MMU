@@ -17,11 +17,17 @@
         <input type="password" id="confirmpasswordreg" name="confirmpasswordreg" required><br><br>
         <p class="tinytexts">Password be must 6 or more characters</p>
 {#        <div id="incorrectTextType"></div>#}
+
         {% if not passproperlength  %}
             <p style="color: red;">Inappropriate password length.</p>
+        {% else %}
+            <p>Good password</p>
         {% endif %}
+
         {% if not passSameWithConfirm  %}
-            <p style="color: red;">Password is not same with confirmed password.</p>
+            <p style="color: red;">Password is not the same as the confirmed password.</p>
+        {% else %}
+            <<p>Good password</p>
         {% endif %}
 
 
@@ -30,8 +36,8 @@
     </form>
 
 <script>
-    const passProperLength = {{ passproperlength }}
-    const passNotSame =  {{ passSameWithConfirm }};
+    /*
+    const passProperLength = x
 
     const incorrectInputTexts = document.getElementById('incorrectTextType');
 
