@@ -1,0 +1,11 @@
+SEARCH BAR 
+https://pagedart.com/blog/how-to-add-a-search-bar-in-html/
+
+WHOLE CSS
+https://www.w3schools.com/css/ 
+
+BASIC FLASK
+https://www.codecademy.com/enrolled/courses/learn-flask-fundamentals 
+
+MORE EXAMPLE ABOUT FLASK
+https://www.youtube.com/watch?v=Z1RJmh_OqeA
