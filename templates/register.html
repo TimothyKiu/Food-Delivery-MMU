@@ -18,10 +18,15 @@
         <p class="tinytexts">Password be must 6 or more characters</p>
 {#        <div id="incorrectTextType"></div>#}
 
-        {% if bothfalse %}
-            <p style="color: red;">Inappropriate password length and incorrect password</p>
+{#    Jinja2 is a translator for python to html#}
+        {% if allfalse %}
+            <p style="color: red;">Inappropriate password length and incorrect password and name already taken.</p>
 
         {% endif %}
+
+        {% if nametaken %}
+            <p style="color: red;">Username already taken.</p>
+        {%  endif %}
 
         {% if passnotproperlength  %}
             <p style="color: red;">Inappropriate password length.</p>

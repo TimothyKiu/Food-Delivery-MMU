@@ -41,53 +41,77 @@ def register():
     # session.setdefault('passproperlength', True)
     # session.setdefault('passSameWithConfirm', True)
 
+    #̶N̶O̶T̶E̶S̶ F̶O̶R̶ T̶O̶M̶O̶R̶R̶O̶W̶, A̶D̶D̶ A̶ F̶U̶N̶C̶T̶I̶O̶N̶ W̶H̶E̶R̶E̶ I̶T̶ D̶E̶T̶E̶C̶T̶S̶ I̶F̶ A̶ D̶U̶P̶L̶I̶C̶A̶T̶E̶ U̶S̶E̶R̶N̶A̶M̶E̶ I̶S̶ D̶E̶T̶E̶C̶T̶E̶D̶ W̶I̶T̶H̶I̶N̶ T̶H̶E̶ S̶Q̶L̶ D̶B̶
+    #BUG WHEN USERNAME IS RETRIEVED FROM DB, IT MESSES SOMETHING UP..
+
     if request.method == 'POST':
         # Request from the html button with the name 'username'
+        #BUG: when registering twice, website stops workign
         usernamereg = request.form['usernamereg']
         passwordreg = request.form['passwordreg']
         confirmpasswordreg = request.form['confirmpasswordreg']
 
-        if not(usernamereg in users):
-            if len(passwordreg) >= 6 and (passwordreg == confirmpasswordreg):
-                session['nametaken'] = False
-                cursor = db.cursor()
-                query = "INSERT INTO mysql.registeredAccounts (user_name, user_password) VALUES (%s, %s)"
-                cursor.execute(query, (usernamereg, passwordreg,))
-                db.commit()
-                cursor.close()
+        query = "SELECT user_name FROM mysql.registeredAccounts WHERE user_name = %s "
 
-                # Redirect using the function name, NOT the app.route(/example)
-                # session['passproperlength'] = True
-                # session['passSameWithConfirm'] = True
-                return redirect(url_for("successlogin"))
-            else:
-                #BUG FOUND! ONLY ONE RETURN STATEMENT CAN BE RETURNED!!!!
-                if (len(passwordreg) < 6 or len(passwordreg) > 10) and (not (passwordreg == confirmpasswordreg)):
-                    print('Both')
-                    return render_template('register.html', bothfalse=True)
+        # Execute the SQL query with the username and password as parameters
+        # This is where user enters his credentials in the HTML page
+        mycursor.execute(query, (usernamereg,))
+        # Fetch the result (assuming only one row is expected)
+        userdata = mycursor.fetchone()
+        print("Userdata:", userdata)
 
-                #BUG: BOTH CONDITIONS CANT RUN AT THE SAME TIME
-                elif len(passwordreg) < 6 or len(passwordreg) > 10:
-                    # session['passproperlength'] = False
-                    print("Password not proper length")
-                    #RUNS FINE!
-                    return render_template('register.html', passnotproperlength=True)
+        # if(userdata is not None) and not(usernamereg == userdata[0]):
+        if len(passwordreg) >= 6 and (passwordreg == confirmpasswordreg) and ((userdata is not None) and (userdata[0] != usernamereg)):
+            session['nametaken'] = False
+            cursor = db.cursor()
+            query = "INSERT INTO mysql.registeredAccounts (user_name, user_password) VALUES (%s, %s)"
+            cursor.execute(query, (usernamereg, passwordreg,))
+            db.commit()
+            cursor.close()
 
-                elif(not(passwordreg == confirmpasswordreg)):
-                    # session['passSameWithConfirm'] = False
-                    print("Password not same")
-                    return render_template('register.html', passnotsame=True)
+            # Redirect using the function name, NOT the app.route(/example)
+            # session['passproperlength'] = True
+            # session['passSameWithConfirm'] = True
+            return redirect(url_for("successlogin"))
+        else:
+            #BUG FOUND! ONLY ONE RETURN STATEMENT CAN BE RETURNED!!!!
+            if (len(passwordreg) < 6 or len(passwordreg) > 10) and (not (passwordreg == confirmpasswordreg)) and (userdata is not None and userdata[0] == usernamereg):
+                print('All three')
+                return render_template('register.html', allfalse=True)
+
+            elif(len(passwordreg) < 6 or len(passwordreg) > 10) and (not (passwordreg == confirmpasswordreg)):
+                return render_template('register.html', passnotproperlength=True, passnotsame=True)
+            elif(not (passwordreg == confirmpasswordreg)) and (userdata is not None and userdata[0] == usernamereg):
+                return render_template('register.html', passnotsame=True, nametaken=True)
+            elif((len(passwordreg) < 6 or len(passwordreg) > 10) and (userdata is not None and userdata[0] == usernamereg)):
+                return render_template('register.html', passnotproperlength=True, nametaken=True)
+            elif(userdata is not None and userdata[0] == usernamereg):
+                return render_template('register.html',nametaken=True)
+
+            #BUG: BOTH CONDITIONS CANT RUN AT THE SAME TIME
+            elif len(passwordreg) < 6 or len(passwordreg) > 10:
+                # session['passproperlength'] = False
+                print("Password not proper length")
+                #RUNS FINE!
+                return render_template('register.html', passnotproperlength=True)
+
+            elif(not(passwordreg == confirmpasswordreg)):
+                # session['passSameWithConfirm'] = False
+                print("Password not same")
+                return render_template('register.html', passnotsame=True)
 
     else:
         passnotproperlength = request.args.get('passnotproperlength', False)
         passnotsame = request.args.get('passnotsame', False)
-        bothfalse = request.args.get('passSameWithConfirm', False)
+        allfalse = request.args.get('allfalse', False)
+        nametaken = request.args.get('nametaken', False)
         # passSameWithConfirm = session.get('passSameWithConfirm')
         # DO NOT STORE THESE AS SESSION VARIABLES, SINCE ITS MERELY COSMETIC
         return render_template('register.html',
                                passproperlength=passnotproperlength,
                                passnotsame=passnotsame,
-                               bothfalse=bothfalse)
+                               allfalse=allfalse,
+                               nametaken=nametaken)
                                # passSameWithConfirm=passSameWithConfirm)
 
 

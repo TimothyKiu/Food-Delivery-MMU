@@ -43,5 +43,4 @@ class loginLogic:
             return render_template('login.html',
                                    login_failed=login_failed,
                                    firstAttempt=session.get('firstAttempt'),
-
                                    )
