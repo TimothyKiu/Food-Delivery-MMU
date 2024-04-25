@@ -60,18 +60,16 @@ def register():
         userdata = mycursor.fetchone()
 
         # if(userdata is not None) and not(usernamereg == userdata[0]):
-        if len(passwordreg) >= 6 and (passwordreg == confirmpasswordreg) and ((userdata is not None) and not(userdata[0] == usernamereg) ):
-            session['nametaken'] = False
+        if len(passwordreg) >= 6 and (passwordreg == confirmpasswordreg) and ((userdata is None)):
+            # No user with this username exists, proceed with registration
             cursor = db.cursor()
-            query = "INSERT INTO mysql.registeredAccounts (user_name, user_password) VALUES (%s, %s)"
-            cursor.execute(query, (usernamereg, passwordreg,))
-            db.commit()
+            insert_query = "INSERT INTO mysql.registeredAccounts (user_name, user_password) VALUES (%s, %s)"
+            cursor.execute(insert_query, (usernamereg, passwordreg))
+            db.commit()  # Commit the transaction to save changes to the database
             cursor.close()
-
-            # Redirect using the function name, NOT the app.route(/example)
-            # session['passproperlength'] = True
-            # session['passSameWithConfirm'] = True
             return redirect(url_for("successlogin"))
+
+
         else:
             #BUG FOUND! ONLY ONE RETURN STATEMENT CAN BE RETURNED!!!!
             if (len(passwordreg) < 6 or len(passwordreg) > 10) and (not (passwordreg == confirmpasswordreg)) and (userdata is not None and userdata[0] == usernamereg):
@@ -99,19 +97,20 @@ def register():
                 print("Password not same")
                 return render_template('register.html', passnotsame=True)
 
-    else:
-        passnotproperlength = request.args.get('passnotproperlength', False)
-        passnotsame = request.args.get('passnotsame', False)
-        allfalse = request.args.get('allfalse', False)
-        nametaken = request.args.get('nametaken', False)
-        # passSameWithConfirm = session.get('passSameWithConfirm')
-        # DO NOT STORE THESE AS SESSION VARIABLES, SINCE ITS MERELY COSMETIC
-        return render_template('register.html',
-                               passproperlength=passnotproperlength,
-                               passnotsame=passnotsame,
-                               allfalse=allfalse,
-                               nametaken=nametaken)
-                               # passSameWithConfirm=passSameWithConfirm)
+
+    passnotproperlength = request.args.get('passnotproperlength', False)
+    passnotsame = request.args.get('passnotsame', False)
+    allfalse = request.args.get('allfalse', False)
+    nametaken = request.args.get('nametaken', False)
+    # passSameWithConfirm = session.get('passSameWithConfirm')
+    # DO NOT STORE THESE AS SESSION VARIABLES, SINCE ITS MERELY COSMETIC
+    return render_template('register.html',
+                           passproperlength=passnotproperlength,
+                           passnotsame=passnotsame,
+                           allfalse=allfalse,
+                           nametaken=nametaken)
+                           # passSameWithConfirm=passSameWithConfirm)
+
 
 
     # else:
