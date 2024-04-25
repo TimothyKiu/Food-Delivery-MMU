@@ -54,7 +54,8 @@ def register():
         query = "SELECT user_name FROM mysql.registeredAccounts WHERE user_name = %s "
 
         # Execute the SQL query with the username and password as parameters
-        # This is where user enters his credentials in the HTML page
+        # This is where user enters his credentials in the HTML page, the parameter values then are run into the
+        # query, if it finds a match it returns something back, if not then it returns null
         mycursor.execute(query, (usernamereg,))
         # Fetch the result (assuming only one row is expected)
         userdata = mycursor.fetchone()
@@ -67,14 +68,15 @@ def register():
             cursor.execute(insert_query, (usernamereg, passwordreg))
             db.commit()  # Commit the transaction to save changes to the database
             cursor.close()
-            return redirect(url_for("successlogin"))
-
+            return redirect(url_for("accountcreatedsuccess"))
 
         else:
             #BUG FOUND! ONLY ONE RETURN STATEMENT CAN BE RETURNED!!!!
             if (len(passwordreg) < 6 or len(passwordreg) > 10) and (not (passwordreg == confirmpasswordreg)) and (userdata is not None and userdata[0] == usernamereg):
                 print('All three')
                 return render_template('register.html', allfalse=True)
+
+            #All combinations of password/username errors, I have to do this individually because only one return statement is allowed
 
             elif(len(passwordreg) < 6 or len(passwordreg) > 10) and (not (passwordreg == confirmpasswordreg)):
                 return render_template('register.html', passnotproperlength=True, passnotsame=True)
@@ -129,14 +131,10 @@ def index():
     #Draw the website template from the folder!
     return render_template('frontpage.html')
 
-@app.route('/createaccount')
-def createAccount():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+@app.route('/accountcreatedsuccess')
+def accountcreatedsuccess():
 
-    else:
-        return render_template('createaccount.html')
+    return render_template('accountcreatedsuccess.html')
 
 @app.route('/html2')
 def page2():
