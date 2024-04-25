@@ -1,24 +1,61 @@
 .header {
-    padding: 6px;
-    text-align: center;
-    background: #3d1818;
-    color: rgb(185, 169, 129);
-    font-size: 20px;
-    min-height: 50px; 
-  }
+  padding: 6px;
+  text-align: center;
+  background: #9f77a7;
+  color: rgb(212, 215, 186);
+  font-size: 20px;
+  min-height: 50px; 
+}
 
 .main {
-    background: #ffffff;
-
+  background: #ffffff;
 }
 
 .bottom {
-    padding: 6px;
-    text-align: left;
-    background: #3d1818;
-    color: rgb(185, 169, 129);
-    font-size: 30px;
-    min-height: 50px; 
-    text-decoration: none;
-  }
-  
+  padding: 10px;
+  text-align: right;
+  background: #9f77a7;
+  color: rgb(212, 215, 186);
+  font-size: 20px;
+  min-height:20px; 
+  position: sticky;
+  bottom: 0;
+}
+
+.bottom a {
+  text-decoration: none;
+}
+
+.cart-button {
+  text-decoration: none;
+  color: white; 
+  font-size: 40px;
+  position: relative; 
+}
+
+
+.cart-number {
+  position: absolute; 
+  top: -10px; 
+  right: 0px; 
+  background: rgb(192, 54, 36); 
+  color: rgb(255, 255, 255);
+  border-radius: 100%; 
+  padding: 3px; 
+}
+
+#cart {
+  display: none; 
+  position: fixed; 
+  top: 10px;
+  right: 50px; 
+  background: lightgrey; 
+  border: 1px solid #ccc; /* Border for definition */
+  padding: 100px; /* Padding for comfort */
+  z-index: 100; /* Ensure it's above other content */
+}
+
+
+#cart:target {
+  display: block; /* Show when targeted */
+}
