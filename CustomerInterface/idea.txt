@@ -11,6 +11,11 @@ Timothy: Login page, user features
 Chan: Customer ordering page
 Keyon: Runner accept order page, extra features
 
+参考
+页面排版[https://www.vecteezy.com/vector-art/7861335-food-delivery-ui-design-template-vector-mobile-app-user-interface-design-concept]
+
+可以放runner page，
+
 可以参照有间面馆
 1. 可选择不要的
 2. 店家收到的是整理好的清单

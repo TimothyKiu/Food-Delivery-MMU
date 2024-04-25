@@ -1,0 +1,24 @@
+.header {
+    padding: 6px;
+    text-align: center;
+    background: #3d1818;
+    color: rgb(185, 169, 129);
+    font-size: 20px;
+    min-height: 50px; 
+  }
+
+.main {
+    background: #ffffff;
+
+}
+
+.bottom {
+    padding: 6px;
+    text-align: left;
+    background: #3d1818;
+    color: rgb(185, 169, 129);
+    font-size: 30px;
+    min-height: 50px; 
+    text-decoration: none;
+  }
+  
