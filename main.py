@@ -14,7 +14,7 @@ db = mysql.connector.connect(
     database='mysql'
 )
 
-mycursor = db.cursor()
+mycursor = db.cursor(buffered=True)
 
 app = Flask(__name__)
 app.secret_key = 'theSecretKeyToTheEvilPiratesTreasureHarHarHar'
@@ -58,10 +58,9 @@ def register():
         mycursor.execute(query, (usernamereg,))
         # Fetch the result (assuming only one row is expected)
         userdata = mycursor.fetchone()
-        print("Userdata:", userdata)
 
         # if(userdata is not None) and not(usernamereg == userdata[0]):
-        if len(passwordreg) >= 6 and (passwordreg == confirmpasswordreg) and ((userdata is not None) and (userdata[0] != usernamereg)):
+        if len(passwordreg) >= 6 and (passwordreg == confirmpasswordreg) and ((userdata is not None) and not(userdata[0] == usernamereg) ):
             session['nametaken'] = False
             cursor = db.cursor()
             query = "INSERT INTO mysql.registeredAccounts (user_name, user_password) VALUES (%s, %s)"
