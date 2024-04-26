@@ -49,6 +49,8 @@ def register():
         #BUG: when registering twice, website stops workign
         usernamereg = request.form['usernamereg']
         passwordreg = request.form['passwordreg']
+        accountTypereg = request.form['usertype']
+        print(accountTypereg)
         confirmpasswordreg = request.form['confirmpasswordreg']
 
         query = "SELECT user_name FROM mysql.registeredAccounts WHERE user_name = %s "

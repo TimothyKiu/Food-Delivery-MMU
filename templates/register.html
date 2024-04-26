@@ -7,7 +7,15 @@
 </head>
 <body>
     <form method="post">
+{#    type=radio is only if you can only select one at a time, name must be the same!!! (usertype)#}
+        <label for="customerTick">Customer</label>
+          <input type="radio" id="customerTick" name="usertype" value="customerTick">
+          <br>
+        <label for="runnerTick">Runner</label>
+            <input type="radio" id="runnerTick" name="usertype" value="runnerTick">
+            <br>
         <label for="usernamereg">Username:</label>
+
         <input type="text" id="usernamereg" name="usernamereg" required><br><br>
 
 
