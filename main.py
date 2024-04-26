@@ -71,7 +71,6 @@ def register():
             db.commit()  # Commit the transaction to save changes to the database
             cursor.close()
 
-
             return redirect(url_for("accountcreatedsuccess"))
 
         else:
@@ -140,8 +139,13 @@ def accountcreatedsuccess():
 
     return render_template('accountcreatedsuccess.html')
 
-@app.route('/html2')
-def page2():
-    return render_template('html2.html')
+@app.route('/profile')
+def profile():
+
+    usernameP = session['username']
+    print(usernameP)
+
+
+    return render_template('profile.html', usernameP=usernameP)
 
 app.run(debug=True)

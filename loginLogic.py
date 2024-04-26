@@ -26,6 +26,8 @@ class loginLogic:
 
             if (userdata is not None) and userdata[0] == username and userdata[1] == password:
                 #Redirect using the function name, NOT the app.route(/example)
+                session['username'] = userdata[0]
+
                 return redirect(url_for("successlogin", login_failed=False))
 
             else:
