@@ -6,7 +6,7 @@ from loginLogic import loginLogic
 import json
 import mysql.connector
 
-
+#NOTE: STOP RUNNING PYTHON WHENEVER YOU WANNA ALTER SQL TABLES
 db = mysql.connector.connect(
     host="localhost",
     user='root',
@@ -66,10 +66,12 @@ def register():
         if len(passwordreg) >= 6 and (passwordreg == confirmpasswordreg) and ((userdata is None)):
             # No user with this username exists, proceed with registration
             cursor = db.cursor()
-            insert_query = "INSERT INTO mysql.registeredAccounts (user_name, user_password) VALUES (%s, %s)"
-            cursor.execute(insert_query, (usernamereg, passwordreg))
+            insert_query = "INSERT INTO mysql.registeredAccounts (user_name, user_password, type) VALUES (%s, %s, %s)"
+            cursor.execute(insert_query, (usernamereg, passwordreg, accountTypereg))
             db.commit()  # Commit the transaction to save changes to the database
             cursor.close()
+
+
             return redirect(url_for("accountcreatedsuccess"))
 
         else:
