@@ -148,7 +148,7 @@ def profile():
 
 
     if request.method == 'POST':
-        # Retrieve the value of the 'logOut' form field
+        # Retrieve the value of the 'logOut' form field 
         loggedOut = request.form.get('logOut')
 
         if loggedOut == "True":

@@ -31,7 +31,7 @@ class loginLogic:
                 session['username'] = userdata[0]
                 session['loggedIn'] = True
 
-                return redirect(url_for("successlogin", login_failed=False))
+                return redirect(url_for("profile", login_failed=False))
 
             else:
                 cursor = db.cursor()
