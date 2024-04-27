@@ -139,13 +139,26 @@ def accountcreatedsuccess():
 
     return render_template('accountcreatedsuccess.html')
 
-@app.route('/profile')
+@app.route('/profile', methods=['GET', 'POST'])
 def profile():
+    # Retrieve the username from the session or set it to None if the key is missing
+    usernameP = session.get('username')
+    loggedIn = session.get('loggedIn')
+    #loggedin detected
 
-    usernameP = session['username']
-    print(usernameP)
 
+    if request.method == 'POST':
+        # Retrieve the value of the 'logOut' form field
+        loggedOut = request.form.get('logOut')
 
-    return render_template('profile.html', usernameP=usernameP)
+        if loggedOut == "True":
+            # Remove the 'username' key from the session if the user logs out
+
+            noLoginYet = "You haven't logged in!"
+            session['username'] = noLoginYet
+            loggedIn = False
+
+    return render_template('profile.html', usernameP=usernameP, loggedIn=loggedIn)
+
 
 app.run(debug=True)

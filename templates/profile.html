@@ -1,11 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <h1>Hi, {{ usernameP }}</h1>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <h1>Hi, {{ finalUsername }}</h1>
+         <form method="post">
+            <button type="submit" name="logOut" id="logOut" value="True" >Log out</button>
+         </form>
+        <p>Logged in: {{ loggedIn }}</p>
 
-</body>
-</html>
+    </body>
+    </html>

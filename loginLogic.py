@@ -8,6 +8,8 @@ class loginLogic:
         #EVERYTIME A USER DOES A POST REQUEST
         #firstAttempt = True
         session.setdefault('loginAttempts', -1)
+        session.setdefault('loggedIn', False)
+
 
         if request.method == 'POST':
             #Request from the html button with the name 'username'
@@ -27,6 +29,7 @@ class loginLogic:
             if (userdata is not None) and userdata[0] == username and userdata[1] == password:
                 #Redirect using the function name, NOT the app.route(/example)
                 session['username'] = userdata[0]
+                session['loggedIn'] = True
 
                 return redirect(url_for("successlogin", login_failed=False))
 
