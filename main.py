@@ -151,10 +151,13 @@ def profile():
         loggedOut = request.form.get('logOut')
         deleteAccount = request.form.get('deleteAccount')
 
+        noLoginYet = "You haven't logged in!"
+        accountDeleted = "Account successfully deleted..."
+
         if loggedOut == "True":
             # Remove the 'username' key from the session if the user logs out
 
-            noLoginYet = "You haven't logged in!"
+
             session['username'] = noLoginYet
             session['loggedIn'] = False
 
@@ -163,6 +166,9 @@ def profile():
             deleteQuery = "DELETE FROM mysql.registeredAccounts WHERE user_name = %s"
             mycursor.execute(deleteQuery, (session['username'],))
             db.commit()
+
+            session['username'] = accountDeleted
+            session['loggedIn'] = False
 
 
 
