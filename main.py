@@ -19,7 +19,6 @@ mycursor = db.cursor(buffered=True)
 app = Flask(__name__)
 app.secret_key = 'theSecretKeyToTheEvilPiratesTreasureHarHarHar'
 
-
 # Dummy data for testing purposes
 users = {'john': 'password',
          'jane': 'password123',
@@ -148,15 +147,26 @@ def profile():
 
 
     if request.method == 'POST':
-        # Retrieve the value of the 'logOut' form field 
+        # Retrieve the value of the 'logOut' form field
         loggedOut = request.form.get('logOut')
+        deleteAccount = request.form.get('deleteAccount')
 
         if loggedOut == "True":
             # Remove the 'username' key from the session if the user logs out
 
             noLoginYet = "You haven't logged in!"
             session['username'] = noLoginYet
-            loggedIn = False
+            session['loggedIn'] = False
+
+
+        if deleteAccount == "True": #works
+            deleteQuery = "DELETE FROM mysql.registeredAccounts WHERE user_name = %s"
+            mycursor.execute(deleteQuery, (session['username'],))
+            db.commit()
+
+
+
+
 
     return render_template('profile.html', usernameP=usernameP, loggedIn=loggedIn)
 
