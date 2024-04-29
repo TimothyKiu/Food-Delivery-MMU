@@ -143,21 +143,22 @@ def profile():
     # Retrieve the username from the session or set it to None if the key is missing
     usernameP = session.get('username')
     loggedIn = session.get('loggedIn')
+
     #loggedin detected
 
 
     if request.method == 'POST':
         # Retrieve the value of the 'logOut' form field
+
         loggedOut = request.form.get('logOut')
         deleteAccount = request.form.get('deleteAccount')
+
 
         noLoginYet = "You haven't logged in!"
         accountDeleted = "Account successfully deleted..."
 
         if loggedOut == "True":
             # Remove the 'username' key from the session if the user logs out
-
-
             session['username'] = noLoginYet
             session['loggedIn'] = False
 
@@ -170,9 +171,9 @@ def profile():
             session['username'] = accountDeleted
             session['loggedIn'] = False
 
-
-
-
+            # DO NOT DO THIS, THIS DIRECTLY TAMPERS THE CODE, USE HTML/JS
+            # if loggedOut == "True":
+            #     session['username'] = "You can't delete now! Youve already logged out..."
 
     return render_template('profile.html', usernameP=usernameP, loggedIn=loggedIn)
 
