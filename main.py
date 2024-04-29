@@ -143,6 +143,8 @@ def profile():
     # Retrieve the username from the session or set it to None if the key is missing
     usernameP = session.get('username')
     loggedIn = session.get('loggedIn')
+    loggedOut = None
+    deleteAccount = None
 
     #loggedin detected
 
@@ -161,6 +163,8 @@ def profile():
             # Remove the 'username' key from the session if the user logs out
             session['username'] = noLoginYet
             session['loggedIn'] = False
+
+            return redirect(url_for("login"))
 
 
         if deleteAccount == "True": #works
