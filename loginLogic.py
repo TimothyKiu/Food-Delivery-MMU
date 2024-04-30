@@ -17,7 +17,7 @@ class loginLogic:
             password = request.form['password']
 
             # Prepare the SQL query with placeholders
-            query = "SELECT user_name, user_password FROM mysql.registeredAccounts WHERE user_name = %s AND user_password = %s"
+            query = "SELECT user_name, user_password FROM webDB.registeredAccounts WHERE user_name = %s AND user_password = %s"
 
             # Execute the SQL query with the username and password as parameters
             #This is where user enters his credentials in the HTML page

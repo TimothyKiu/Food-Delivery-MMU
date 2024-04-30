@@ -11,7 +11,7 @@ db = mysql.connector.connect(
     host="localhost",
     user='root',
     passwd='0000',
-    database='mysql'
+    database='webDB'
 )
 
 mycursor = db.cursor(buffered=True)
@@ -52,7 +52,7 @@ def register():
         print(accountTypereg)
         confirmpasswordreg = request.form['confirmpasswordreg']
 
-        query = "SELECT user_name FROM mysql.registeredAccounts WHERE user_name = %s "
+        query = "SELECT user_name FROM webDB.registeredAccounts WHERE user_name = %s "
 
         # Execute the SQL query with the username and password as parameters
         # This is where user enters his credentials in the HTML page, the parameter values then are run into the
@@ -65,7 +65,7 @@ def register():
         if len(passwordreg) >= 6 and (passwordreg == confirmpasswordreg) and ((userdata is None)):
             # No user with this username exists, proceed with registration
             cursor = db.cursor()
-            insert_query = "INSERT INTO mysql.registeredAccounts (user_name, user_password, type) VALUES (%s, %s, %s)"
+            insert_query = "INSERT INTO webDB.registeredAccounts (user_name, user_password, type) VALUES (%s, %s, %s)"
             cursor.execute(insert_query, (usernamereg, passwordreg, accountTypereg))
             db.commit()  # Commit the transaction to save changes to the database
             cursor.close()
@@ -175,7 +175,7 @@ def profile():
 
 
             if deleteAccount == "True": #works
-                deleteQuery = "DELETE FROM mysql.registeredAccounts WHERE user_name = %s"
+                deleteQuery = "DELETE FROM webDB.registeredAccounts WHERE user_name = %s"
                 mycursor.execute(deleteQuery, (session['username'],))
                 db.commit()
 
