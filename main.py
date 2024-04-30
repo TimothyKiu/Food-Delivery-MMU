@@ -143,6 +143,8 @@ def profile():
     # Retrieve the username from the session or set it to None if the key is missing
     usernameP = session.get('username')
     loggedIn = session.get('loggedIn')
+    errorText = "placeholder"
+
     loggedOut = None
     deleteAccount = None
 
@@ -161,8 +163,9 @@ def profile():
 
         if loggedOut == "True":
             # Remove the 'username' key from the session if the user logs out
-            session['username'] = noLoginYet
+            session['username'] = None
             session['loggedIn'] = False
+            errorText = "Logged out."
 
             return redirect(url_for("login"))
 
@@ -172,14 +175,15 @@ def profile():
             mycursor.execute(deleteQuery, (session['username'],))
             db.commit()
 
-            session['username'] = accountDeleted
+            session['username'] = None
             session['loggedIn'] = False
+            errorText = "Account deleted successfully."
 
             # DO NOT DO THIS, THIS DIRECTLY TAMPERS THE CODE, USE HTML/JS
             # if loggedOut == "True":
             #     session['username'] = "You can't delete now! Youve already logged out..."
 
-    return render_template('profile.html', usernameP=usernameP, loggedIn=loggedIn)
+    return render_template('profile.html', usernameP=usernameP, loggedIn=loggedIn, errorText=errorText)
 
 
 app.run(debug=True)
