@@ -7,11 +7,21 @@
   min-height: 50px; 
 }
 
+.header, .footer {
+  background-image: url('background.jpg'); /* Use the same image */
+  background-size: cover; /* Cover the entire area */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* No tiling */
+  color: white; /* Ensure text is readable on the background */
+  padding: 20px; /* Add padding for spacing */
+  text-align: center; /* Center text */
+}
+
 .main {
   background: #ffffff;
 }
 
-.bottom {
+.footer {
   padding: 10px;
   text-align: right;
   background: #9f77a7;
@@ -22,7 +32,7 @@
   bottom: 0;
 }
 
-.bottom a {
+.footer a {
   text-decoration: none;
 }
 
@@ -51,11 +61,17 @@
   right: 50px; 
   background: lightgrey; 
   border: 1px solid #ccc; /* Border for definition */
-  padding: 100px; /* Padding for comfort */
+  padding: 30px; /* Padding for comfort */
   z-index: 100; /* Ensure it's above other content */
 }
 
 
 #cart:target {
   display: block; /* Show when targeted */
+}
+
+#cart-list {
+  font-style: sans-serif;
+  font-size: 20px;
+  z-index: 100;
 }
