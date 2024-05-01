@@ -3,28 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
-    <link rel="stylesheet" type="text/css" href="/static/login.css">
+    <link rel="stylesheet" type="text/css" href="/static/register.css">
 </head>
 <body>
-    <form method="post">
-{#    type=radio is only if you can only select one at a time, name must be the same!!! (usertype)#}
-        <label for="customerTick">Customer</label>
-          <input type="radio" id="customerTick" name="usertype" value="Customer" required>
-          <br>
-        <label for="runnerTick">Runner</label>
-            <input type="radio" id="runnerTick" name="usertype" value="Runner" required>
-            <br>
-        <label for="usernamereg">Username:</label>
 
-        <input type="text" id="usernamereg" name="usernamereg" required><br><br>
+    <form method="post" id="formDiv">
+        {#    type=radio is only if you can only select one at a time, name must be the same!!! (usertype)#}
+        <h1 class="title1">Register your account</h1>
+
+        <div class="textboxGroup">
+
+            <label for="usernamereg">Username:</label>
+            <input type="text" id="usernamereg" name="usernamereg" required><br><br>
 
 
-        <label for="passwordreg">Password:</label>
-        <input type="password" id="passwordreg" name="passwordreg" required><br><br>
+            <label for="passwordreg">Password:</label>
+            <input type="password" id="passwordreg" name="passwordreg" class="loginboxes" required><br><br>
 
-        <label for="confirmpasswordreg">Confirm password:</label>
-        <input type="password" id="confirmpasswordreg" name="confirmpasswordreg" required><br><br>
+            <label for="confirmpasswordreg">Confirm password:</label>
+            <input type="password" id="confirmpasswordreg" name="confirmpasswordreg" class="loginboxes" required><br><br>
+        </div>
         <p class="tinytexts">Password be must 6 or more characters</p>
+
+
+        <div class="radio-group">
+            <label for="customerTick" class="regBoxes">Customer</label>
+            <input type="radio" id="customerTick" name="usertype" value="Customer" required>
+
+            <label for="runnerTick" class="regBoxes">Runner</label>
+            <input type="radio" id="runnerTick" name="usertype" value="Runner" required>
+        </div>
 {#        <div id="incorrectTextType"></div>#}
 
 {#    Jinja2 is a translator for python to html#}

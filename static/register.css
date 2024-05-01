@@ -2,3 +2,67 @@
 #loginlink {
 
 }
+
+.title1 {
+    position: relative;
+    /*relative position means it will start from parents starting point*/
+    top: -20px;
+    margin: 0 auto;
+    margin-bottom: 50px;
+    font-family: "Roboto Light";
+}
+
+.textboxGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.textboxGroup input {
+    height: 30px;
+    width: 350px;
+    font-size: 17px;
+}
+
+.regLabel {
+    margin-bottom: 10px;
+}
+
+
+#formDiv {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: "Roboto Light";
+
+
+    /*margin = 0 no spaces, "auto" to auto center horizontally*/
+}
+
+.tinytexts {
+    position: relative;
+    top: -45px;
+    font-size: 11px;
+}
+
+#radio-group {
+    display: flex;
+    /*flex makes it side by side instead of vertical*/
+}
+
+#tickDiv1 {}
+
+.radio-group {
+    position: relative;
+    top: -30px;
+}
+
+button[id="registerButton"]{
+    font-family : "Comic Sans MS";
+    color : blue;
+    position: relative;
+    right: -130px;
+    width:100px;
+    height:25px;
+
+}
