@@ -1,21 +1,30 @@
 .header {
   padding: 6px;
-  text-align: center;
   background: #9f77a7;
   color: rgb(212, 215, 186);
   font-size: 20px;
-  min-height: 50px; 
+  min-height: 0px; 
+}
+
+#title {
+  text-align: left;
+  top: 0;
+  left:0;
+}
+
+.searchbar {
+  text-align: right;
 }
 
 .header, .footer {
-  background-image: url('background.jpg'); /* Use the same image */
-  background-size: cover; /* Cover the entire area */
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat; /* No tiling */
-  color: white; /* Ensure text is readable on the background */
-  padding: 20px; /* Add padding for spacing */
-  text-align: center; /* Center text */
-}
+  background-image: url('background.jpg');
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  color: black; 
+  padding: 20px; 
+  text-align: center; 
+} 
 
 .main {
   background: #ffffff;
@@ -24,7 +33,7 @@
 .footer {
   padding: 10px;
   text-align: right;
-  background: #9f77a7;
+  background:#9f77a7;
   color: rgb(212, 215, 186);
   font-size: 20px;
   min-height:20px; 
