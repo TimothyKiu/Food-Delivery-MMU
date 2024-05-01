@@ -1,19 +1,26 @@
 .logindiv {
   font-family : "Comic Sans MS";
   position: absolute;
-  top: 50%;
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
 
+}
 
+#registerlink{
+    position:absolute;
+    margin-top:70px
 }
 
 .boxtitles {
     position: absolute;
     right:100%
 }
-
-button[name="submitbutton"]{
+.loginboxes {
+    width:400px;
+    height:15px;
+}
+button[id="submitter1"]{
     font-family : "Comic Sans MS";
     color : blue;
     position: absolute;

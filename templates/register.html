@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" type="text/css" href="/static/login.css">
+</head>
+<body>
+    <form method="post">
+{#    type=radio is only if you can only select one at a time, name must be the same!!! (usertype)#}
+        <label for="customerTick">Customer</label>
+          <input type="radio" id="customerTick" name="usertype" value="Customer" required>
+          <br>
+        <label for="runnerTick">Runner</label>
+            <input type="radio" id="runnerTick" name="usertype" value="Runner" required>
+            <br>
+        <label for="usernamereg">Username:</label>
+
+        <input type="text" id="usernamereg" name="usernamereg" required><br><br>
+
+
+        <label for="passwordreg">Password:</label>
+        <input type="password" id="passwordreg" name="passwordreg" required><br><br>
+
+        <label for="confirmpasswordreg">Confirm password:</label>
+        <input type="password" id="confirmpasswordreg" name="confirmpasswordreg" required><br><br>
+        <p class="tinytexts">Password be must 6 or more characters</p>
+{#        <div id="incorrectTextType"></div>#}
+
+{#    Jinja2 is a translator for python to html#}
+        {% if allfalse %}
+            <p style="color: red;">Inappropriate password length and incorrect password and name already taken.</p>
+
+        {% endif %}
+
+        {% if nametaken %}
+            <p style="color: red;">Username already taken.</p>
+        {%  endif %}
+
+        {% if passnotproperlength  %}
+            <p style="color: red;">Inappropriate password length.</p>
+
+        {% endif %}
+
+        {% if passnotsame  %}
+            <p style="color: red;">Password is not the same as the confirmed password.</p>
+
+        {% endif %}
+
+
+        <button type="submit" id="registerButton">Register</button>
+        <p id="loginlink"><a href="login">Click me</a>  if you've already registered</p>
+    </form>
+
+<script>
+    /*
+    const passProperLength = x
+
+    const incorrectInputTexts = document.getElementById('incorrectTextType');
+
+    if(!passProperLength && !passNotSame){
+        incorrectInputTexts.textContent = "-Inappropiate password length \n -Password is not same with confirmation"
+    } else {
+        if (!passProperLength) {
+            incorrectInputTexts.textContent = "-Inappropriate password length";
+        }
+        if (!passNotSame) {
+            incorrectInputTexts.textContent = "-Password is not same with confirmation";
+        }
+    }
+
+</script>
+</body>
+</html>
