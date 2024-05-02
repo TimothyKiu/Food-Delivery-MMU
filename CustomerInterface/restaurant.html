@@ -5,17 +5,22 @@
     <title>Food_Delivery_MMU</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
+    <https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-    <header>
-        <h1>Food Delivery MMU</h1>       
-        <!-- 改过 -->
-        <form action="/CustomerInterface/payment.html" method="get">
-            <input type="search" name="query" placeholder="Type the restaurant name." />
-            <button type="submit">Search</button>
-        </form>
-    </header>
+    <header class="header">
+        <h1 id="title">Food Delivery MMU</h1> 
 
+        <form action="/CustomerInterface/restaurant.html" method="get" class="searchbar">
+            <input type="search" name="query" placeholder="Type the restaurant name." />
+            <button type="submit">🔍</button>
+        </form>
+        
+        <h2>Hello, <br><i>username</i></h2>
+        <h2>Your balance</h2>
+        <h1>Money</h1>      
+        
+    </header>
     
     <nav class="bottom-nav">
             <a href="#home">Home</a>

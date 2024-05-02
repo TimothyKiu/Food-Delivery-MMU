@@ -9,3 +9,6 @@ https://www.codecademy.com/enrolled/courses/learn-flask-fundamentals
 
 MORE EXAMPLE ABOUT FLASK
 https://www.youtube.com/watch?v=Z1RJmh_OqeA
+
+SQL pdf
+https://drive.google.com/drive/folders/1g5NQGwhBLx3EranI7hDxaQcgciOxB9MI
