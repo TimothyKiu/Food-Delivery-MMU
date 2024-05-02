@@ -1,3 +1,9 @@
+#title {
+  text-align: left;
+  top: 0;
+  left:0;
+}
+
 .header {
   padding: 6px;
   background: #9f77a7;
@@ -6,29 +12,15 @@
   min-height: 0px; 
 }
 
-#title {
-  text-align: left;
-  top: 0;
-  left:0;
-}
-
-.searchbar {
-  text-align: right;
-}
-
 .header, .footer {
   background-image: url('background.jpg');
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat; 
-  color: black; 
+  color: white; 
   padding: 20px; 
   text-align: center; 
 } 
-
-.main {
-  background: #ffffff;
-}
 
 .footer {
   padding: 10px;
@@ -45,13 +37,20 @@
   text-decoration: none;
 }
 
+.searchbar {
+  text-align: right;
+}
+
+.main {
+  background: #ffffff;
+}
+
 .cart-button {
   text-decoration: none;
   color: white; 
   font-size: 40px;
   position: relative; 
 }
-
 
 .cart-number {
   position: absolute; 
@@ -82,5 +81,31 @@
 #cart-list {
   font-style: sans-serif;
   font-size: 20px;
-  z-index: 100;
+  color: black;
+}
+
+
+.menu ul {
+  list-style-type: none;  /* Remove list bullets */
+  padding: 0;  /* No padding */
+}
+
+.menu li {
+  padding: 10px 0;  /* Padding between menu items */
+  display: flex;  /* Horizontal layout for menu item and button */
+  justify-content: space-between;  /* Space between text and button */
+  border-bottom: 1px solid #ddd;  /* Divider between items */
+}
+
+.button {
+  background: #007bff;  /* Button background color */
+  color: white;  /* Button text color */
+  border: none;  /* No border */
+  padding: 10px;  /* Padding for comfort */
+  border-radius: 10px;  /* Rounded corners */
+  cursor: pointer;  /* Pointer cursor for interactivity */
+}
+
+.button:hover {
+  background: #49a897;  /* Darken background on hover */
 }

@@ -5,8 +5,8 @@
     <title>Food_Delivery_MMU</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
-    <https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
+
 <body>
     <header class="header">
         <h1 id="title">Food Delivery MMU</h1> 
@@ -16,27 +16,35 @@
             <button type="submit">🔍</button>
         </form>
         
-        
-        <h2>Hello, <br><i>username</i></h2>
-        <h2>Your balance</h2>
-        <h1>Money</h1>      
+        <h2>XXX Restaurant</h2>
         
     </header>
 
     <main class="main">
-        hii
-        f<br>
-        c 
-        a 
-        s 
-        f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>
-        f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>
-        f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>
-        f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>f<br>
 
+        <div class="menu">
+            <h2>Rice</h2>
+            <ul>
+              <li>
+                Rice - Ingredients
+                <button class="button" onclick="addtocart('Rice', 1.00)">Add to Cart</button>
+              </li>
+              <li>
+                Mee - Ingredients
+                <button class="button" onclick="addtocart('Mee', 2.00)">Add to Cart</button>
+              </li>
+            </ul>
+        </div>
+
+        <script>
+            function addtocart(itemName, itemPrice) {
+              // Placeholder function to simulate adding to cart
+              console.log(`Adding ${itemName} to the cart with price ${itemPrice}`);
+            }
+          </script>
 
     </main>
-    
+
     <footer class="footer">
         <nav>
             <a href="#cart" class="cart-button">🛒 <span class="cart-number">3</span></a>
@@ -58,5 +66,6 @@
           </div>
 
     </footer>
+
 </body>
 </html>
