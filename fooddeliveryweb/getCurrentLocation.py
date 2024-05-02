@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('getCurrentLocationHTML.html')
 
 @app.route('/current_location', methods=['POST'])
 def current_location():

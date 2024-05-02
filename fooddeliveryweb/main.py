@@ -12,7 +12,7 @@ orders = [
 @app.route('/')
 def index():
     if orders:
-        return render_template('index.html', orders=orders)
+        return render_template('index-keyon.html', orders=orders)
     else:
         return render_template('no_comfirm_order.html')
 
