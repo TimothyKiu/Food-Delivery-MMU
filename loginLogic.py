@@ -34,11 +34,11 @@ class loginLogic:
                 return redirect(url_for("profile", login_failed=False))
 
             else:
-                cursor = db.cursor()
-                query = "INSERT INTO clicks (click_id, username) VALUES (%s, %s)"
-                cursor.execute(query, (42069, username,))
-                db.commit()
-                cursor.close()
+                # cursor = db.cursor()
+                # query = "INSERT INTO clicks (click_id, username) VALUES (%s, %s)"
+                # cursor.execute(query, (42069, username,))
+                # db.commit()
+                # cursor.close()
 
                 return render_template('login.html',login_failed=True)
         else:
