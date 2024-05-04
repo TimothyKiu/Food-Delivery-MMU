@@ -42,8 +42,20 @@ def register():
 
 #DO NOT STORE SESSION VARIABLES AS SELF VARIABLES
 #This is where the template will be stored in the url
-@app.route('/ratings')
-def index():
+@app.route('/ratings', methods=['GET', 'POST'])
+def ratings():
+    if request.method == 'POST':
+        ratings = request.form.get('rating')
+        review = request.form.get('writeReview')
+        usernameR = request.form.get('usernameR')
+
+        insert_query = "INSERT INTO webDB.reviews (user_name, review_text, rating_given) VALUES (%s, %s, %s)"
+        mycursor.execute(insert_query, ("placeholder", review, ratings))
+        db.commit()  # Commit the transaction to save changes to the database
+        mycursor.close()
+
+        return redirect(url_for("profile"))
+
     #Draw the website template from the folder!
     return render_template('ratings.html')
 

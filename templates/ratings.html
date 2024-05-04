@@ -8,25 +8,31 @@
 </head>
 <body>
     <h1>Rate your food!</h1>
-     <div class="rating-css">
-        <input type="radio" id="1star" name="rating" value="1star" required>
-        <label class="star" for="1star">&#9733;</label>
+    <h2>Rate your runner placeholder </h2>
+    <form action="/ratings" method="post" class="logindiv">
+         <div class="rating-css">
+            <input type="radio" id="5star" name="rating" value="5" required>
+            <label class="star" for="5star">&#9733;</label>
 
-        <input type="radio" id="2star" name="rating" value="2star" required>
-        <label class="star" for="2star">&#9733;</label>
+            <input type="radio" id="4star" name="rating" value="4" required>
+            <label class="star" for="4star">&#9733;</label>
 
-        <input type="radio" id="3star" name="rating" value="3star" required>
-        <label class="star" for="3star">&#9733;</label>
+            <input type="radio" id="3star" name="rating" value="3" required>
+            <label class="star" for="3star">&#9733;</label>
 
-        <input type="radio" id="4star" name="rating" value="4star" required>
-        <label class="star" for="4star">&#9733;</label>
+            <input type="radio" id="2star" name="rating" value="2" required>
+            <label class="star" for="2star">&#9733;</label>
 
-        <input type="radio" id="5star" name="rating" value="5star" required>
-        <label class="star" for="5star">&#9733;</label>
-    </div>
+            <input type="radio" id="1star" name="rating" value="1" required>
+            <label class="star" for="1star">&#9733;</label>
+        </div>
 
-    <label for="writeReview" class="writeReview">Write a review:</label>
-            <input id="customerTick" name="usertype" >
+        <label for="writeReview" class="writeReview">Write a review:</label>
+                <input id="customerTick" name="writeReview" >
+
+        <button type="submit" id="submitReview">Submit review</button>
+
+    </form>
 
 </body>
 </html>
