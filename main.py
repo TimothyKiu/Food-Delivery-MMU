@@ -42,6 +42,10 @@ def register():
 
 #DO NOT STORE SESSION VARIABLES AS SELF VARIABLES
 #This is where the template will be stored in the url
+@app.route('/ratings')
+def index():
+    #Draw the website template from the folder!
+    return render_template('ratings.html')
 
 def index():
     #Draw the website template from the folder!

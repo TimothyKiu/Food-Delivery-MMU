@@ -1,0 +1,33 @@
+input[type="radio"] {
+    display: none;
+    /*Hide the radio buttons */
+}
+
+/* Designs the star icons */
+label.star {
+    font-size: 30px;
+    color: #aaa;
+    cursor: pointer;
+}
+
+/* Styles star icons when checked */
+input[type="radio"]:checked + label.star:before {
+    content: '\2605'; /* Star code */
+    color: gold;
+    position: fixed;
+
+}
+
+input:not(:checked) ~ label:hover {
+    color:gold;
+}
+
+input:checked ~ label {
+    color: gold;
+}
+
+.rating-css {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: left; /* choose where you want to place your rating horizontally */
+}
