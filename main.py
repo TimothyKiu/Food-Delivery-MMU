@@ -71,7 +71,11 @@ def ratings():
                UPDATE webDB.reviews rev
                JOIN webDB.temp_accumulative temp ON rev.user_name = temp.user_name
                SET webDB.rev.accumulative_reviews = temp.total_rating;
+               
            ''')
+        mycursor.execute('''
+                       DROP TEMPORARY TABLE IF EXISTS webDB.temp_accumulative;
+                   ''')
 
         # Commit changes and close connection
         db.commit()
@@ -108,7 +112,7 @@ def profile():
         query = "SELECT accumulative_reviews FROM webDB.reviews WHERE user_name = %s "
         mycursor.execute(query, (usernameP,))
         ratingsArray = mycursor.fetchall()
-        ratings = int(ratingsArray[0][0])
+        ratings = round(float(ratingsArray[0][0]), 2)
 
         # Execute the SQL query with the username and password as parameters
         # This is where user enters his credentials in the HTML page, the parameter values then are run into the
