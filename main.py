@@ -20,6 +20,9 @@ mycursor = db.cursor(buffered=True)
 app = Flask(__name__)
 app.secret_key = 'theSecretKeyToTheEvilPiratesTreasureHarHarHar'
 
+
+
+
 # Dummy data for testing purposes
 users = {'john': 'password',
          'jane': 'password123',
@@ -47,17 +50,39 @@ def ratings():
     if request.method == 'POST':
         ratings = request.form.get('rating')
         review = request.form.get('writeReview')
-        usernameR = request.form.get('usernameR')
+        usernameR = request.form.get('runnerName')
+
 
         insert_query = "INSERT INTO webDB.reviews (user_name, review_text, rating_given) VALUES (%s, %s, %s)"
-        mycursor.execute(insert_query, ("placeholder", review, ratings))
+        mycursor.execute(insert_query, (usernameR, review, ratings,))
         db.commit()  # Commit the transaction to save changes to the database
-        mycursor.close()
 
-        return redirect(url_for("profile"))
+        # Create temporary table
+        mycursor.execute('''
+               CREATE TEMPORARY TABLE IF NOT EXISTS temp_accumulative AS
+               SELECT user_name, AVG(rating_given) AS total_rating
+               FROM reviews
+               GROUP BY user_name
+           ''')
+
+        # Update main table with values from temporary table
+        mycursor.execute('''
+               UPDATE reviews rev
+               JOIN temp_accumulative temp ON rev.user_name = temp.user_name
+               SET rev.accumulative_reviews = temp.total_rating
+           ''')
+
+        # Commit changes and close connection
+        db.commit()
+
+        return redirect(url_for("ratingsent"))
 
     #Draw the website template from the folder!
     return render_template('ratings.html')
+
+@app.route('/ratingsent', methods=['GET', 'POST'])
+def ratingsent():
+    return render_template('ratingsent.html')
 
 def index():
     #Draw the website template from the folder!
@@ -79,18 +104,21 @@ def profile():
         loggedIn = session.get('loggedIn')
         errorText = "placeholder"
 
-        loggedOut = None
-        deleteAccount = None
+        query = "SELECT accumulative_reviews FROM webDB.reviews WHERE user_name = %s "
+        mycursor.execute(query, (usernameP,))
+        ratings = mycursor.fetchall()
 
-        #loggedin detected
-
+        # Execute the SQL query with the username and password as parameters
+        # This is where user enters his credentials in the HTML page, the parameter values then are run into the
+        # query, if it finds a match it returns something back, if not then it returns null
+        mycursor.execute(query, (usernameP,))
+        # Fetch the result (assuming only one row is expected)
 
         if request.method == 'POST':
             # Retrieve the value of the 'logOut' form field
 
             loggedOut = request.form.get('logOut')
             deleteAccount = request.form.get('deleteAccount')
-
 
             noLoginYet = "You haven't logged in!"
             accountDeleted = "Account successfully deleted..."
@@ -117,7 +145,7 @@ def profile():
                 # if loggedOut == "True":
                 #     session['username'] = "You can't delete now! Youve already logged out..."
 
-        return render_template('profile.html', usernameP=usernameP, loggedIn=loggedIn, errorText=errorText)
+        return render_template('profile.html', usernameP=usernameP, loggedIn=loggedIn, errorText=errorText, ratings=ratings)
 
     else:
         return redirect(url_for("login"))

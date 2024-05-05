@@ -4,25 +4,25 @@ input[type="radio"] {
 }
 
 /* Designs the star icons */
-label.star {
+.rating-css label.star {
     font-size: 30px;
     color: #aaa;
     cursor: pointer;
 }
 
 /* Styles star icons when checked */
-input[type="radio"]:checked + label.star:before {
+.rating-css input[type="radio"]:checked + label.star:before {
     content: '\2605'; /* Star code */
     color: gold;
     position: fixed;
 
 }
 
-input:not(:checked) ~ label:hover {
+.rating-css input:not(:checked) ~ label:hover {
     color:gold;
 }
 
-input:checked ~ label {
+.rating-css input:checked ~ label {
     color: gold;
 }
 
