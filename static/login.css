@@ -7,24 +7,41 @@
 
 }
 
+#welcomeText {
+    position: relative;
+    right: -139px;
+    top: -20px;
+}
+
 #registerlink{
     position:absolute;
-    margin-top:70px
+    margin-top:70px;
 }
 
 .boxtitles {
-    position: absolute;
-    right:100%
+    display: flex;
+    flex-direction: column;
+
+    position: relative;
+    top: -7px;
+    bottom: -20px;
+    font-family: "Roboto Light";
 }
 .loginboxes {
-    width:400px;
-    height:15px;
+    height: 30px;
+    width: 350px;
+    font-size: 17px;
 }
 button[id="submitter1"]{
     font-family : "Comic Sans MS";
-    color : blue;
-    position: absolute;
-    right: 50%;
-    width:100px;
-    height:50px
+    position: relative;
+    width: 350px;
+    height:30px;
+
+}
+
+.logintexts {
+    position: relative;
+    top: -20px;
+
 }

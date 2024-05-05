@@ -35,7 +35,6 @@
     transform: translate(-50%, -50%);
     font-family: "Roboto Light";
 
-
     /*margin = 0 no spaces, "auto" to auto center horizontally*/
 }
 
@@ -59,10 +58,16 @@
 
 button[id="registerButton"]{
     font-family : "Comic Sans MS";
-    color : blue;
     position: relative;
     right: -130px;
     width:100px;
     height:25px;
 
+}
+
+
+
+.registerlink {
+    position: relative;
+    top: -20px;
 }

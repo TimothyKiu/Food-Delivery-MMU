@@ -8,29 +8,33 @@
     <title>Login Page</title>
 </head>
 <body>
-    <h2>Log in</h2>
     <div id="output"></div>
 
     <form action="/login" method="post" class="logindiv">
-        {% if not login_failed %}
-            <p style="color: blue;">Enter your username and password!</p>
-        {% endif %}
-        {% if login_failed%}
-            <p style="color: red;">Login failed. Please check your username and password.</p>
-        {% endif %}
+         <h2 id="welcomeText">Log in</h2>
+
+
 
         <label for="username" class="boxtitles">Username:</label>
         <input type="text" id="username" name="username" class="loginboxes" required><br><br>
 
         <label for="password" class="boxtitles">Password:</label>
         <input type="password" id="password" name="password" class="loginboxes" required><br><br>
+
+        <div class="logintexts">
+            {% if not login_failed %}
+                <p style="color: blue; font-size:11px;">Enter your username and password!</p>
+            {% endif %}
+            {% if login_failed%}
+                <p style="color: red; font-size:11px;">Login failed. Please check your username and password.</p>
+            {% endif %}
+        </div>
+
         <button type="submit" id="submitter1">Login</button>
 
-        <p id="registerlink"><a href="register">Click me</a>  if you haven't registered...</p>
+        <p id="registerlink" class="registerlink"> Don't have an account? <a href="register">Sign up!</a> </p>
     </form>
-    <a href="/html">Back to Page 1</a>
 
-    <button id="colorButton" class="button">Change Color</button>
 
     <script>
 
