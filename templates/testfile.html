@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Popup Button</title>
+<style>
+    /* Popup container */
+    .popup {
+        display: none; /* Hide the popup by default */
+        position: fixed; /* Position the popup relative to the viewport */
+        top: 50%; /* Center the popup vertically */
+        left: 50%; /* Center the popup horizontally */
+        transform: translate(-50%, -50%); /* Center the popup precisely */
+        background-color: white;
+        padding: 20px;
+        border: 2px solid black;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Add shadow effect */
+        z-index: 999; /* Ensure the popup is above other elements */
+    }
+</style>
+</head>
+<body>
+
+<!-- Button to trigger the popup -->
+<button onclick="togglePopup()">Open Popup</button>
+
+<!-- Popup content -->
+<div id="popup" class="popup">
+    <h2>This is a simple popup</h2>
+    <p>Click outside this popup or click the button again to close it.</p>
+</div>
+
+<script>
+    // Function to toggle the visibility of the popup
+    function togglePopup() {
+        var popup = document.getElementById("popup");
+        // Toggle the 'display' property between 'none' and 'block'
+        //                                                 CONDITION     ? is condition checker
+        popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";
+        //                                                                                      IF TRUE   IF FALSE
+    }
+</script>
+
+</body>
+</html>

@@ -8,26 +8,14 @@
     #buttonContainer {
         display: flex;
         justify-content: center;
-
     }
-
     /* Styling for the buttons */
     .tabButton{
         font-family: "Roboto Light";
-
         width:100px;
         height:50px;
         margin: 20px;
-
-
-
     }
-
-    /* Styling for the active button */
-    .active {
-        background-color: #cfcccc;
-    }
-
     /* Styling for the tab content borders */
     .tabcontent {
         display: none;
@@ -36,7 +24,6 @@
         border-top: none;
         font-family: "Roboto Light";
     }
-
     #deleteAccount {
         color: red;
         border: none; /* Remove border */
@@ -45,7 +32,17 @@
         font: inherit; /* Inherit font */
         cursor: pointer; /* Change cursor to pointer */
     }
-
+    .popup {
+        display: none; /* Hide the popup by default */
+        position: fixed; /* Position the popup relative to the viewport */
+        top: 50%; /* Center the popup vertically */
+        left: 50%; /* Center the popup horizontally */
+        transform: translate(-50%, -50%); /* Center the popup precisely */
+        background-color: white;
+        padding: 20px;
+        border: 2px solid black;
+        z-index: 999; /* Ensure the popup is above other elements */
+    }
 
 </style>
 </head>
@@ -84,9 +81,19 @@
             <h3>Edit password</h3>
             <h3>Edit phone number</h3>
 
-            <form method="post">
+{#            <form method="post" >#}
+{#                <button type="submit" name="deleteAccount" id="deleteAccount"  value="True" >Delete account</button>#}
+{#            </form>#}
+            <!-- Button to trigger the popup -->
+            <button onclick="togglePopup()" id="deleteAccount">Delete account</button>
+
+            <!-- Popup content -->
+            <div id="popup" class="popup">
+                <h2>Are you sure? This action cannot be undone.</h2>
+                <form method="post" >
                 <button type="submit" name="deleteAccount" id="deleteAccount"  value="True" >Delete account</button>
-            </form>
+              </form>
+            </div>
 
         </div>
 
@@ -113,6 +120,14 @@
 
         // Darken the button when pressed, active calls out the css design
         event.currentTarget.classList.add("active");
+    }
+
+    function togglePopup() {
+        var popup = document.getElementById("popup");
+        // Toggle the 'display' property between 'none' and 'block'
+        //                                                 CONDITION     ? is condition checker
+        popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";
+        //                                                                                      IF TRUE   IF FALSE
     }
 
 
