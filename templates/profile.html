@@ -1,23 +1,124 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Title</title>
-    </head>
-    <body>
-        <h1>Hi, {{ usernameP }}</h1>
-        <h2>Ratings: {{ratings}} </h2>
-         <form method="post">
-            <button type="submit" name="logOut" id="logOut" value="True" >Log out</button>
-            <button type="submit" name="deleteAccount" id="deleteAccount" value="True" >Delete account</button>
-         </form>
-        <p>Logged in: {{ loggedIn }}</p>
-        <p>Session : {{ usernameP }}</p>
-        <p>Action : {{ errorText }}</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Profile</title>
+<style>
+    #buttonContainer {
+        display: flex;
+        justify-content: center;
+
+    }
+
+    /* Styling for the buttons */
+    .tabButton{
+        font-family: "Roboto Light";
+
+        width:100px;
+        height:50px;
+        margin: 20px;
+
+
+
+    }
+
+    /* Styling for the active button */
+    .active {
+        background-color: #cfcccc;
+    }
+
+    /* Styling for the tab content borders */
+    .tabcontent {
+        display: none;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-top: none;
+        font-family: "Roboto Light";
+    }
+
+    #deleteAccount {
+        color: red;
+        border: none; /* Remove border */
+        background: none; /* Remove background */
+        padding: 0; /* Remove padding */
+        font: inherit; /* Inherit font */
+        cursor: pointer; /* Change cursor to pointer */
+    }
+
+
+</style>
+</head>
+<body>
+    <h2 style="display: flex; justify-content: center; font-family: 'Roboto Light';">Hi, {{ usernameP }}</h2>
+
+    <div id="superDiv">
+
+        <!-- Button container -->
+        <div id="buttonContainer">
+            <button class="tabButton" onclick="openTab('ViewDashboard')">Dashboard</button>
+            <button class="tabButton" onclick="openTab('EditProfile')">Edit Profile</button>
+            <button class="tabButton" onclick="openTab('Settings')">Settings</button>
+
+            <form method="post">
+                <button class="tabButton" type="submit" name="logOut" id="logOut" value="True" >Log out</button>
+            </form>
+{#            <form method="post">#}
+{#             <button type="submit" name="logOut" id="logOut" value="True" >Log out</button>#}
+{#            </form>#}
+        </div>
+
+        <!-- Divs -->
+        <div id="ViewDashboard" class="tabcontent">
+            <h3>Ratings: {{ ratings }}</h3>
+            <!-- Add content related to viewing dashboard here -->
+        </div>
+
+        <div id="EditProfile" class="tabcontent">
+            <h3>Upload photo</h3>
+            <h3>Edit nickname</h3>
+            <!-- Add form fields and other content related to editing profile here -->
+        </div>
+
+        <div id="Settings" class="tabcontent">
+            <h3>Edit password</h3>
+            <h3>Edit phone number</h3>
+
+            <form method="post">
+                <button type="submit" name="deleteAccount" id="deleteAccount"  value="True" >Delete account</button>
+            </form>
+
+        </div>
+
+    </div>
+
+
+<script>
+    //Tab name is a parameter, HTML will use this function
+    function openTab(tabName) {
+        // Hide all tab contents
+        var tabcontents = document.getElementsByClassName("tabcontent");
+        for (var i = 0; i < tabcontents.length; i++) {
+            tabcontents[i].style.display = "none";
+        }
+
+        // Deactivate all buttons
+        var tabButton = document.getElementsByClassName("tabButton");
+        for (var i = 0; i < tabButton.length; i++) {
+            tabButton[i].classList.remove("active");
+        }
+
+        // Show the selected tab content
+        document.getElementById(tabName).style.display = "block";
+
+        // Darken the button when pressed, active calls out the css design
+        event.currentTarget.classList.add("active");
+    }
 
 
 
 
+</script>
 
-    </body>
-    </html>
+</body>
+</html>
