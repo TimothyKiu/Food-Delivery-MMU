@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07960bb2-8772-4dee-adee-bc4804c7b956" name="Changes" comment="" />
+    <list default="true" id="07960bb2-8772-4dee-adee-bc4804c7b956" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loginLogic.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginLogic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,6 +18,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -126,7 +131,7 @@
       <updated>1714753715874</updated>
       <workItem from="1714753716768" duration="596000" />
       <workItem from="1714919223453" duration="1404000" />
-      <workItem from="1715066853851" duration="1658000" />
+      <workItem from="1715066853851" duration="3997000" />
     </task>
     <servers />
   </component>
@@ -136,6 +141,6 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/GITHUB_TEST$Flask__main_py_.coverage" NAME="Flask (main.py) Coverage Results" MODIFIED="1714918962995" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/GITHUB_TEST$main.coverage" NAME="main Coverage Results" MODIFIED="1714634200471" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GITHUB_TEST$GITHUB_TEST.coverage" NAME="GITHUB TEST Coverage Results" MODIFIED="1715068007414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/GITHUB_TEST$GITHUB_TEST.coverage" NAME="GITHUB TEST Coverage Results" MODIFIED="1715072017405" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

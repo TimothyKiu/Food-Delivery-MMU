@@ -160,5 +160,7 @@ def profile():
     else:
         return redirect(url_for("login"))
 
-
+@app.route('/testfile')
+def testfile():
+    return render_template('testfile.html')
 app.run(debug=True)

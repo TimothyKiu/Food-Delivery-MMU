@@ -10,8 +10,6 @@ class loginLogic:
         session.setdefault('loginAttempts', -1)
         session.setdefault('loggedIn', False)
 
-
-
         if session.get('loggedIn') == True:
             return redirect(url_for('profile'))
 
