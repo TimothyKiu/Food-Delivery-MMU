@@ -5,20 +5,45 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>User Profile</title>
 <style>
+    #statusBar {
+        display: table;
+        border: 1px solid rgba(99,99,99,.75);
+        border-top: none;
+        box-sizing: border-box;
+        background-color: #333333; /* Gray color */
+        height: 40px; /* Adjust height as needed */
+        width: 100%; /* Full width of the viewport */
+    }
+
+    #settingsText {
+        font-family: "Roboto Light";
+        position:relative;
+        right: -230px;
+        font-size: 32px;
+
+    }
+
     #buttonContainer {
         display: flex;
         justify-content: center;
+        flex-direction: column;
     }
+
     /* Styling for the buttons */
     .tabButton{
         font-family: "Roboto Light";
+        position:relative;
         width:100px;
         height:50px;
         margin: 20px;
+        right:-50px;
+        bottom: -90px;
+
     }
+
     /* Styling for the tab content borders */
     .tabcontent {
-        display: none;
+        display:none;
         padding: 20px;
         border: 1px solid #ccc;
         border-top: none;
@@ -47,10 +72,10 @@
 </style>
 </head>
 <body>
-    <h2 style="display: flex; justify-content: center; font-family: 'Roboto Light';">Hi, {{ usernameP }}</h2>
+    <div id="statusBar"></div>
 
-    <div id="superDiv">
-
+    <div id="superDiv" style="display: flex; flex-direction: row;">
+        <h3 id="settingsText">My Settings</h3>
         <!-- Button container -->
         <div id="buttonContainer">
             <button class="tabButton" onclick="openTab('ViewDashboard')">Dashboard</button>
