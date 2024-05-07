@@ -17,46 +17,57 @@
 
     #settingsText {
         font-family: "Roboto Light";
-        position:relative;
-        right: -230px;
         font-size: 32px;
+    }
 
+    #superDiv {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     #buttonContainer {
         display: flex;
-        justify-content: center;
-        flex-direction: column;
+        flex-direction: row;
+        margin-bottom: 20px;
     }
 
-    /* Styling for the buttons */
     .tabButton{
         font-family: "Roboto Light";
-        position:relative;
-        width:100px;
-        height:50px;
-        margin: 20px;
-        right:-50px;
-        bottom: -90px;
-
+        margin: 0 10px;
+        padding: 10px 20px;
+        cursor: pointer;
     }
 
-    /* Styling for the tab content borders */
     .tabcontent {
-        display:none;
+        display: none;
         padding: 20px;
         border: 1px solid #ccc;
         border-top: none;
         font-family: "Roboto Light";
     }
-    #deleteAccount {
-        color: red;
+   #deleteAccount {
+        color: red; /* Set text color to red */
         border: none; /* Remove border */
         background: none; /* Remove background */
         padding: 0; /* Remove padding */
         font: inherit; /* Inherit font */
         cursor: pointer; /* Change cursor to pointer */
     }
+   #untoggle {
+        color: green; /* Set text color to red */
+        border: none; /* Remove border */
+        background: none; /* Remove background */
+        padding: 0; /* Remove padding */
+        font: inherit; /* Inherit font */
+        cursor: pointer; /* Change cursor to pointer */
+   }
+
+    #accountInfo {
+        font-family: "Roboto Light";
+        margin-bottom: 20px;
+    }
+
     .popup {
         display: none; /* Hide the popup by default */
         position: fixed; /* Position the popup relative to the viewport */
@@ -68,27 +79,28 @@
         border: 2px solid black;
         z-index: 999; /* Ensure the popup is above other elements */
     }
+    #logOutButton {
+
+    }
 
 </style>
 </head>
 <body>
     <div id="statusBar"></div>
 
-    <div id="superDiv" style="display: flex; flex-direction: row;">
+    <div id="superDiv">
         <h3 id="settingsText">My Settings</h3>
         <!-- Button container -->
         <div id="buttonContainer">
             <button class="tabButton" onclick="openTab('ViewDashboard')">Dashboard</button>
             <button class="tabButton" onclick="openTab('EditProfile')">Edit Profile</button>
             <button class="tabButton" onclick="openTab('Settings')">Settings</button>
-
-            <form method="post">
+            <form method="post" id="logOutButton">
                 <button class="tabButton" type="submit" name="logOut" id="logOut" value="True" >Log out</button>
             </form>
-{#            <form method="post">#}
-{#             <button type="submit" name="logOut" id="logOut" value="True" >Log out</button>#}
-{#            </form>#}
         </div>
+
+        <h3 id="accountInfo">Account info:</h3>
 
         <!-- Divs -->
         <div id="ViewDashboard" class="tabcontent">
@@ -105,28 +117,28 @@
         <div id="Settings" class="tabcontent">
             <h3>Edit password</h3>
             <h3>Edit phone number</h3>
-
-{#            <form method="post" >#}
-{#                <button type="submit" name="deleteAccount" id="deleteAccount"  value="True" >Delete account</button>#}
-{#            </form>#}
             <!-- Button to trigger the popup -->
             <button onclick="togglePopup()" id="deleteAccount">Delete account</button>
-
             <!-- Popup content -->
             <div id="popup" class="popup">
                 <h2>Are you sure? This action cannot be undone.</h2>
-                <form method="post" >
-                <button type="submit" name="deleteAccount" id="deleteAccount"  value="True" >Delete account</button>
-              </form>
+{#                #}
+
+{#                <form method="post" >#}
+{#                    <button type="submit" name="deleteAccount" id="deleteAccount"  value="True" >Delete account</button>#}
+{#                </form>#}
+                <div>
+                    <form method="post"  style="display: flex; justify-content: space-between;">
+                        <button onclick="untogglePopup()" id="untoggle">I changed my mind</button>
+                        <button type="submit" name="deleteAccount" id="deleteAccount" value="True">Delete account</button>
+                    </form>
+                </div>
+
             </div>
-
         </div>
-
     </div>
 
-
 <script>
-    //Tab name is a parameter, HTML will use this function
     function openTab(tabName) {
         // Hide all tab contents
         var tabcontents = document.getElementsByClassName("tabcontent");
@@ -143,21 +155,14 @@
         // Show the selected tab content
         document.getElementById(tabName).style.display = "block";
 
-        // Darken the button when pressed, active calls out the css design
+        // Darken the button when pressed
         event.currentTarget.classList.add("active");
     }
 
     function togglePopup() {
         var popup = document.getElementById("popup");
-        // Toggle the 'display' property between 'none' and 'block'
-        //                                                 CONDITION     ? is condition checker
         popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";
-        //                                                                                      IF TRUE   IF FALSE
     }
-
-
-
-
 </script>
 
 </body>
