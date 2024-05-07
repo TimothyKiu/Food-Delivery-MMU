@@ -112,7 +112,11 @@ def profile():
         query = "SELECT accumulative_reviews FROM webDB.reviews WHERE user_name = %s "
         mycursor.execute(query, (usernameP,))
         ratingsArray = mycursor.fetchall()
-        ratings = round(float(ratingsArray[0][0]), 2)
+
+        if ratingsArray:  # Check if ratingsArray is not empty
+            ratings = round(float(ratingsArray[0][0]), 2)
+        else:
+            ratings = "N/A"
 
         # Execute the SQL query with the username and password as parameters
         # This is where user enters his credentials in the HTML page, the parameter values then are run into the
