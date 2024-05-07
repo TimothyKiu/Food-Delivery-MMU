@@ -11,7 +11,12 @@ class loginLogic:
         session.setdefault('loggedIn', False)
 
 
-        if request.method == 'POST':
+
+        if session.get('loggedIn') == True:
+            return redirect(url_for('profile'))
+
+
+        elif request.method == 'POST':
             #Request from the html button with the name 'username'
             username = request.form['username']
             password = request.form['password']
