@@ -10,9 +10,12 @@
         border: 1px solid rgba(99,99,99,.75);
         border-top: none;
         box-sizing: border-box;
-        background-color: #333333; /* Gray color */
+        background-color: #D3D3D3; /* Gray color */
         height: 40px; /* Adjust height as needed */
         width: 100%; /* Full width of the viewport */
+
+        color: black;
+        font-family: "Roboto Light";
     }
 
     #settingsText {
@@ -80,63 +83,141 @@
         border: 2px solid black;
         z-index: 999; /* Ensure the popup is above other elements */
     }
-    #logOutButton {
+    .editButtons {
+        height: 25px;
+        width: 25px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://cdn-icons-png.freepik.com/512/84/84380.png"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+    }
+
+    #settingsicon {
+        height: 25px;
+        width: 25px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://icon-library.com/images/white-gear-icon-png/white-gear-icon-png-20.jpg"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+        background-color: transparent;
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
 
     }
 
+     #logouticon {
+        height: 40px;
+        width: 40px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://cdn4.iconfinder.com/data/icons/dashboard-3/100/7-512.png"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+        background-color: transparent;
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+
+    }
 </style>
 </head>
 <body>
-    <div id="statusBar"></div>
+     <div id="statusBar" style="display:flex; flex-direction:row; justify-content: space-between;">
+         <div>
+             <p>Home</p>
+         </div>
+
+         <div>
+             <p>Order</p>
+         </div>
+
+
+         <div style="display:flex; flex-direction:row;">
+             <button id="settingsicon" style="margin: 21px;"></button>
+             <button id="logouticon" style="margin-left: 21px;"></button>
+
+         </div>
+
+    </div>
+
 
     <div id="superDiv">
-        <h3 id="settingsText">My Settings</h3>
+        <h3 id="settingsText">My Profile</h3>
         <!-- Button container -->
         <div id="buttonContainer">
             <button class="tabButton" onclick="openTab('ViewDashboard')">Dashboard</button>
             <button class="tabButton" onclick="openTab('EditProfile')">Edit Profile</button>
             <button class="tabButton" onclick="openTab('Settings')">Settings</button>
             <form method="post" id="logOutButton">
-                <button class="tabButton" type="submit" name="logOut" id="logOut" value="True" >Log out</button>
+                <button class="tabButton" type="submit" name="logOut" id="logOut" value="True" >Log Out</button>
             </form>
         </div>
 
-        <h3 id="accountInfo">Account info:</h3>
+        <h3 id="accountInfo">Account Info:</h3>
 
-        <!-- Divs -->
         <div id="ViewDashboard" class="tabcontent">
             <h3>Ratings: {{ ratings }}</h3>
             <!-- Add content related to viewing dashboard here -->
         </div>
 
         <div id="EditProfile" class="tabcontent" >
-            <h3>Upload photo</h3>
-            <h3>Edit nickname</h3>
+
+
+            <div style="display:flex; flex-direction:row; justify-content: space-between;">
+                <h3>Upload photo</h3>
+                <button class="editButtons">Edit</button>
+
+            </div>
+
+            <div style="display:flex; flex-direction:row; justify-content: space-between;">
+                <h3>Edit nickname</h3>
+                <button class="editButtons">Edit</button>
+
+            </div>
 
             <!-- Add form fields and other content related to editing profile here -->
         </div>
 
-        <div id="Settings" class="tabcontent">
-            <h3>Edit password</h3>
-            <h3>Edit phone number</h3>
-            <!-- Button to trigger the popup -->
-            <button onclick="togglePopup()" id="deleteAccount">Delete account</button>
-            <!-- Popup content -->
-            <div id="popup" class="popup">
-                <h2>Are you sure? This action cannot be undone.</h2>
-{#                #}
-
-{#                <form method="post" >#}
-{#                    <button type="submit" name="deleteAccount" id="deleteAccount"  value="True" >Delete account</button>#}
-{#                </form>#}
-                <div>
-                    <form method="post"  style="display: flex; justify-content: space-between;">
-                        <button onclick="untogglePopup()" id="untoggle">I changed my mind</button>
-                        <button type="submit" name="deleteAccount" id="deleteAccount" value="True">Delete account</button>
-                    </form>
-                </div>
-
+        <div id="Settings" class="tabcontent" >
+            <div style="display:flex; flex-direction:row; justify-content: space-between;">
+                <h3>Edit password</h3>
+                <button type="button" class="editButtons">Edit</button>
             </div>
+
+            <div style="display:flex; flex-direction:row; justify-content: space-between;">
+                <h3>Edit phone number</h3>
+                <button class="editButtons">Edit</button>
+            </div>
+            <!-- Button to trigger the popup -->
+
+            <div style="display:flex; flex-direction:row; justify-content: space-between;">
+                <button onclick="togglePopup()" id="deleteAccount">Delete account</button>
+            <!-- Popup content -->
+                <div id="popup" class="popup">
+                    <h2>Are you sure? This action cannot be undone.</h2>
+    {#                #}
+
+    {#                <form method="post" >#}
+    {#                    <button type="submit" name="deleteAccount" id="deleteAccount"  value="True" >Delete account</button>#}
+    {#                </form>#}
+                    <div>
+                        <form method="post"  style="display: flex; justify-content: space-between;">
+                            <button onclick="untogglePopup()" id="untoggle">I changed my mind</button>
+                            <button type="submit" name="deleteAccount" id="deleteAccount" value="True">Delete account</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
