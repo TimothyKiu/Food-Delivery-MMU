@@ -142,7 +142,7 @@
 
 
          <div style="display:flex; flex-direction:row;">
-             <button id="settingsicon" style="margin: 21px;" onclick="redirectToSettings()"></button>
+             <button id="settingsicon" style="margin: 21px;"></button>
              <form method="post" id="logoutForm">
                 <button id="logouticon" type="submit" name="logOut" value="True" style="margin-left: 21px;"></button>
     {#                <button class="tabButton" type="submit" name="logOut" id="logOut" value="True" >Log Out</button>#}
@@ -155,14 +155,74 @@
 
     <div id="superDiv">
         <h3 id="settingsText">Hi, {{ usernameP }}</h3>
+        <!-- Button container -->
+        <div id="buttonContainer">
+            <button class="tabButton" onclick="openTab('ViewDashboard')">Dashboard</button>
+            <button class="tabButton" onclick="openTab('EditProfile')">Edit Profile</button>
+            <button class="tabButton" onclick="openTab('Settings')">Security</button>
+
+        </div>
+
+        <h3 id="accountInfo">Account Info:</h3>
+
+        <div id="ViewDashboard" class="tabcontent">
+            <h3>Ratings: {{ ratings }}</h3>
+            <!-- Add content related to viewing dashboard here -->
+        </div>
+
+        <div id="EditProfile" class="tabcontent" >
 
 
+            <div style="display:flex; flex-direction:row; justify-content: space-between;">
+                <h3>Upload photo</h3>
+                <button class="editButtons">Edit</button>
+
+            </div>
+
+            <div style="display:flex; flex-direction:row; justify-content: space-between;">
+                <h3>Edit nickname</h3>
+                <button class="editButtons">Edit</button>
+
+            </div>
+
+            <!-- Add form fields and other content related to editing profile here -->
+        </div>
+
+        <div id="Settings" class="tabcontent" >
+            <div style="display:flex; flex-direction:row; justify-content: space-between;">
+                <h3>Edit password</h3>
+                <button type="button" class="editButtons">Edit</button>
+            </div>
+
+            <div style="display:flex; flex-direction:row; justify-content: space-between;">
+                <h3>Edit phone number</h3>
+                <button class="editButtons">Edit</button>
+            </div>
+            <!-- Button to trigger the popup -->
+
+            <div style="display:flex; flex-direction:row; justify-content: space-between;">
+                <button onclick="togglePopup()" id="deleteAccount">Delete account</button>
+            <!-- Popup content -->
+                <div id="popup" class="popup">
+                    <h2>Are you sure? This action cannot be undone.</h2>
+    {#                #}
+
+    {#                <form method="post" >#}
+    {#                    <button type="submit" name="deleteAccount" id="deleteAccount"  value="True" >Delete account</button>#}
+    {#                </form>#}
+                    <div>
+                        <form method="post"  style="display: flex; justify-content: space-between;">
+                            <button onclick="untogglePopup()" id="untoggle">I changed my mind</button>
+                            <button type="submit" name="deleteAccount" id="deleteAccount" value="True">Delete account</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
 <script>
-    function redirectToSettings(){
-        window.location.href = "settings"
-    }
     function openTab(tabName) {
         // Hide all tab contents
         var tabcontents = document.getElementsByClassName("tabcontent");
