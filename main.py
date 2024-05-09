@@ -56,16 +56,43 @@ def ratings():
         insert_query = "INSERT INTO webDB.reviews (user_name, review_text, rating_given) VALUES (%s, %s, %s)"
         mycursor.execute(insert_query, (usernameR, review, ratings,))
         db.commit()  # Commit the transaction to save changes to the database
+        # mycursor.execute('''CREATE TABLE IF NOT EXISTS average_reviews (
+        #         ID INT AUTO_INCREMENT PRIMARY KEY,
+        #         Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        #         username VARCHAR(255),
+        #         total_ratings FLOAT,
+        #         rating_count INT,
+        #         average_rating FLOAT
+        #         );
+        #     ''')
 
         # Create temporary table
         mycursor.execute('''
+<<<<<<< HEAD
                     CREATE TEMPORARY TABLE webDB.temp_accumulative AS
                     SELECT user_name, AVG(rating_given) AS total_rating
                     FROM webDB.reviews
                     GROUP BY user_name;
+=======
+            INSERT INTO average_reviews (username, total_ratings, rating_count, average_rating)
+            SELECT 
+                user_name AS username,
+                SUM(rating_given) AS total_ratings,
+                COUNT(*) AS rating_count,
+                SUM(rating_given) / COUNT(*) AS average_rating
+            FROM 
+                webDB.reviews
+            GROUP BY 
+                user_name
+            ON DUPLICATE KEY UPDATE
+                total_ratings = VALUES(total_ratings),
+                rating_count = VALUES(rating_count),
+                average_rating = VALUES(average_rating);
+>>>>>>> sql3
 
                 ''')
 
+<<<<<<< HEAD
         # Update main table with values from temporary table
         mycursor.execute('''
                     UPDATE webDB.reviews rev
@@ -77,6 +104,8 @@ def ratings():
                             DROP TEMPORARY TABLE IF EXISTS webDB.temp_accumulative;
                         ''')
 
+=======
+>>>>>>> sql3
         # Commit changes and close connection
         db.commit()
 
@@ -109,7 +138,7 @@ def profile():
         loggedIn = session.get('loggedIn')
         errorText = "placeholder"
 
-        query = "SELECT accumulative_reviews FROM webDB.reviews WHERE user_name = %s "
+        query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
         mycursor.execute(query, (usernameP,))
         ratingsArray = mycursor.fetchall()
 
@@ -172,7 +201,7 @@ def settings():
         loggedIn = session.get('loggedIn')
         errorText = "placeholder"
 
-        query = "SELECT accumulative_reviews FROM webDB.reviews WHERE user_name = %s "
+        query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
         mycursor.execute(query, (usernameP,))
         ratingsArray = mycursor.fetchall()
 
