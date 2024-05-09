@@ -19,10 +19,13 @@
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             xhr.send(JSON.stringify({latitude: latitude, longitude: longitude}));
         }
+
+        setInterval(getLocation, 5000); // Call getLocation every 5 seconds
     </script>
 </head>
 <body>
     <h1>Get Current Location</h1>
-    <button onclick="getLocation()">Get Location</button>
+    //button removed since automatically update the location every 5 sec
 </body>
 </html>
+

@@ -12,8 +12,8 @@ def current_location():
     latitude = data['latitude']
     longitude = data['longitude']
     # Process location data as needed
-    print("Received location: Latitude {}, Longitude {}".format(latitude, longitude))
-    return "Received location: Latitude {}, Longitude {}".format(latitude, longitude)
+    print("rider location: Latitude {}, Longitude {}".format(latitude, longitude))
+    return "rider location: Latitude {}, Longitude {}".format(latitude, longitude)
 
 if __name__ == '__main__':
     app.run(debug=True)
