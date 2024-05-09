@@ -59,23 +59,23 @@ def ratings():
 
         # Create temporary table
         mycursor.execute('''
-               CREATE TEMPORARY TABLE webDB.temp_accumulative AS
-               SELECT user_name, AVG(rating_given) AS total_rating
-               FROM webDB.reviews
-               GROUP BY user_name;
+                    CREATE TEMPORARY TABLE webDB.temp_accumulative AS
+                    SELECT user_name, AVG(rating_given) AS total_rating
+                    FROM webDB.reviews
+                    GROUP BY user_name;
 
-           ''')
+                ''')
 
         # Update main table with values from temporary table
         mycursor.execute('''
-               UPDATE webDB.reviews rev
-               JOIN webDB.temp_accumulative temp ON rev.user_name = temp.user_name
-               SET webDB.rev.accumulative_reviews = temp.total_rating;
-               
-           ''')
+                    UPDATE webDB.reviews rev
+                    JOIN webDB.temp_accumulative temp ON rev.user_name = temp.user_name
+                    SET webDB.rev.accumulative_reviews = temp.total_rating;
+
+                ''')
         mycursor.execute('''
-                       DROP TEMPORARY TABLE IF EXISTS webDB.temp_accumulative;
-                   ''')
+                            DROP TEMPORARY TABLE IF EXISTS webDB.temp_accumulative;
+                        ''')
 
         # Commit changes and close connection
         db.commit()
