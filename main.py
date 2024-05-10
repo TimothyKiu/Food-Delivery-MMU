@@ -179,8 +179,9 @@ def settings():
         # Retrieve the username from the session or set it to None if the key is missing
         usernameP = session.get('username')
         loggedIn = session.get('loggedIn')
+        changepasssworderror = False
         errorText = "placeholder"
-        changedPassword = session.get('changePassword')
+
 
         query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
         mycursor.execute(query, (usernameP,))
@@ -202,6 +203,10 @@ def settings():
 
             loggedOut = request.form.get('logOut')
             deleteAccount = request.form.get('deleteAccount')
+            changedPassword = request.form.get('changedPassword')
+
+
+            passwordtext = request.form.get('confirmnewpassword')
 
             noLoginYet = "You haven't logged in!"
             accountDeleted = "Account successfully deleted..."
@@ -229,11 +234,28 @@ def settings():
                 # if loggedOut == "True":
                 #     session['username'] = "You can't delete now! Youve already logged out..."
 
-            # if changePassword == "True":
-            #     alter_query = "UPDATE webDB.registeredAccounts SET password = %s WHERE user_name = %s"
-            #
+            if changedPassword == "True":
+
+                oldpassword = request.form['oldpassword']
+                newpassword = request.form['newpassword']
+                confirmnewpassword = request.form['confirmnewpassword']
+
+                getpassword = "SELECT user_password from webDb.registeredAccounts WHERE user_name = %s "
+                mycursor.execute(getpassword, (session['username'],))
+                db.commit()
+
+                userdata = mycursor.fetchone()
+
+
+                if(newpassword == confirmnewpassword) and (oldpassword == userdata[0]):
+                    alter_query = "UPDATE webDB.registeredAccounts SET user_password = %s WHERE user_name = %s"
+                    mycursor.execute(alter_query, (passwordtext, usernameP))
+                    db.commit()
+                else:
+                    changepasssworderror = True
+
         return render_template('settings.html', usernameP=usernameP, loggedIn=loggedIn, errorText=errorText,
-                               ratings=ratings)
+                               ratings=ratings, changepasssworderror=changepasssworderror)
 
     else:
         return redirect(url_for("settings"))

@@ -191,7 +191,34 @@
         <div id="Settings" class="tabcontent" >
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h3>Edit password</h3>
-                <button type="button" class="editButtons">Edit</button>
+
+
+                <button type="button" class="editButtons" onclick="togglePopup()">Edit</button>
+                <div id="popup" class="popup">
+                    <form method="post"  >
+
+                      <label for="oldpassword" class="label1">Old password:</label>
+                      <input type="password" id="oldpassword" name="oldpassword" required><br><br>
+
+
+                      <label for="newpassword" class="label1">New password:</label>
+                      <input type="password" id="newpassword" name="newpassword" class="loginboxes" required><br><br>
+
+                       <label for="confirmnewpassword" class="label1">Confirm new password:</label>
+                       <input type="password" id="confirmnewpassword" name="confirmnewpassword" class="loginboxes" required><br><br>
+
+                        {% if changepasssworderror %}
+                            <p>Error</p>
+                        {% endif %}
+
+                    <div style="display: flex; justify-content: space-between;">
+                        <button name="changedPassword" value="True" type="submit" onclick="togglePopup()" id="untoggle">Change</button>
+                        <button id="deleteAccount" formnovalidate>Cancel</button>
+                    </div>
+
+                    </form>
+
+                </div>
             </div>
 
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
@@ -246,6 +273,14 @@
     function togglePopup() {
         var popup = document.getElementById("popup");
         popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";
+
+    }
+    function togglePopupSubmit() {
+        event.preventDefault();
+
+        var popup = document.getElementById("popup");
+        popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "block";
+
     }
 </script>
 
