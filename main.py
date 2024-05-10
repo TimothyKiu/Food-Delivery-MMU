@@ -4,7 +4,6 @@ from flask import Flask,render_template, request, redirect, url_for, session, js
 from loginLogic import loginLogic
 from registerLogic import registerLogic
 
-import json
 import mysql.connector
 
 #NOTE: STOP RUNNING PYTHON WHENEVER YOU WANNA ALTER SQL TABLES
@@ -69,11 +68,7 @@ def ratings():
         # Create temporary table
         mycursor.execute('''
 
-                    CREATE TEMPORARY TABLE webDB.temp_accumulative AS
-                    SELECT user_name, AVG(rating_given) AS total_rating
-                    FROM webDB.reviews
-                    GROUP BY user_name;
-
+                                
             INSERT INTO average_reviews (username, total_ratings, rating_count, average_rating)
             SELECT 
                 user_name AS username,
@@ -89,20 +84,7 @@ def ratings():
                 rating_count = VALUES(rating_count),
                 average_rating = VALUES(average_rating);
 
-
                 ''')
-
-
-        # Update main table with values from temporary table
-        mycursor.execute('''
-                    UPDATE webDB.reviews rev
-                    JOIN webDB.temp_accumulative temp ON rev.user_name = temp.user_name
-                    SET webDB.rev.accumulative_reviews = temp.total_rating;
-
-                ''')
-        mycursor.execute('''
-                            DROP TEMPORARY TABLE IF EXISTS webDB.temp_accumulative;
-                        ''')
 
         # Commit changes and close connection
         db.commit()
@@ -198,6 +180,7 @@ def settings():
         usernameP = session.get('username')
         loggedIn = session.get('loggedIn')
         errorText = "placeholder"
+        changedPassword = session.get('changePassword')
 
         query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
         mycursor.execute(query, (usernameP,))
@@ -246,6 +229,9 @@ def settings():
                 # if loggedOut == "True":
                 #     session['username'] = "You can't delete now! Youve already logged out..."
 
+            # if changePassword == "True":
+            #     alter_query = "UPDATE webDB.registeredAccounts SET password = %s WHERE user_name = %s"
+            #
         return render_template('settings.html', usernameP=usernameP, loggedIn=loggedIn, errorText=errorText,
                                ratings=ratings)
 
