@@ -211,7 +211,18 @@
                 <h3>Edit nickname</h3>
                 <button type="button" class="editButtons" onclick="popupToggler('editNickname')">Edit</button>
                 <div id="editNickname" class="popup">
-                    <p>aaosidja</p>
+                    <form method="post" >
+                       <p>Current: {{ nickname }}</p>
+
+                       <label for="newNickname" class="label1">New nickname:</label>
+                       <input type="text" name="newNickname" class="loginboxes" required><br><br>
+
+                    <div style="display: flex; justify-content: space-between;">
+                        <button name="changedNickname" value="True" type="submit" id="untoggle" >Change</button>
+                        <button id="deleteAccount" formnovalidate>Cancel</button>
+                    </div>
+
+                    </form>
                 </div>
 
             </div>
@@ -256,7 +267,19 @@
                 <h3>Edit phone number</h3>
                 <button type="button" class="editButtons" onclick="popupToggler('editPhoneNumber')">Edit</button>
                 <div id="editPhoneNumber" class="popup">
-                    <p>dspjaip</p>
+
+                    <form method="post" >
+                       <p>Current: {{ phoneNumber }}</p>
+
+                       <label for="newNickname" class="label1">New phone number:</label>
+                       <input type="text" name="newPhoneNumber" class="loginboxes" required><br><br>
+
+                    <div style="display: flex; justify-content: space-between;">
+                        <button name="changedPhoneNumber" value="True" type="submit" id="untoggle">Change</button>
+                        <button id="deleteAccount" formnovalidate>Cancel</button>
+                    </div>
+
+                    </form>
                 </div>
 
             </div>
@@ -302,27 +325,32 @@
 
     function popupToggler(id) {
         var popup = document.getElementById(id);
-        popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";
+        //                                                                                 IF:   TRUE       FALSE
+        popup.style.display = (popup.style.display === "none" || popup.style.display === "" ) ? "block" : "none";
 
+    }
+    function refreshPage() {
+            // Reload the current page
+            location.reload();
     }
 
     {#function toggleDelete() {#}
     {#    var popup = document.getElementById("deletePopup");#}
     {#    popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";#}
     {##}
-    {#}#}
+
 
     {#function toggleEditPassword(){#}
     {#    var popup = document.getElementById("editPasswordPopup");#}
     {#    popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";#}
-    {#}#}
+
     {#function togglePopupSubmit() {#}
     {#    event.preventDefault();#}
     {##}
     {#    var popup = document.getElementById("popup");#}
     {#    popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "block";#}
     {##}
-    {#}#}
+
 </script>
 
 </body>

@@ -29,6 +29,7 @@ class registerLogic:
                 # No user with this username exists, proceed with registration
                 cursor = db.cursor()
                 insert_query = "INSERT INTO webDB.registeredAccounts (user_name, user_password, type) VALUES (%s, %s, %s)"
+                
                 cursor.execute(insert_query, (usernamereg, passwordreg, accountTypereg))
                 db.commit()  # Commit the transaction to save changes to the database
                 cursor.close()

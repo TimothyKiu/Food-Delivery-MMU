@@ -1,5 +1,6 @@
 from urllib import request
 from flask import Flask,render_template, request, redirect, url_for, session, jsonify
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from loginLogic import loginLogic
 from registerLogic import registerLogic
@@ -113,9 +114,12 @@ def profile():
     print(session.get('loggedIn'))
 
     if session.get('loggedIn') == True:
-        # Retrieve the username from the session or set it to None if the key is missing
         usernameP = session.get('username')
         loggedIn = session.get('loggedIn')
+
+
+
+
         errorText = "placeholder"
 
         query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
@@ -179,8 +183,20 @@ def settings():
         # Retrieve the username from the session or set it to None if the key is missing
         usernameP = session.get('username')
         loggedIn = session.get('loggedIn')
+
         changepasssworderror = False
         errorText = "placeholder"
+
+
+
+        # Retrieve the username from the session or set it to None if the key is missing
+        query = "SELECT phone_number, nickname FROM webDB.registeredAccounts WHERE user_name = %s "
+        mycursor.execute(query, (usernameP,))
+        test1 = mycursor.fetchone()
+        phoneNumber = test1[0]
+        nickname = test1[1]
+
+
 
 
         query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
@@ -204,6 +220,8 @@ def settings():
             loggedOut = request.form.get('logOut')
             deleteAccount = request.form.get('deleteAccount')
             changedPassword = request.form.get('changedPassword')
+            changedNickname = request.form.get('changedNickname')
+            changedPhoneNumber = request.form.get('changedPhoneNumber')
 
 
             passwordtext = request.form.get('confirmnewpassword')
@@ -254,8 +272,25 @@ def settings():
                 else:
                     changepasssworderror = True
 
+            if changedNickname == "True":
+                newNickname = request.form['newNickname']
+
+                setNickname = "UPDATE webDb.registeredAccounts SET nickname = %s WHERE user_name = %s"
+
+                mycursor.execute(setNickname, (newNickname, session['username']))
+                db.commit()
+
+            if changedPhoneNumber == "True":
+                newPhoneNumber = request.form['newPhoneNumber']
+
+                setNickname = "UPDATE webDb.registeredAccounts SET phone_number = %s WHERE user_name = %s"
+
+                mycursor.execute(setNickname, (newPhoneNumber, session['username']))
+                db.commit()
+
+
         return render_template('settings.html', usernameP=usernameP, loggedIn=loggedIn, errorText=errorText,
-                               ratings=ratings, changepasssworderror=changepasssworderror)
+                               ratings=ratings, changepasssworderror=changepasssworderror, nickname=nickname, phoneNumber=phoneNumber)
 
     else:
         return redirect(url_for("settings"))
