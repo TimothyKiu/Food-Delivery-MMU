@@ -71,6 +71,17 @@
         font-family: "Roboto Light";
         margin-bottom: 20px;
     }
+    .popup {
+        display: none; /* Hide the popup by default */
+        position: fixed; /* Position the popup relative to the viewport */
+        top: 50%; /* Center the popup vertically */
+        left: 50%; /* Center the popup horizontally */
+        transform: translate(-50%, -50%); /* Center the popup precisely */
+        background-color: white;
+        padding: 20px;
+        border: 2px solid black;
+        z-index: 999; /* Ensure the popup is above other elements */
+    }
     .editPasswordPopup {
         display: none; /* Hide the popup by default */
         position: fixed; /* Position the popup relative to the viewport */
@@ -198,10 +209,10 @@
 
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h3>Edit nickname</h3>
-                <button type="button" class="editNickname" onclick="togglePopup()">Edit</button>
-{#                <div id="popup" class="popup">#}
-{#                    <p>aaosidja</p>#}
-{#                </div>#}
+                <button type="button" class="editButtons" onclick="popupToggler('editNickname')">Edit</button>
+                <div id="editNickname" class="popup">
+                    <p>aaosidja</p>
+                </div>
 
             </div>
 
@@ -212,11 +223,10 @@
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h3>Edit password</h3>
 
+                <button type="button" class="editButtons" onclick="popupToggler('editPasswordPopup')">Edit</button>
 
-                <button type="button" class="editButtons" onclick="toggleEditPassword()">Edit</button>
-
-                <div id="popup" class="editPasswordPopup">
-                    <form method="post"  >
+                <div id="editPasswordPopup" class="editPasswordPopup">
+                    <form method="post" >
 
                       <label for="oldpassword" class="label1">Old password:</label>
                       <input type="password" id="oldpassword" name="oldpassword" required><br><br>
@@ -233,7 +243,7 @@
                         {% endif %}
 
                     <div style="display: flex; justify-content: space-between;">
-                        <button name="changedPassword" value="True" type="submit" onclick="togglePopup()" id="untoggle">Change</button>
+                        <button name="changedPassword" value="True" type="submit" id="untoggle">Change</button>
                         <button id="deleteAccount" formnovalidate>Cancel</button>
                     </div>
 
@@ -244,14 +254,17 @@
 
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h3>Edit phone number</h3>
-                <button type="button" class="editNickname" onclick="togglePopup()">Edit</button>
+                <button type="button" class="editButtons" onclick="popupToggler('editPhoneNumber')">Edit</button>
+                <div id="editPhoneNumber" class="popup">
+                    <p>dspjaip</p>
+                </div>
 
             </div>
 
             <div style="display:flex; flex-direction:row; justify-content: space-between;" >
-                <button onclick="toggleDelete()" id="deleteAccount">Delete account</button>
+                <button onclick="popupToggler('deletePopup')" id="deleteAccount">Delete account</button>
             <!-- Popup content -->
-                <div id="popup" class="deletePopup" >
+                <div id="deletePopup" class="deletePopup" >
                     <h2>Are you sure? This action cannot be undone.</h2>
 
                     <div>
@@ -287,16 +300,22 @@
         event.currentTarget.classList.add("active");
     }
 
-    function toggleDelete() {
-        var popup = document.getElementById("deletePopup");
+    function popupToggler(id) {
+        var popup = document.getElementById(id);
         popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";
 
     }
 
-    function toggleEditPassword(){
-        var popup = document.getElementById("editPasswordPopup");
-        popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";
-    }
+    {#function toggleDelete() {#}
+    {#    var popup = document.getElementById("deletePopup");#}
+    {#    popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";#}
+    {##}
+    {#}#}
+
+    {#function toggleEditPassword(){#}
+    {#    var popup = document.getElementById("editPasswordPopup");#}
+    {#    popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";#}
+    {#}#}
     {#function togglePopupSubmit() {#}
     {#    event.preventDefault();#}
     {##}
