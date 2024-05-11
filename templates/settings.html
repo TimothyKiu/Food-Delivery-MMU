@@ -97,6 +97,20 @@
         cursor: pointer; /* Change cursor to pointer */
     }
 
+    .editNickname {
+        height: 25px;
+        width: 25px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://cdn-icons-png.freepik.com/512/84/84380.png"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+    }
+
     #settingsicon {
         height: 25px;
         width: 25px;
@@ -172,16 +186,12 @@
 
         <div id="EditProfile" class="tabcontent" >
 
-
-            <div style="display:flex; flex-direction:row; justify-content: space-between;">
-                <h3>Upload photo</h3>
-                <button class="editButtons">Edit</button>
-
-            </div>
-
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h3>Edit nickname</h3>
-                <button class="editButtons">Edit</button>
+                <button type="button" class="editNickname" onclick="togglePopup()">Edit</button>
+{#                <div id="popup" class="popup">#}
+{#                    <p>aaosidja</p>#}
+{#                </div>#}
 
             </div>
 
@@ -194,6 +204,7 @@
 
 
                 <button type="button" class="editButtons" onclick="togglePopup()">Edit</button>
+
                 <div id="popup" class="popup">
                     <form method="post"  >
 
@@ -223,8 +234,10 @@
 
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h3>Edit phone number</h3>
-                <button class="editButtons">Edit</button>
+                <button type="button" class="editNickname" onclick="togglePopup()">Edit</button>
+
             </div>
+
             <!-- Button to trigger the popup -->
 
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
@@ -275,13 +288,13 @@
         popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";
 
     }
-    function togglePopupSubmit() {
-        event.preventDefault();
-
-        var popup = document.getElementById("popup");
-        popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "block";
-
-    }
+    {#function togglePopupSubmit() {#}
+    {#    event.preventDefault();#}
+    {##}
+    {#    var popup = document.getElementById("popup");#}
+    {#    popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "block";#}
+    {##}
+    {#}#}
 </script>
 
 </body>
