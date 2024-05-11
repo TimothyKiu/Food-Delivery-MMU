@@ -184,6 +184,8 @@ def settings():
         usernameP = session.get('username')
         loggedIn = session.get('loggedIn')
 
+        passwordNotSame = False
+
         changepasssworderror = False
         errorText = "placeholder"
 
@@ -265,12 +267,17 @@ def settings():
                 userdata = mycursor.fetchone()
 
 
-                if(newpassword == confirmnewpassword) and (oldpassword == userdata[0]):
+                if(newpassword == confirmnewpassword) and check_password_hash(userdata[0], oldpassword) :
                     alter_query = "UPDATE webDB.registeredAccounts SET user_password = %s WHERE user_name = %s"
-                    mycursor.execute(alter_query, (passwordtext, usernameP))
+
+                    hashedNewPassword = generate_password_hash(newpassword)
+                    mycursor.execute(alter_query, (hashedNewPassword, usernameP))
                     db.commit()
-                else:
-                    changepasssworderror = True
+                    print("Password changed successfully")
+
+                elif newpassword != confirmnewpassword:
+                    print("Passwords do not match")
+                    passwordNotSame = True
 
             if changedNickname == "True":
                 newNickname = request.form['newNickname']
@@ -290,7 +297,7 @@ def settings():
 
 
         return render_template('settings.html', usernameP=usernameP, loggedIn=loggedIn, errorText=errorText,
-                               ratings=ratings, changepasssworderror=changepasssworderror, nickname=nickname, phoneNumber=phoneNumber)
+                               ratings=ratings, changepasssworderror=changepasssworderror, nickname=nickname, phoneNumber=phoneNumber, passwordNotSame=passwordNotSame)
 
     else:
         return redirect(url_for("settings"))

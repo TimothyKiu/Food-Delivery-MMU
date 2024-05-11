@@ -1,5 +1,5 @@
 from flask import Flask,render_template, request, redirect, url_for
-
+from werkzeug.security import generate_password_hash
 class registerLogic:
 
     #̶N̶O̶T̶E̶S̶ F̶O̶R̶ T̶O̶M̶O̶R̶R̶O̶W̶, A̶D̶D̶ A̶ F̶U̶N̶C̶T̶I̶O̶N̶ W̶H̶E̶R̶E̶ I̶T̶ D̶E̶T̶E̶C̶T̶S̶ I̶F̶ A̶ D̶U̶P̶L̶I̶C̶A̶T̶E̶ U̶S̶E̶R̶N̶A̶M̶E̶ I̶S̶ D̶E̶T̶E̶C̶T̶E̶D̶ W̶I̶T̶H̶I̶N̶ T̶H̶E̶ S̶Q̶L̶ D̶B̶
@@ -29,8 +29,9 @@ class registerLogic:
                 # No user with this username exists, proceed with registration
                 cursor = db.cursor()
                 insert_query = "INSERT INTO webDB.registeredAccounts (user_name, user_password, type) VALUES (%s, %s, %s)"
-                
-                cursor.execute(insert_query, (usernamereg, passwordreg, accountTypereg))
+                hashedPassword = generate_password_hash(passwordreg)
+
+                cursor.execute(insert_query, (usernamereg, hashedPassword, accountTypereg))
                 db.commit()  # Commit the transaction to save changes to the database
                 cursor.close()
 

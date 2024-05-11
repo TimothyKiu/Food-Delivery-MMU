@@ -1,5 +1,5 @@
 from flask import Flask,render_template, request, redirect, url_for
-
+from werkzeug.security import generate_password_hash, check_password_hash
 class loginLogic:
 
     #Post means send or create, an attempt will be made to the server, if conditions are right it will return you back with a status
@@ -20,16 +20,16 @@ class loginLogic:
             password = request.form['password']
 
             # Prepare the SQL query with placeholders
-            query = "SELECT user_name, user_password FROM webDB.registeredAccounts WHERE user_name = %s AND user_password = %s"
+            query = "SELECT user_name, user_password FROM webDB.registeredAccounts WHERE user_name = %s"
 
             # Execute the SQL query with the username and password as parameters
             #This is where user enters his credentials in the HTML page
-            cursor.execute(query, (username, password))
+            cursor.execute(query, (username,))
 
             # Fetch the result (assuming only one row is expected)
             userdata = cursor.fetchone()
 
-            if (userdata is not None) and userdata[0] == username and userdata[1] == password:
+            if (userdata is not None) and userdata[0] == username and check_password_hash(userdata[1], password):
                 #Redirect using the function name, NOT the app.route(/example)
                 session['username'] = userdata[0]
                 session['loggedIn'] = True
