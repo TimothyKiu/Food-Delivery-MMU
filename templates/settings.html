@@ -71,8 +71,18 @@
         font-family: "Roboto Light";
         margin-bottom: 20px;
     }
-
-    .popup {
+    .editPasswordPopup {
+        display: none; /* Hide the popup by default */
+        position: fixed; /* Position the popup relative to the viewport */
+        top: 50%; /* Center the popup vertically */
+        left: 50%; /* Center the popup horizontally */
+        transform: translate(-50%, -50%); /* Center the popup precisely */
+        background-color: white;
+        padding: 20px;
+        border: 2px solid black;
+        z-index: 999; /* Ensure the popup is above other elements */
+    }
+    .deletePopup {
         display: none; /* Hide the popup by default */
         position: fixed; /* Position the popup relative to the viewport */
         top: 50%; /* Center the popup vertically */
@@ -203,9 +213,9 @@
                 <h3>Edit password</h3>
 
 
-                <button type="button" class="editButtons" onclick="togglePopup()">Edit</button>
+                <button type="button" class="editButtons" onclick="toggleEditPassword()">Edit</button>
 
-                <div id="popup" class="popup">
+                <div id="popup" class="editPasswordPopup">
                     <form method="post"  >
 
                       <label for="oldpassword" class="label1">Old password:</label>
@@ -238,18 +248,12 @@
 
             </div>
 
-            <!-- Button to trigger the popup -->
-
-            <div style="display:flex; flex-direction:row; justify-content: space-between;">
-                <button onclick="togglePopup()" id="deleteAccount">Delete account</button>
+            <div style="display:flex; flex-direction:row; justify-content: space-between;" >
+                <button onclick="toggleDelete()" id="deleteAccount">Delete account</button>
             <!-- Popup content -->
-                <div id="popup" class="popup">
+                <div id="popup" class="deletePopup" >
                     <h2>Are you sure? This action cannot be undone.</h2>
-    {#                #}
 
-    {#                <form method="post" >#}
-    {#                    <button type="submit" name="deleteAccount" id="deleteAccount"  value="True" >Delete account</button>#}
-    {#                </form>#}
                     <div>
                         <form method="post"  style="display: flex; justify-content: space-between;">
                             <button onclick="untogglePopup()" id="untoggle">I changed my mind</button>
@@ -283,10 +287,15 @@
         event.currentTarget.classList.add("active");
     }
 
-    function togglePopup() {
-        var popup = document.getElementById("popup");
+    function toggleDelete() {
+        var popup = document.getElementById("deletePopup");
         popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";
 
+    }
+
+    function toggleEditPassword(){
+        var popup = document.getElementById("editPasswordPopup");
+        popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";
     }
     {#function togglePopupSubmit() {#}
     {#    event.preventDefault();#}
