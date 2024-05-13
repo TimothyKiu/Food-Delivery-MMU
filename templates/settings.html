@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Profile</title>
+<style>
+    #statusBar {
+        display: table;
+        border: 1px solid rgba(99,99,99,.75);
+        border-top: none;
+        box-sizing: border-box;
+        background-color: #D3D3D3; /* Gray color */
+        height: 40px; /* Adjust height as needed */
+        width: 100%; /* Full width of the viewport */
+
+        color: black;
+        font-family: "Roboto Light";
+    }
+
+    #settingsText {
+        font-family: "Roboto Light";
+        font-size: 32px;
+    }
+
+    #superDiv {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #buttonContainer {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 20px;
+    }
+
+    .tabButton{
+        font-family: "Roboto Light";
+        margin: 0 10px;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+
+    .tabcontent {
+        display: none;
+        padding: 20px;
+        width:80%;
+        border: 1px solid #ccc;
+        border-top: none;
+        font-family: "Roboto Light";
+    }
+   #deleteAccount {
+        color: red; /* Set text color to red */
+        border: none; /* Remove border */
+        background: none; /* Remove background */
+        padding: 0; /* Remove padding */
+        font: inherit; /* Inherit font */
+        cursor: pointer; /* Change cursor to pointer */
+    }
+   #untoggle {
+        color: green; /* Set text color to red */
+        border: none; /* Remove border */
+        background: none; /* Remove background */
+        padding: 0; /* Remove padding */
+        font: inherit; /* Inherit font */
+        cursor: pointer; /* Change cursor to pointer */
+   }
+
+    #accountInfo {
+        font-family: "Roboto Light";
+        margin-bottom: 20px;
+    }
+    .popup {
+        display: none; /* Hide the popup by default */
+        position: fixed; /* Position the popup relative to the viewport */
+        top: 50%; /* Center the popup vertically */
+        left: 50%; /* Center the popup horizontally */
+        transform: translate(-50%, -50%); /* Center the popup precisely */
+        background-color: white;
+        padding: 20px;
+        border: 2px solid black;
+        z-index: 999; /* Ensure the popup is above other elements */
+    }
+    .editPasswordPopup {
+        display: none; /* Hide the popup by default */
+        position: fixed; /* Position the popup relative to the viewport */
+        top: 50%; /* Center the popup vertically */
+        left: 50%; /* Center the popup horizontally */
+        transform: translate(-50%, -50%); /* Center the popup precisely */
+        background-color: white;
+        padding: 20px;
+        border: 2px solid black;
+        z-index: 999; /* Ensure the popup is above other elements */
+    }
+    .deletePopup {
+        display: none; /* Hide the popup by default */
+        position: fixed; /* Position the popup relative to the viewport */
+        top: 50%; /* Center the popup vertically */
+        left: 50%; /* Center the popup horizontally */
+        transform: translate(-50%, -50%); /* Center the popup precisely */
+        background-color: white;
+        padding: 20px;
+        border: 2px solid black;
+        z-index: 999; /* Ensure the popup is above other elements */
+    }
+    .editButtons {
+        height: 25px;
+        width: 25px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://cdn-icons-png.freepik.com/512/84/84380.png"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+    }
+
+    .editNickname {
+        height: 25px;
+        width: 25px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://cdn-icons-png.freepik.com/512/84/84380.png"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+    }
+
+    #settingsicon {
+        height: 25px;
+        width: 25px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://icon-library.com/images/white-gear-icon-png/white-gear-icon-png-20.jpg"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+        background-color: transparent;
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+
+    }
+
+     #logouticon {
+        height: 40px;
+        width: 40px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://cdn4.iconfinder.com/data/icons/dashboard-3/100/7-512.png"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+        background-color: transparent;
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+
+    }
+</style>
+</head>
+<body>
+     <div id="statusBar" style="display:flex; flex-direction:row; justify-content: space-between;">
+         <div>
+             <p>Home</p>
+         </div>
+
+         <div>
+             <p>Order</p>
+         </div>
+
+
+         <div style="display:flex; flex-direction:row;">
+             <button id="settingsicon" style="margin: 21px;"></button>
+             <form method="post" id="logoutForm">
+                <button id="logouticon" type="submit" name="logOut" value="True" style="margin-left: 21px;"></button>
+    {#                <button class="tabButton" type="submit" name="logOut" id="logOut" value="True" >Log Out</button>#}
+             </form>
+
+         </div>
+
+    </div>
+
+
+    <div id="superDiv">
+        <h3 id="settingsText">Hi, {{ usernameP }}</h3>
+        <!-- Button container -->
+        <div id="buttonContainer">
+            <button class="tabButton" onclick="openTab('ViewDashboard')">Dashboard</button>
+            <button class="tabButton" onclick="openTab('EditProfile')">Edit Profile</button>
+            <button class="tabButton" onclick="openTab('Settings')">Security</button>
+
+        </div>
+
+        <h3 id="accountInfo">Account Info:</h3>
+
+        <div id="ViewDashboard" class="tabcontent">
+            <h3>Ratings: {{ ratings }}</h3>
+            <!-- Add content related to viewing dashboard here -->
+        </div>
+
+        <div id="EditProfile" class="tabcontent" >
+
+            <div style="display:flex; flex-direction:row; justify-content: space-between;">
+                <h3>Edit nickname</h3>
+                <button type="button" class="editButtons" onclick="popupToggler('editNickname')">Edit</button>
+                <div id="editNickname" class="popup">
+                    <form method="post" >
+                       <p>Current: {{ nickname }}</p>
+
+                       <label for="newNickname" class="label1">New nickname:</label>
+                       <input type="text" name="newNickname" class="loginboxes" required><br><br>
+
+                    <div style="display: flex; justify-content: space-between;">
+                        <button name="changedNickname" value="True" type="submit" id="untoggle" >Change</button>
+                        <button id="deleteAccount" formnovalidate>Cancel</button>
+                    </div>
+
+                    </form>
+                </div>
+
+            </div>
+
+            <!-- Add form fields and other content related to editing profile here -->
+        </div>
+
+        <div id="Settings" class="tabcontent" >
+            <div style="display:flex; flex-direction:row; justify-content: space-between;">
+                <h3>Edit password</h3>
+
+                <button type="button" class="editButtons" onclick="popupToggler('editPasswordPopup')">Edit</button>
+
+                <div id="editPasswordPopup" class="editPasswordPopup">
+                    <form method="post" >
+
+                      <label for="oldpassword" class="label1">Old password:</label>
+                      <input type="password" id="oldpassword" name="oldpassword" required><br><br>
+
+
+                      <label for="newpassword" class="label1">New password:</label>
+                      <input type="password" id="newpassword" name="newpassword" class="loginboxes" required><br><br>
+
+                       <label for="confirmnewpassword" class="label1">Confirm new password:</label>
+                       <input type="password" id="confirmnewpassword" name="confirmnewpassword" class="loginboxes" required><br><br>
+
+                        {% if changepasssworderror %}
+                            <p>Error</p>
+                        {% endif %}
+
+                    <div style="display: flex; justify-content: space-between;">
+                        <button name="changedPassword" value="True" type="submit" id="untoggle">Change</button>
+                        <button id="deleteAccount" formnovalidate>Cancel</button>
+                    </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:row; justify-content: space-between;">
+                <h3>Edit phone number</h3>
+                <button type="button" class="editButtons" onclick="popupToggler('editPhoneNumber')">Edit</button>
+                <div id="editPhoneNumber" class="popup">
+
+                    <form method="post" >
+                       <p>Current: {{ phoneNumber }}</p>
+
+                       <label for="newNickname" class="label1">New phone number:</label>
+                       <input type="text" name="newPhoneNumber" class="loginboxes" required><br><br>
+
+                    <div style="display: flex; justify-content: space-between;">
+                        <button name="changedPhoneNumber" value="True" type="submit" id="untoggle">Change</button>
+                        <button id="deleteAccount" formnovalidate>Cancel</button>
+                    </div>
+
+                    </form>
+                </div>
+
+            </div>
+
+            <div style="display:flex; flex-direction:row; justify-content: space-between;" >
+                <button onclick="popupToggler('deletePopup')" id="deleteAccount">Delete account</button>
+            <!-- Popup content -->
+                <div id="deletePopup" class="deletePopup" >
+                    <h2>Are you sure? This action cannot be undone.</h2>
+
+                    <div>
+                        <form method="post"  style="display: flex; justify-content: space-between;">
+                            <button onclick="untogglePopup()" id="untoggle">I changed my mind</button>
+                            <button type="submit" name="deleteAccount" id="deleteAccount" value="True">Delete account</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+    function openTab(tabName) {
+        // Hide all tab contents
+        var tabcontents = document.getElementsByClassName("tabcontent");
+        for (var i = 0; i < tabcontents.length; i++) {
+            tabcontents[i].style.display = "none";
+        }
+
+        // Deactivate all buttons
+        var tabButton = document.getElementsByClassName("tabButton");
+        for (var i = 0; i < tabButton.length; i++) {
+            tabButton[i].classList.remove("active");
+        }
+
+        // Show the selected tab content
+        document.getElementById(tabName).style.display = "block";
+
+        // Darken the button when pressed
+        event.currentTarget.classList.add("active");
+    }
+
+    function popupToggler(id) {
+        var popup = document.getElementById(id);
+        //                                                                                 IF:   TRUE       FALSE
+        popup.style.display = (popup.style.display === "none" || popup.style.display === "" ) ? "block" : "none";
+
+    }
+    function refreshPage() {
+            // Reload the current page
+            location.reload();
+    }
+
+    {#function toggleDelete() {#}
+    {#    var popup = document.getElementById("deletePopup");#}
+    {#    popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";#}
+    {##}
+
+
+    {#function toggleEditPassword(){#}
+    {#    var popup = document.getElementById("editPasswordPopup");#}
+    {#    popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";#}
+
+    {#function togglePopupSubmit() {#}
+    {#    event.preventDefault();#}
+    {##}
+    {#    var popup = document.getElementById("popup");#}
+    {#    popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "block";#}
+    {##}
+
+</script>
+
+</body>
+</html>

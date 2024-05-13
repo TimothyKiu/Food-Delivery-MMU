@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Profile</title>
+<style>
+    #statusBar {
+        display: table;
+        border: 1px solid rgba(99,99,99,.75);
+        border-top: none;
+        box-sizing: border-box;
+        background-color: #D3D3D3; /* Gray color */
+        height: 40px; /* Adjust height as needed */
+        width: 100%; /* Full width of the viewport */
+
+        color: black;
+        font-family: "Roboto Light";
+    }
+
+    #settingsText {
+        font-family: "Roboto Light";
+        font-size: 32px;
+    }
+
+    #superDiv {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #buttonContainer {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 20px;
+    }
+
+    .tabButton{
+        font-family: "Roboto Light";
+        margin: 0 10px;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+
+    .tabcontent {
+        display: none;
+        padding: 20px;
+        width:80%;
+        border: 1px solid #ccc;
+        border-top: none;
+        font-family: "Roboto Light";
+    }
+   #deleteAccount {
+        color: red; /* Set text color to red */
+        border: none; /* Remove border */
+        background: none; /* Remove background */
+        padding: 0; /* Remove padding */
+        font: inherit; /* Inherit font */
+        cursor: pointer; /* Change cursor to pointer */
+    }
+   #untoggle {
+        color: green; /* Set text color to red */
+        border: none; /* Remove border */
+        background: none; /* Remove background */
+        padding: 0; /* Remove padding */
+        font: inherit; /* Inherit font */
+        cursor: pointer; /* Change cursor to pointer */
+   }
+
+    #accountInfo {
+        font-family: "Roboto Light";
+        margin-bottom: 20px;
+    }
+
+    .popup {
+        display: none; /* Hide the popup by default */
+        position: fixed; /* Position the popup relative to the viewport */
+        top: 50%; /* Center the popup vertically */
+        left: 50%; /* Center the popup horizontally */
+        transform: translate(-50%, -50%); /* Center the popup precisely */
+        background-color: white;
+        padding: 20px;
+        border: 2px solid black;
+        z-index: 999; /* Ensure the popup is above other elements */
+    }
+    .editButtons {
+        height: 25px;
+        width: 25px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://cdn-icons-png.freepik.com/512/84/84380.png"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+    }
+
+    #settingsicon {
+        height: 25px;
+        width: 25px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://icon-library.com/images/white-gear-icon-png/white-gear-icon-png-20.jpg"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+        background-color: transparent;
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+
+    }
+
+     #logouticon {
+        height: 40px;
+        width: 40px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://cdn4.iconfinder.com/data/icons/dashboard-3/100/7-512.png"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+        background-color: transparent;
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+
+    }
+</style>
+</head>
+<body>
+     <div id="statusBar" style="display:flex; flex-direction:row; justify-content: space-between;">
+         <div>
+             <p>Home</p>
+         </div>
+
+         <div>
+             <p>Order</p>
+         </div>
+
+
+         <div style="display:flex; flex-direction:row;">
+             <button id="settingsicon" style="margin: 21px;" onclick="redirectToSettings()"></button>
+             <form method="post" id="logoutForm">
+                <button id="logouticon" type="submit" name="logOut" value="True" style="margin-left: 21px;"></button>
+    {#                <button class="tabButton" type="submit" name="logOut" id="logOut" value="True" >Log Out</button>#}
+             </form>
+
+         </div>
+
+    </div>
+
+
+    <div id="superDiv">
+        <h3 id="settingsText">Hi, {{ usernameP }}</h3>
+
+
+    </div>
+
+<script>
+    function redirectToSettings(){
+        window.location.href = "settings"
+    }
+    function openTab(tabName) {
+        // Hide all tab contents
+        var tabcontents = document.getElementsByClassName("tabcontent");
+        for (var i = 0; i < tabcontents.length; i++) {
+            tabcontents[i].style.display = "none";
+        }
+
+        // Deactivate all buttons
+        var tabButton = document.getElementsByClassName("tabButton");
+        for (var i = 0; i < tabButton.length; i++) {
+            tabButton[i].classList.remove("active");
+        }
+
+        // Show the selected tab content
+        document.getElementById(tabName).style.display = "block";
+
+        // Darken the button when pressed
+        event.currentTarget.classList.add("active");
+    }
+
+    function togglePopup() {
+        var popup = document.getElementById("popup");
+        popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";
+    }
+</script>
+
+</body>
+</html>

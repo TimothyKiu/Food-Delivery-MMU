@@ -1,0 +1,48 @@
+.logindiv {
+  font-family: "Roboto Light";
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+}
+
+#welcomeText {
+    position: relative;
+    right: -139px;
+    top: -20px;
+    font-size: 32px;
+}
+
+#registerlink{
+    position:absolute;
+    margin-top:70px;
+}
+
+.boxtitles {
+    display: flex;
+    flex-direction: column;
+
+    position: relative;
+    top: -7px;
+    bottom: -20px;
+    font-family: "Roboto Light";
+}
+.loginboxes {
+    height: 30px;
+    width: 350px;
+    font-size: 17px;
+}
+button[id="submitter1"]{
+    font-family : "Comic Sans MS";
+    position: relative;
+    width: 350px;
+    height:30px;
+
+}
+
+.logintexts {
+    position: relative;
+    top: -20px;
+
+}

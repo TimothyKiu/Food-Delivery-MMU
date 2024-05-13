@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/design.css">
+    <title>Flask Button Example</title>
+</head>
+<body>
+    <h1 class="title">You're too lazy to walk so you came here!</h1>
+    <form action="/html2" method="get">
+        <button type="submit">Click Me!</button>
+    </form>
+    <form action="/login" method="get">
+        <button type="submit">Go to login</button>
+    </form>
+    <form action="/register" method="get">
+        <button type="submit">Create account</button>
+    </form>
+    <ul>
+        <li>Walter Hartwell White</li>
+        <li>Jesse Pinkman</li>
+        <li>Gustavo Fring</li>
+        <li>Mike Ehrmantraut</li>
+    </ul>
+
+    <!--This html line cannot be run directly on the html file, you can only access it by running on the python main file. JINJA2-->
+    {% set label_text = "Extra joe" %}
+    {% set label_texts = [] %}
+
+    {% set _ = label_texts.append("Nasi Briyani") %}
+    {% set _ = label_texts.append("Nasi Goreng") %}
+    {% set _ = label_texts.append("Nasi Goreng Pattaya") %}
+    {% set _ = label_texts.append("Nasi Goreng Ayam") %}
+    {% set _ = label_texts.append("Nasi Goreng Daging") %}
+    {% set _ = label_texts.append("Nasi Goreng Cili Padi") %}
+
+    {% for i in range(1, 10) %}
+        {% for j in label_texts %}
+            <label for="checkbox{{ i }}">{{ j }}:</label>
+            <input type="checkbox" id="checkbox{{ i }}" name="checkbox">
+        {% endfor %}
+    {% endfor %}
+
+
+
+</body>
+</html>

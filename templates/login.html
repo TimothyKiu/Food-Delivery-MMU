@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/login.css">
+
+    <title>Login Page</title>
+</head>
+<body>
+    <div id="output"></div>
+
+    <form action="/login" method="post" class="logindiv">
+         <h2 id="welcomeText">Log in</h2>
+
+
+
+        <label for="username" class="boxtitles">Username:</label>
+        <input type="text" id="username" name="username" class="loginboxes" required><br><br>
+
+        <label for="password" class="boxtitles">Password:</label>
+        <input type="password" id="password" name="password" class="loginboxes" required><br><br>
+
+        <div class="logintexts">
+            {% if not login_failed %}
+                <p style="color: blue; font-size:11px;">Enter your username and password!</p>
+            {% endif %}
+            {% if login_failed%}
+                <p style="color: red; font-size:11px;">Login failed. Please check your username and password.</p>
+            {% endif %}
+        </div>
+
+        <button type="submit" id="submitter1">Login</button>
+
+        <p id="registerlink" class="registerlink"> Don't have an account? <a href="register">Sign up!</a> </p>
+    </form>
+
+
+    <script>
+
+        // Ignore the red lines, it's just js not recognizing jinja2
+        const loginFailed = {{ login_failed|tojson|safe }};
+        if (localStorage.getItem('loginFailedCounter') === null) {
+            //loginfailedcounter initialized with 0
+            localStorage.setItem('loginFailedCounter', '0');
+        }
+        let loginFailedCounter = parseInt(localStorage.getItem('loginFailedCounter'));
+
+        // Access HTML elements
+        const counterDisplayer = document.getElementById("output");
+        const button1 = document.getElementById('colorButton');
+        const buttonLogin = document.getElementById('submitter1');
+
+        // Color changing is experimental, just to see if it works
+        buttonLogin.addEventListener('submit', () => {
+            if(loginFailed) {
+                const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+                buttonLogin.style.background = randomColor;
+                loginFailedCounter += 1;
+                counterDisplayer.textContent = loginFailedCounter;
+                // stringify it so that json can save it
+                localStorage.setItem('loginFailedCounter', loginFailedCounter.toString());
+            }
+            counterDisplayer.textContent = loginFailedCounter;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" type="text/css" href="/static/register.css">
+</head>
+<body>
+
+    <form method="post" id="formDiv">
+        {#    type=radio is only if you can only select one at a time, name must be the same!!! (usertype)#}
+        <h1 class="title1">Register your account</h1>
+
+        <div class="textboxGroup">
+
+            <label for="usernamereg" class="label1">Username:</label>
+            <input type="text" id="usernamereg" name="usernamereg" required><br><br>
+
+
+            <label for="passwordreg" class="label1">Password:</label>
+            <input type="password" id="passwordreg" name="passwordreg" class="loginboxes" required><br><br>
+
+            <label for="confirmpasswordreg" class="label1">Confirm password:</label>
+            <input type="password" id="confirmpasswordreg" name="confirmpasswordreg" class="loginboxes" required><br><br>
+        </div>
+        <p class="tinytexts">Password be must 6 or more characters</p>
+
+
+        <div class="radio-group">
+            <label for="customerTick" class="label1">Customer</label>
+            <input type="radio" id="customerTick" name="usertype" value="Customer" required>
+
+            <label for="runnerTick" class="label1">Runner</label>
+            <input type="radio" id="runnerTick" name="usertype" value="Runner" required>
+        </div>
+{#        <div id="incorrectTextType"></div>#}
+
+{#    Jinja2 is a translator for python to html#}
+        {% if allfalse %}
+            <p style="color: red;">Inappropriate password length and incorrect password and name already taken.</p>
+
+        {% endif %}
+
+        {% if nametaken %}
+            <p style="color: red;">Username already taken.</p>
+        {%  endif %}
+
+        {% if passnotproperlength  %}
+            <p style="color: red;">Inappropriate password length.</p>
+
+        {% endif %}
+
+        {% if passnotsame  %}
+            <p style="color: red;">Password is not the same as the confirmed password.</p>
+
+        {% endif %}
+
+
+        <button type="submit" id="registerButton">Register</button>
+        <p id="loginlink"><a href="login">Click me</a>  if you've already registered</p>
+    </form>
+
+<script>
+    /*
+    const passProperLength = x
+
+    const incorrectInputTexts = document.getElementById('incorrectTextType');
+
+    if(!passProperLength && !passNotSame){
+        incorrectInputTexts.textContent = "-Inappropiate password length \n -Password is not same with confirmation"
+    } else {
+        if (!passProperLength) {
+            incorrectInputTexts.textContent = "-Inappropriate password length";
+        }
+        if (!passNotSame) {
+            incorrectInputTexts.textContent = "-Password is not same with confirmation";
+        }
+    }
+
+     */
+</script>
+</body>
+</html>
