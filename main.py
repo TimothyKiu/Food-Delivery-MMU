@@ -19,7 +19,7 @@ mycursor = db.cursor(buffered=True)
 
 app = Flask(__name__)
 app.secret_key = 'theSecretKeyToTheEvilPiratesTreasureHarHarHar'
-
+mycursor.execute("SHOW GRANTS FOR 'root'@'localhost'")
 
 
 
@@ -185,11 +185,10 @@ def settings():
         loggedIn = session.get('loggedIn')
 
         passwordNotSame = False
+        attemptedPasswordChange = False
 
         changepasssworderror = False
         errorText = "placeholder"
-
-
 
         # Retrieve the username from the session or set it to None if the key is missing
         query = "SELECT phone_number, nickname FROM webDB.registeredAccounts WHERE user_name = %s "
@@ -273,11 +272,13 @@ def settings():
                     hashedNewPassword = generate_password_hash(newpassword)
                     mycursor.execute(alter_query, (hashedNewPassword, usernameP))
                     db.commit()
-                    print("Password changed successfully")
+                    passwordNotSame = False
+                    attemptedPasswordChange = True
 
-                elif newpassword != confirmnewpassword:
+                else:
                     print("Passwords do not match")
                     passwordNotSame = True
+                    attemptedPasswordChange = True
 
             if changedNickname == "True":
                 newNickname = request.form['newNickname']
@@ -295,9 +296,10 @@ def settings():
                 mycursor.execute(setNickname, (newPhoneNumber, session['username']))
                 db.commit()
 
-
         return render_template('settings.html', usernameP=usernameP, loggedIn=loggedIn, errorText=errorText,
-                               ratings=ratings, changepasssworderror=changepasssworderror, nickname=nickname, phoneNumber=phoneNumber, passwordNotSame=passwordNotSame)
+                               ratings=ratings, changepasssworderror=changepasssworderror, nickname=nickname,
+                               phoneNumber=phoneNumber, passwordNotSame=passwordNotSame,
+                               attemptedPasswordChange=attemptedPasswordChange)
 
     else:
         return redirect(url_for("settings"))

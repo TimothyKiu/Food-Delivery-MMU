@@ -234,6 +234,7 @@
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h3>Edit password</h3>
 
+
                 <button type="button" class="editButtons" onclick="popupToggler('editPasswordPopup')">Edit</button>
 
                 <div id="editPasswordPopup" class="editPasswordPopup">
@@ -249,9 +250,7 @@
                        <label for="confirmnewpassword" class="label1">Confirm new password:</label>
                        <input type="password" id="confirmnewpassword" name="confirmnewpassword" class="loginboxes" required><br><br>
 
-                        {% if changepasssworderror %}
-                            <p>Error</p>
-                        {% endif %}
+
 
                     <div style="display: flex; justify-content: space-between;">
                         <button name="changedPassword" value="True" type="submit" id="untoggle">Change</button>
@@ -261,7 +260,16 @@
                     </form>
 
                 </div>
+
+
+
             </div>
+            {% if passwordNotSame %}
+                <p style="color: red; position: relative; top: -10px; font-size: 11px;">Error: Check your password</p>
+            {% endif %}
+            {% if not passwordNotSame and attemptedPasswordChange %}
+                <p style="color: blue; position: relative; top: -10px; font-size: 11px;">Successfully changed password</p>
+            {% endif %}
 
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h3>Edit phone number</h3>
@@ -355,3 +363,6 @@
 
 </body>
 </html>
+
+
+
