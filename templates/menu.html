@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Food_Delivery_MMU</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="header">
+        <h1 id="title">Food Delivery MMU</h1> 
+
+        <form action="/templates/restaurant.html" method="get" class="searchbar">
+            <input type="search" name="query" placeholder="Type the restaurant name." />
+            <button type="submit">🔍</button>
+        </form>
+        
+        <h2>XXX Restaurant</h2>
+        
+    </header>
+
+    <main class="main">
+
+        <div class="menu">
+            <h2>Rice</h2>
+            <ul>
+              <li>
+                Rice - Ingredients
+
+                <form action="/submit_remarks" method="post">
+                  <label for="remarks">Customer Remarks:</label>
+                  <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+                  <button type="submit">Submit Remarks</button>
+                </form>
+
+                <button class="button" onclick="addtocart('Rice', 1.00)">Add to Cart</button>
+              </li>
+              <li>
+                Mee - Ingredients
+
+                <form action="/submit_remarks" method="post">
+                  <label for="remarks">Customer Remarks:</label>
+                  <textarea id="remarks" name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+                  <button type="submit">Submit Remarks</button>
+                </form>
+
+
+                <button class="button" onclick="addtocart('Mee', 2.00)">Add to Cart</button>
+              </li>
+            </ul>
+        </div>
+
+        <script>
+            function addtocart(itemName, itemPrice) {
+              // Placeholder function to simulate adding to cart
+              console.log(`Adding ${itemName} to the cart with price ${itemPrice}`);
+            }
+          </script>
+
+    </main>
+
+    <footer class="footer">
+        <nav>
+            <a href="#cart" class="cart-button">🛒 <span class="cart-number">3</span></a>
+            <a href="#home">Home</a>
+            <a href="#templates/restaurant.html">Restaurant</a>
+            <a href="#profile">Profile</a>
+        </nav>
+
+        <div id="cart">
+            <a href="#close" class="close-button">✖</a>
+            <h2>Order Cart</h2>
+            <ul>
+              <li id="cart-list">1 - RM1.00</li>
+              <li id="cart-list">2 - RM2.00</li>
+              <li id="cart-list">3 - RM3.00</li>
+            </ul>
+            <div class="total">Total: $60.00</div>
+            <button class="checkout">Checkout</button>
+          </div>
+
+    </footer>
+
+</body>
+</html>

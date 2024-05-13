@@ -1,0 +1,111 @@
+#title {
+  text-align: left;
+  top: 0;
+  left:0;
+}
+
+.header {
+  padding: 6px;
+  background: #9f77a7;
+  color: rgb(212, 215, 186);
+  font-size: 20px;
+  min-height: 0px; 
+}
+
+.header, .footer {
+  background-image: url('background.jpg');
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  color: white; 
+  padding: 20px; 
+  text-align: center; 
+} 
+
+.footer {
+  padding: 10px;
+  text-align: right;
+  background:#9f77a7;
+  color: rgb(212, 215, 186);
+  font-size: 20px;
+  min-height:20px; 
+  position: sticky;
+  bottom: 0;
+}
+
+.footer a {
+  text-decoration: none;
+}
+
+.searchbar {
+  text-align: right;
+}
+
+.main {
+  background: #ffffff;
+}
+
+.cart-button {
+  text-decoration: none;
+  color: white; 
+  font-size: 40px;
+  position: relative; 
+}
+
+.cart-number {
+  position: absolute; 
+  top: -10px; 
+  right: 0px; 
+  background: rgb(192, 54, 36); 
+  color: rgb(255, 255, 255);
+  border-radius: 100%; 
+  padding: 3px; 
+}
+
+#cart {
+  display: none; 
+  position: fixed; 
+  top: 10px;
+  right: 50px; 
+  background: lightgrey; 
+  border: 1px solid #ccc; /* Border for definition */
+  padding: 30px; /* Padding for comfort */
+  z-index: 100; /* Ensure it's above other content */
+}
+
+
+#cart:target {
+  display: block; /* Show when targeted */
+}
+
+#cart-list {
+  font-style: sans-serif;
+  font-size: 20px;
+  color: black;
+}
+
+
+.menu ul {
+  list-style-type: none;  /* Remove list bullets */
+  padding: 0;  /* No padding */
+}
+
+.menu li {
+  padding: 10px 0;  /* Padding between menu items */
+  display: flex;  /* Horizontal layout for menu item and button */
+  justify-content: space-between;  /* Space between text and button */
+  border-bottom: 1px solid #ddd;  /* Divider between items */
+}
+
+.button {
+  background: #007bff;  /* Button background color */
+  color: white;  /* Button text color */
+  border: none;  /* No border */
+  padding: 10px;  /* Padding for comfort */
+  border-radius: 10px;  /* Rounded corners */
+  cursor: pointer;  /* Pointer cursor for interactivity */
+}
+
+.button:hover {
+  background: #49a897;  /* Darken background on hover */
+}
