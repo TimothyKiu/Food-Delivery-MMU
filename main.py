@@ -189,13 +189,18 @@ def settings():
 
         changepasssworderror = False
         errorText = "placeholder"
+        nickname = "placeholder"
+        phoneNumber = "placeholder"
 
         # Retrieve the username from the session or set it to None if the key is missing
         query = "SELECT phone_number, nickname FROM webDB.registeredAccounts WHERE user_name = %s "
         mycursor.execute(query, (usernameP,))
         test1 = mycursor.fetchone()
-        phoneNumber = test1[0]
-        nickname = test1[1]
+        if test1 is not None:
+            phoneNumber = test1[0]
+            nickname = test1[1]
+
+
 
 
 
