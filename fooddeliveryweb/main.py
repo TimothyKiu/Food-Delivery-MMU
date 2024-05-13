@@ -1,8 +1,18 @@
 from flask import Flask, render_template, request, redirect, url_for
+import mysql.connector
+
+# Example orders data (can be replaced with database queries)
+db = mysql.connector.connect(
+    host="localhost",
+    user='root',
+    passwd='pr6/Weio',
+    database='location_database'
+)
+
+cursor = db.cursor()
 
 app = Flask(__name__)
 
-# Example orders data (can be replaced with database queries)
 orders = [
     {"id": 1, "item": "roti kosong"},
     {"id": 2, "item": "maggi goreng"},
