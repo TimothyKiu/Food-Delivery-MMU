@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Order</title>
+</head>
+<body>
+    <h1>Do you want to accept the order for {{ order.item }}?</h1>
+    <form action="/comfirm_order" method="post">
+        <input type="hidden" name="order_id" value="{{ order.id }}">
+        <button type="submit" name="decision" value="accept">Accept</button>
+        <button type="submit" name="decision" value="decline">Decline</button>
+    </form>
+</body>
+</html>
