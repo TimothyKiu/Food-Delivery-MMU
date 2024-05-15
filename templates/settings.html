@@ -71,7 +71,6 @@
         font-family: "Roboto Light";
         margin-bottom: 20px;
     }
-
     .popup {
         display: none; /* Hide the popup by default */
         position: fixed; /* Position the popup relative to the viewport */
@@ -83,7 +82,43 @@
         border: 2px solid black;
         z-index: 999; /* Ensure the popup is above other elements */
     }
+    .editPasswordPopup {
+        display: none; /* Hide the popup by default */
+        position: fixed; /* Position the popup relative to the viewport */
+        top: 50%; /* Center the popup vertically */
+        left: 50%; /* Center the popup horizontally */
+        transform: translate(-50%, -50%); /* Center the popup precisely */
+        background-color: white;
+        padding: 20px;
+        border: 2px solid black;
+        z-index: 999; /* Ensure the popup is above other elements */
+    }
+    .deletePopup {
+        display: none; /* Hide the popup by default */
+        position: fixed; /* Position the popup relative to the viewport */
+        top: 50%; /* Center the popup vertically */
+        left: 50%; /* Center the popup horizontally */
+        transform: translate(-50%, -50%); /* Center the popup precisely */
+        background-color: white;
+        padding: 20px;
+        border: 2px solid black;
+        z-index: 999; /* Ensure the popup is above other elements */
+    }
     .editButtons {
+        height: 25px;
+        width: 25px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://cdn-icons-png.freepik.com/512/84/84380.png"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+    }
+
+    .editNickname {
         height: 25px;
         width: 25px;
         align-self: center;  /* used for the slight misalignment for edit buttons */
@@ -172,16 +207,23 @@
 
         <div id="EditProfile" class="tabcontent" >
 
-
-            <div style="display:flex; flex-direction:row; justify-content: space-between;">
-                <h3>Upload photo</h3>
-                <button class="editButtons">Edit</button>
-
-            </div>
-
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h3>Edit nickname</h3>
-                <button class="editButtons">Edit</button>
+                <button type="button" class="editButtons" onclick="popupToggler('editNickname')">Edit</button>
+                <div id="editNickname" class="popup">
+                    <form method="post" >
+                       <p>Current: {{ nickname }}</p>
+
+                       <label for="newNickname" class="label1">New nickname:</label>
+                       <input type="text" name="newNickname" class="loginboxes" required><br><br>
+
+                    <div style="display: flex; justify-content: space-between;">
+                        <button name="changedNickname" value="True" type="submit" id="untoggle" >Change</button>
+                        <button id="deleteAccount" formnovalidate>Cancel</button>
+                    </div>
+
+                    </form>
+                </div>
 
             </div>
 
@@ -191,25 +233,71 @@
         <div id="Settings" class="tabcontent" >
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h3>Edit password</h3>
-                <button type="button" class="editButtons">Edit</button>
+
+
+                <button type="button" class="editButtons" onclick="popupToggler('editPasswordPopup')">Edit</button>
+
+                <div id="editPasswordPopup" class="editPasswordPopup">
+                    <form method="post" >
+
+                      <label for="oldpassword" class="label1">Old password:</label>
+                      <input type="password" id="oldpassword" name="oldpassword" required><br><br>
+
+
+                      <label for="newpassword" class="label1">New password:</label>
+                      <input type="password" id="newpassword" name="newpassword" class="loginboxes" required><br><br>
+
+                       <label for="confirmnewpassword" class="label1">Confirm new password:</label>
+                       <input type="password" id="confirmnewpassword" name="confirmnewpassword" class="loginboxes" required><br><br>
+
+
+
+                    <div style="display: flex; justify-content: space-between;">
+                        <button name="changedPassword" value="True" type="submit" id="untoggle">Change</button>
+                        <button id="deleteAccount" formnovalidate>Cancel</button>
+                    </div>
+
+                    </form>
+
+                </div>
+
+
+
             </div>
+            {% if passwordNotSame %}
+                <p style="color: red; position: relative; top: -10px; font-size: 11px;">Error: Check your password</p>
+            {% endif %}
+            {% if not passwordNotSame and attemptedPasswordChange %}
+                <p style="color: blue; position: relative; top: -10px; font-size: 11px;">Successfully changed password</p>
+            {% endif %}
 
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h3>Edit phone number</h3>
-                <button class="editButtons">Edit</button>
+                <button type="button" class="editButtons" onclick="popupToggler('editPhoneNumber')">Edit</button>
+                <div id="editPhoneNumber" class="popup">
+
+                    <form method="post" >
+                       <p>Current: {{ phoneNumber }}</p>
+
+                       <label for="newNickname" class="label1">New phone number:</label>
+                       <input type="text" name="newPhoneNumber" class="loginboxes" required><br><br>
+
+                    <div style="display: flex; justify-content: space-between;">
+                        <button name="changedPhoneNumber" value="True" type="submit" id="untoggle">Change</button>
+                        <button id="deleteAccount" formnovalidate>Cancel</button>
+                    </div>
+
+                    </form>
+                </div>
+
             </div>
-            <!-- Button to trigger the popup -->
 
-            <div style="display:flex; flex-direction:row; justify-content: space-between;">
-                <button onclick="togglePopup()" id="deleteAccount">Delete account</button>
+            <div style="display:flex; flex-direction:row; justify-content: space-between;" >
+                <button onclick="popupToggler('deletePopup')" id="deleteAccount">Delete account</button>
             <!-- Popup content -->
-                <div id="popup" class="popup">
+                <div id="deletePopup" class="deletePopup" >
                     <h2>Are you sure? This action cannot be undone.</h2>
-    {#                #}
 
-    {#                <form method="post" >#}
-    {#                    <button type="submit" name="deleteAccount" id="deleteAccount"  value="True" >Delete account</button>#}
-    {#                </form>#}
                     <div>
                         <form method="post"  style="display: flex; justify-content: space-between;">
                             <button onclick="untogglePopup()" id="untoggle">I changed my mind</button>
@@ -243,11 +331,38 @@
         event.currentTarget.classList.add("active");
     }
 
-    function togglePopup() {
-        var popup = document.getElementById("popup");
-        popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";
+    function popupToggler(id) {
+        var popup = document.getElementById(id);
+        //                                                                                 IF:   TRUE       FALSE
+        popup.style.display = (popup.style.display === "none" || popup.style.display === "" ) ? "block" : "none";
+
     }
+    function refreshPage() {
+            // Reload the current page
+            location.reload();
+    }
+
+    {#function toggleDelete() {#}
+    {#    var popup = document.getElementById("deletePopup");#}
+    {#    popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";#}
+    {##}
+
+
+    {#function toggleEditPassword(){#}
+    {#    var popup = document.getElementById("editPasswordPopup");#}
+    {#    popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";#}
+
+    {#function togglePopupSubmit() {#}
+    {#    event.preventDefault();#}
+    {##}
+    {#    var popup = document.getElementById("popup");#}
+    {#    popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "block";#}
+    {##}
+
 </script>
 
 </body>
 </html>
+
+
+

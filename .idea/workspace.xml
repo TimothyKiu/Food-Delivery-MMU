@@ -4,12 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
+    <list default="true" id="07960bb2-8772-4dee-adee-bc4804c7b956" name="Changes" comment="" />
+=======
     <list default="true" id="07960bb2-8772-4dee-adee-bc4804c7b956" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/templates/settings.html" afterDir="false" />
+<<<<<<< HEAD
+      <change afterPath="$PROJECT_DIR$/bug.txt" afterDir="false" />
+=======
+>>>>>>> sql3
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/profile.html" afterDir="false" />
     </list>
+>>>>>>> aa21a03e08cff54f57b9f1474a6f340aaf104329
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -47,6 +53,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> sql3
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Flask server.GITHUB TEST.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.login.html.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.profile.html.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+<<<<<<< HEAD
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+=======
+    &quot;git-widget-placeholder&quot;: &quot;sql3&quot;,
+>>>>>>> sql3
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+<<<<<<< HEAD
+=======
+>>>>>>> aa21a03e08cff54f57b9f1474a6f340aaf104329
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "DefaultHtmlFileTemplate": "HTML File",
@@ -55,13 +89,23 @@
     "JavaScript Debug.profile.html.executor": "Run",
     "Python.main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "settings",
+<<<<<<< HEAD
+    "git-widget-placeholder": "main",
+=======
+    "git-widget-placeholder": "sql3",
+>>>>>>> aa21a03e08cff54f57b9f1474a6f340aaf104329
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
+<<<<<<< HEAD
+=======
+>>>>>>> sql3
+=======
+>>>>>>> sql3
+>>>>>>> aa21a03e08cff54f57b9f1474a6f340aaf104329
   }
 }]]></component>
   <component name="RunManager" selected="Flask server.GITHUB TEST">
@@ -100,7 +144,7 @@
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
@@ -133,6 +177,7 @@
       <workItem from="1714753716768" duration="596000" />
       <workItem from="1714919223453" duration="1404000" />
       <workItem from="1715066853851" duration="8789000" />
+      <workItem from="1715252746796" duration="953000" />
     </task>
     <servers />
   </component>
@@ -140,8 +185,16 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/GITHUB_TEST$Flask__main_py_.coverage" NAME="Flask (main.py) Coverage Results" MODIFIED="1714918962995" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/GITHUB_TEST$Flask__main_py_.coverage" NAME="Flask (main.py) Coverage Results" MODIFIED="1715255907144" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/GITHUB_TEST$main.coverage" NAME="main Coverage Results" MODIFIED="1714634200471" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GITHUB_TEST$GITHUB_TEST.coverage" NAME="GITHUB TEST Coverage Results" MODIFIED="1715185329834" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+<<<<<<< HEAD
+    <SUITE FILE_PATH="coverage/GITHUB_TEST$GITHUB_TEST.coverage" NAME="GITHUB TEST Coverage Results" MODIFIED="1715255951573" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+=======
+<<<<<<< HEAD
+    <SUITE FILE_PATH="coverage/GITHUB_TEST$GITHUB_TEST.coverage" NAME="GITHUB TEST Coverage Results" MODIFIED="1715253457197" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+=======
+    <SUITE FILE_PATH="coverage/GITHUB_TEST$GITHUB_TEST.coverage" NAME="GITHUB TEST Coverage Results" MODIFIED="1715255599681" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+>>>>>>> sql3
+>>>>>>> aa21a03e08cff54f57b9f1474a6f340aaf104329
   </component>
 </project>

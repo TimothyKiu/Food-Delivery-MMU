@@ -1,5 +1,7 @@
-from flask import Flask, request, session
+from flask import Flask, request, render_template
 import mysql.connector
+
+# ALLOWED_HOSTS = ['127.0.0.1']
 
 #NOTE: STOP RUNNING PYTHON WHENEVER YOU WANNA ALTER SQL TABLES
 db = mysql.connector.connect(
@@ -9,26 +11,27 @@ db = mysql.connector.connect(
     database='customer'
 )
 
-mycursor = db.cursor(buffered=True)
-
 app = Flask(__name__)
 
+@app.route('/menu')
+def menu():
+    return render_template('menu.html')
 
-@app.route('/cart.py/remarks', methods=['POST'])
-def remarks():
+@app.route('/submit_remarks', methods=['POST'])
+def submit_remarks():
     if request.method == 'POST':
 
-        remark = request.form.get('remark')
-
+        remarks = request.form.get('remarks')
+        # exec(remarks)
         cursor = db.cursor()
-        cursor.execute("INSERT INTO customer (customer_name) VALUES (%s)", (remark))
+        cursor.execute("INSERT INTO customer (customer_name) VALUES (%s)", (remarks))
         db.commit()
     return 'success' 
 
 
-@app.route('/')
-def home():
-    return 'Cart Backend'  
+# @app.route('/')
+# def home():
+#     return 'Cart Backend'  
 
 
 # @app.route('/addtocart', methods=['POST'])
@@ -72,4 +75,6 @@ def home():
     
 #     return f"Cart contains: {cart_items}"
 
-app.run(debug=False)
+
+if __name__ == '__main__':
+    app.run('0.0.0.0' , debug=True)

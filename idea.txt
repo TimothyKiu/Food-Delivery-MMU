@@ -1,18 +1,7 @@
-User: - create account, delete account, login, logout, user ratings
-Customer – view menu, add/remove from shopping cart/remarks/select location
-Runner - Accept order, confirm order
-
-Note: Menu is now in the customer page, and is interactive, it works like a tally 
-counter for each item
-Extra features: - Deliver fees depends on weather and distance, notify user when 
-runner is 5 mins away, live runner location
-
-Timothy: Login page, user features
-Chan: Customer ordering page
-Keyon: Runner accept order page, extra features
-
 参考
 页面排版[https://www.vecteezy.com/vector-art/7861335-food-delivery-ui-design-template-vector-mobile-app-user-interface-design-concept]
+
+
 
 可以放runner page，
 
