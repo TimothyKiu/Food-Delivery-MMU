@@ -4,7 +4,7 @@
 <head>
     <title>Food_Delivery_MMU</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
@@ -28,14 +28,16 @@
               <li>
                 Rice - Ingredients
 
-                <form action="/submit_remarks" method="post">
+                <form action="/add_to_cart" method="post">
                   <label for="remarks">Customer Remarks:</label>
                   <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
                   <button type="submit">Submit Remarks</button>
                 </form>
 
-                <button class="button" onclick="addtocart('Rice', 1.00)">Add to Cart</button>
-              </li>
+                <form action="/add_to_cart" method="post">
+                  <button type="submit" value="Rice, RM1">Add to Cart</button>
+                </form>
+                </li>
               <li>
                 Mee - Ingredients
 
@@ -50,13 +52,6 @@
               </li>
             </ul>
         </div>
-
-        <script>
-            function addtocart(itemName, itemPrice) {
-              // Placeholder function to simulate adding to cart
-              console.log(`Adding ${itemName} to the cart with price ${itemPrice}`);
-            }
-          </script>
 
     </main>
 
