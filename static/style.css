@@ -6,17 +6,16 @@
 
 .header {
   padding: 6px;
-  background: #9f77a7;
+  background: #9f77a7; 
   color: rgb(212, 215, 186);
   font-size: 20px;
   min-height: 0px; 
 }
 
 .header, .footer {
-  background-image: url('background.jpg');
+  /* background-image: url('/images/background.jpg'); */
   background-size: cover; 
   background-position: center; 
-  background-repeat: no-repeat; 
   color: white; 
   padding: 20px; 
   text-align: center; 
@@ -78,7 +77,8 @@
   display: block; /* Show when targeted */
 }
 
-#cart-list {
+#cart-list
+,.total {
   font-style: sans-serif;
   font-size: 20px;
   color: black;

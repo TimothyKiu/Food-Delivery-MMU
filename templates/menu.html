@@ -11,6 +11,7 @@
     <header class="header">
         <h1 id="title">Food Delivery MMU</h1> 
 
+
         <form action="/templates/restaurant.html" method="get" class="searchbar">
             <input type="search" name="query" placeholder="Type the restaurant name." />
             <button type="submit">🔍</button>
@@ -31,21 +32,21 @@
                 <form action="/add_to_cart" method="post">
                   <label for="remarks">Customer Remarks:</label>
                   <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
-                  <button type="submit">Submit Remarks</button>
+                  <button type="submit" class="button">Add to Cart</button>
                 </form>
 
-                <form action="/add_to_cart" method="post">
-                  <button type="submit" value="Rice, RM1">Add to Cart</button>
-                </form>
+                
+                  
+                
                 </li>
               <li>
                 Mee - Ingredients
 
-                <form action="/submit_remarks" method="post">
+                <!-- <form action="/add_to_cart" method="post">
                   <label for="remarks">Customer Remarks:</label>
-                  <textarea id="remarks" name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+                  <textarea name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
                   <button type="submit">Submit Remarks</button>
-                </form>
+                </form> -->
 
 
                 <button class="button" onclick="addtocart('Mee', 2.00)">Add to Cart</button>
@@ -58,21 +59,30 @@
     <footer class="footer">
         <nav>
             <a href="#cart" class="cart-button">🛒 <span class="cart-number">3</span></a>
-            <a href="#home">Home</a>
+            <a href="#templates/home.html">Home</a>
             <a href="#templates/restaurant.html">Restaurant</a>
             <a href="#profile">Profile</a>
         </nav>
 
         <div id="cart">
             <a href="#close" class="close-button">✖</a>
-            <h2>Order Cart</h2>
+            <h2 id ="cart-list">Order Cart</h2>
             <ul>
-              <li id="cart-list">1 - RM1.00</li>
-              <li id="cart-list">2 - RM2.00</li>
-              <li id="cart-list">3 - RM3.00</li>
+              {% for remark in remarks %}
+              <li id="cart-list">{{ remark }}</li> 
+              {% endfor %}
+              
             </ul>
             <div class="total">Total: $60.00</div>
-            <button class="checkout">Checkout</button>
+ 
+            <form action="/add_to_cart" method="post">
+              <label for="remarks">Customer Remarks:</label>
+              <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+              <button type="submit" class="checkout">Checkout</button>
+
+              <!-- <button type="submit">Submit Remarks</button> -->
+            </form>
+
           </div>
 
     </footer>
