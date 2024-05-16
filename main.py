@@ -110,15 +110,11 @@ def accountcreatedsuccess():
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-
     print(session.get('loggedIn'))
 
     if session.get('loggedIn') == True:
         usernameP = session.get('username')
         loggedIn = session.get('loggedIn')
-
-
-
 
         errorText = "placeholder"
 
@@ -134,8 +130,38 @@ def profile():
         # Execute the SQL query with the username and password as parameters
         # This is where user enters his credentials in the HTML page, the parameter values then are run into the
         # query, if it finds a match it returns something back, if not then it returns null
-        mycursor.execute(query, (usernameP,))
-        # Fetch the result (assuming only one row is expected)
+
+        query2 = "SELECT review_text, rating_given, timestamp FROM webDB.reviews WHERE user_name = %s"
+        mycursor.execute(query2, (usernameP,))
+        reviewsArray = mycursor.fetchall()
+        if reviewsArray:  # Check if ratingsArray is not empty
+            reviewsGiven = reviewsArray[0][0]
+            ratingsGiven = reviewsArray[0][1]
+            timestamp = reviewsArray[0][2]
+        else:
+            reviewText = "N/A"
+            ratingsGiven = "N/A"
+            timestamp = "N/A"
+
+        #Store each review tab in an array
+        reviewText = []
+        for i in range(len(reviewsArray)):
+            reviewText.append(reviewsArray[i][0])
+
+        reviewStars = []
+        for i in range(len(reviewsArray)):
+            reviewStars.append(reviewsArray[i][1])
+
+        timeStamps = []
+        for i in range(len(reviewsArray)):
+            timeStamps.append(reviewsArray[i][2])
+
+        for k in range(len(timeStamps)):
+            print(reviewStars[k])
+            print(reviewText[k])
+            print(timeStamps[k])
+
+        totalReviews = len(timeStamps)
 
         if request.method == 'POST':
             # Retrieve the value of the 'logOut' form field
@@ -170,7 +196,9 @@ def profile():
                 # if loggedOut == "True":
                 #     session['username'] = "You can't delete now! Youve already logged out..."
 
-        return render_template('profile.html', usernameP=usernameP, loggedIn=loggedIn, errorText=errorText, ratings=ratings)
+        return render_template('profile.html', usernameP=usernameP, loggedIn=loggedIn,
+                               errorText=errorText, ratings=ratings, reviewText=reviewText, reviewStars=reviewStars,
+                               timeStamps=timeStamps, totalReviews=totalReviews)
 
     else:
         return redirect(url_for("login"))
@@ -217,7 +245,6 @@ def settings():
         # Execute the SQL query with the username and password as parameters
         # This is where user enters his credentials in the HTML page, the parameter values then are run into the
         # query, if it finds a match it returns something back, if not then it returns null
-        mycursor.execute(query, (usernameP,))
         # Fetch the result (assuming only one row is expected)
 
         if request.method == 'POST':
