@@ -148,6 +148,8 @@ def profile():
         for i in range(len(reviewsArray)):
             reviewText.append(reviewsArray[i][0])
 
+        reviewSize = len(reviewText)
+
         reviewStars = []
         for i in range(len(reviewsArray)):
             reviewStars.append(reviewsArray[i][1])
@@ -198,7 +200,7 @@ def profile():
 
         return render_template('profile.html', usernameP=usernameP, loggedIn=loggedIn,
                                errorText=errorText, ratings=ratings, reviewText=reviewText, reviewStars=reviewStars,
-                               timeStamps=timeStamps, totalReviews=totalReviews)
+                               timeStamps=timeStamps, totalReviews=totalReviews, reviewSize=reviewSize)
 
     else:
         return redirect(url_for("login"))

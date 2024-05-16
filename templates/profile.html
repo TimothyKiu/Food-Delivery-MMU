@@ -160,12 +160,25 @@
         padding: 10px; /* Add padding to create space between content and border */
         margin-bottom: 10px; /* Add margin bottom to create space between boxes */
     }
-      .quickView {
+   .quickView {
           font-family: "Roboto Light";
           position: absolute;
           left: 50%;
           transform: translate(-50%, -50%);
-      }
+    }
+      .circle {
+       height: 60px;
+       width: 60px;
+       background-color: rgb(173, 216, 230);
+       border-radius: 50%;
+       display: inline-block;
+    }
+
+      .star {
+        font-size: 30px;
+        color: gold;
+        cursor: pointer;
+    }
 </style>
 </head>
 <body>
@@ -193,25 +206,48 @@
 
 
 
-
     <div id="superDiv">
+
         <h3>{{ usernameP }}</h3>
-        <h3>Average ratings: {{ ratings }}</h3>
-        <h3>Total reviews: {{ totalReviews }}</h3>
+        <h1>{{ ratings }} / 5.0</h1>
+        <h3>Total reviews given: {{ totalReviews }}</h3>
+
+
+     <button class="tabButton" onclick="openTab('ShowReviews')" style="display:flex; ">Show ratings</button>
+
     </div>
 
 
 
 
-     <button class="tabButton" onclick="openTab('ShowReviews')">Show ratings</button>
 {#     onLoad="openTab('ViewReviews')"#}
      <div id="ShowReviews" class="tabcontent" >
 
          <h4>Reviews:</h4>
          <div style="display:flex; flex-direction:column">
-         {% for i in range(999) %}
+
+{#         reviewSize was extracted from flask... #}
+         {% for i in range(reviewSize) %}
                 <div class="review-box">
-                    <p>Rating: {{ reviewStars[i] }} Stars </p>
+                    <div style="display:flex; flex-direction:row; ">
+                        <p>Rating: {{ reviewStars[i] }} Stars </p>
+
+                        {% if reviewStars[i] == 1 %}
+                            <label class="star" style="margin-left:20px">&#9733;</label>
+                        {% elif reviewStars[i] == 2 %}
+                            <label class="star" style="margin-left:20px">&#9733;&#9733;</label>
+                        {% elif reviewStars[i] == 3 %}
+                            <label class="star" style="margin-left:20px">&#9733;&#9733;&#9733;</label>
+                        {% elif reviewStars[i] == 4 %}
+                            <label class="star" style="margin-left:20px">&#9733;&#9733;&#9733;&#9733;</label>
+                        {% elif reviewStars[i] == 5 %}
+                            <label class="star" style="margin-left:20px">&#9733;&#9733;&#9733;&#9733;&#9733;</label>
+                        {% endif %}
+
+
+                    </div>
+
+
                     <p>Review: {{ reviewText[i] }} </p>
                     <p>Time: {{ timeStamps[i] }} </p>
                 </div>
