@@ -34,22 +34,17 @@
                   <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
                   <button type="submit" class="button">Add to Cart</button>
                 </form>
-
                 
-                  
-                
-                </li>
+              </li>
               <li>
                 Mee - Ingredients
 
-                <!-- <form action="/add_to_cart" method="post">
+                <form action="/add_to_cart" method="post">
                   <label for="remarks">Customer Remarks:</label>
                   <textarea name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
-                  <button type="submit">Submit Remarks</button>
-                </form> -->
+                  <button type="submit" class="button">Add to Cart</button>
+                </form>
 
-
-                <button class="button" onclick="addtocart('Mee', 2.00)">Add to Cart</button>
               </li>
             </ul>
         </div>
@@ -59,8 +54,8 @@
     <footer class="footer">
         <nav>
             <a href="#cart" class="cart-button">🛒 <span class="cart-number">3</span></a>
-            <a href="#templates/home.html">Home</a>
-            <a href="#templates/restaurant.html">Restaurant</a>
+            <a href="/home.html">Home</a>
+            <a href="/restaurant.html">Restaurant</a>
             <a href="#profile">Profile</a>
         </nav>
 
@@ -69,15 +64,15 @@
             <h2 id ="cart-list">Order Cart</h2>
             <ul>
               {% for remark in remarks %}
-              <li id="cart-list">{{ remark }}</li> 
+              <li id="cart-list">{{ remark[0] }}</li> 
               {% endfor %}
               
             </ul>
             <div class="total">Total: $60.00</div>
  
             <form action="/add_to_cart" method="post">
-              <label for="remarks">Customer Remarks:</label>
-              <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+              <!-- <label for="remarks">Customer Remarks:</label>
+              <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea> -->
               <button type="submit" class="checkout">Checkout</button>
 
               <!-- <button type="submit">Submit Remarks</button> -->
