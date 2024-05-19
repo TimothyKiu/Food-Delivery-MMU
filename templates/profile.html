@@ -213,7 +213,7 @@
         <h3>Total reviews given: {{ totalReviews }}</h3>
 
 
-     <button class="tabButton" onclick="openTab('ShowReviews')" style="display:flex; ">Show ratings</button>
+     <button class="tabButton" onclick="openTab('ShowReviews')" style="display:flex; ">Show Ratings</button>
 
     </div>
 
@@ -230,7 +230,8 @@
          {% for i in range(reviewSize) %}
                 <div class="review-box">
                     <div style="display:flex; flex-direction:row; ">
-                        <p>Rating: {{ reviewStars[i] }} Stars </p>
+{#                        <p>Rating: {{ reviewStars[i] }} Star </p>#}
+                        <p>Rating:</p>
 
                         {% if reviewStars[i] == 1 %}
                             <label class="star" style="margin-left:20px">&#9733;</label>
@@ -246,10 +247,10 @@
 
 
                     </div>
+                    <p>{{ reviewText[i] }} </p>
+                    <p style="font-size:10px; margin-top:5%">{{ timeStamps[i] }} </p>
 
 
-                    <p>Review: {{ reviewText[i] }} </p>
-                    <p>Time: {{ timeStamps[i] }} </p>
                 </div>
 
          {% endfor %}

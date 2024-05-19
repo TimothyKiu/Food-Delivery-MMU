@@ -43,6 +43,11 @@ def register():
     registerlogic = registerLogic()
     return registerlogic.register(session, users, db, mycursor)
 
+
+@app.route('/otherratings', methods=['GET', 'POST'])
+def otherratings():
+
+    return "x"
 #DO NOT STORE SESSION VARIABLES AS SELF VARIABLES
 #This is where the template will be stored in the url
 @app.route('/ratings', methods=['GET', 'POST'])
