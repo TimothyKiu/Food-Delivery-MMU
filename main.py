@@ -70,15 +70,16 @@ def otherratings():
             mycursor.execute(getInfo, (usernameP,))
             infoArray = mycursor.fetchall()
 
-            if infoArray[0][0] == None:
-                nickname = "Not set"
-            else:
-                nickname = infoArray[0][0]
-            if infoArray[0][1] == None:
-                phone_number = "Not set"
-            else:
-                phone_number = infoArray[0][1]
-            user_name = infoArray[0][2]
+            if len(infoArray) > 0:
+                if infoArray[0][0] == None:
+                    nickname = "Not set"
+                else:
+                    nickname = infoArray[0][0]
+                if infoArray[0][1] == None:
+                    phone_number = "Not set"
+                else:
+                    phone_number = infoArray[0][1]
+                user_name = infoArray[0][2]
 
 
 
