@@ -231,15 +231,21 @@
          <label for="username" class="boxtitles">Look for user:</label>
         <input type="text" id="username" name="username" class="loginboxes" required><br><br>
         </form>
+
         <h3>{{ usernameP }}</h3>
 
         <h1>{{ ratings }} / 5.0</h1>
         <h3>Total reviews given: {{ totalReviews }}</h3>
 
-
      <button class="tabButton" onclick="openTab('ShowReviews')" style="display:flex; ">Show Ratings</button>
 
     </div>
+     <ul>
+         <li>Username : {{ user_name }}</li>
+         <li>Nickname : {{ nickname }}</li>
+         <li>Phone number {{ phone_number }}</li>
+     </ul>
+
 
 
 

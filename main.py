@@ -57,10 +57,29 @@ def otherratings():
         reviewSize = len(reviewText)
         ratings = "N/A"
 
+        nickname = "N/A"
+        phone_number = "N/A"
+        user_name = "N/A"
+
         if request.method == 'POST':
 
             username = request.form['username']
             usernameP = username
+
+            getInfo = "SELECT nickname, phone_number, user_name FROM webDB.registeredAccounts WHERE user_name = %s"
+            mycursor.execute(getInfo, (usernameP,))
+            infoArray = mycursor.fetchall()
+
+            if infoArray[0][0] == None:
+                nickname = "Not set"
+            else:
+                nickname = infoArray[0][0]
+            if infoArray[0][1] == None:
+                phone_number = "Not set"
+            else:
+                phone_number = infoArray[0][1]
+            user_name = infoArray[0][2]
+
 
 
 
@@ -125,7 +144,8 @@ def otherratings():
 
         return render_template('otherratings.html', usernameP=usernameP,
                                 ratings=ratings, reviewText=reviewText, reviewStars=reviewStars,
-                               timeStamps=timeStamps, totalReviews=totalReviews, reviewSize=reviewSize)
+                               timeStamps=timeStamps, totalReviews=totalReviews, reviewSize=reviewSize,
+                               nickname=nickname, phone_number=phone_number, user_name=user_name,)
 
     else:
         return redirect(url_for("login"))
