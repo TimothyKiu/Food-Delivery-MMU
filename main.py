@@ -46,8 +46,91 @@ def register():
 
 @app.route('/otherratings', methods=['GET', 'POST'])
 def otherratings():
+    if session.get('loggedIn') == True:
 
-    return "x"
+        usernameP = "Search for reviews"
+
+        reviewText = []
+        timeStamps = []
+        totalReviews = len(timeStamps)
+        reviewStars = []
+        reviewSize = len(reviewText)
+        ratings = "N/A"
+
+        if request.method == 'POST':
+
+            username = request.form['username']
+            usernameP = username
+
+
+
+            # Retrieve the value of the 'logOut' form field
+            query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
+            mycursor.execute(query, (username,))
+            ratingsArray = mycursor.fetchall()
+
+            if ratingsArray:  # Check if ratingsArray is not empty
+                ratings = round(float(ratingsArray[0][0]), 2)
+            else:
+                ratings = "N/A"
+
+            # Execute the SQL query with the username and password as parameters
+            # This is where user enters his credentials in the HTML page, the parameter values then are run into the
+            # query, if it finds a match it returns something back, if not then it returns null
+
+            query2 = "SELECT review_text, rating_given, timestamp FROM webDB.reviews WHERE user_name = %s"
+            mycursor.execute(query2, (username,))
+            reviewsArray = mycursor.fetchall()
+            if reviewsArray:  # Check if ratingsArray is not empty
+                reviewsGiven = reviewsArray[0][0]
+                ratingsGiven = reviewsArray[0][1]
+                timestamp = reviewsArray[0][2]
+            else:
+                reviewText = "N/A"
+                ratingsGiven = "N/A"
+                timestamp = "N/A"
+
+            # Store each review tab in an array
+
+            for i in range(len(reviewsArray)):
+                reviewText.append(reviewsArray[i][0])
+
+            reviewSize = len(reviewText)
+
+            reviewStars = []
+            for i in range(len(reviewsArray)):
+                reviewStars.append(reviewsArray[i][1])
+
+            timeStamps = []
+            for i in range(len(reviewsArray)):
+                timeStamps.append(reviewsArray[i][2])
+
+            for k in range(len(timeStamps)):
+                print(reviewStars[k])
+                print(reviewText[k])
+                print(timeStamps[k])
+
+            totalReviews = len(timeStamps)
+
+            loggedOut = request.form.get('logOut')
+            deleteAccount = request.form.get('deleteAccount')
+
+            noLoginYet = "You haven't logged in!"
+            accountDeleted = "Account successfully deleted..."
+
+
+                # DO NOT DO THIS, THIS DIRECTLY TAMPERS THE CODE, USE HTML/JS
+                # if loggedOut == "True":
+                #     session['username'] = "You can't delete now! Youve already logged out..."
+
+        return render_template('otherratings.html', usernameP=usernameP,
+                                ratings=ratings, reviewText=reviewText, reviewStars=reviewStars,
+                               timeStamps=timeStamps, totalReviews=totalReviews, reviewSize=reviewSize)
+
+    else:
+        return redirect(url_for("login"))
+
+    return render_template("otherratings.html")
 #DO NOT STORE SESSION VARIABLES AS SELF VARIABLES
 #This is where the template will be stored in the url
 @app.route('/ratings', methods=['GET', 'POST'])
