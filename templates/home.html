@@ -9,8 +9,8 @@
 <body>
     <header class="header">
         <h1 id="title">Food Delivery MMU</h1> 
-<!-- 
-        <form action="/templates/restaurant.html" method="get" class="searchbar">
+
+<!--    <form action="/templates/restaurant.html" method="get" class="searchbar">
             <input type="search" name="query" placeholder="Type the restaurant name." />
             <button type="submit">🔍</button>
         </form> -->
@@ -21,28 +21,36 @@
     </header>
 
     <main class="main">
-       
+        <nav>
+            <a href="deen.html">DEEN</a><br>
+            <a href="htc.html">HTC</span></a><br>
+            <a href="dlight_bakery.html">D'LIGHT_BAKERY</a><br>
+        </nav>
 
     </main>
     
     <footer class="footer">
         <nav>
             <a href="#cart" class="cart-button">🛒 <span class="cart-number">3</span></a>
-            <a href="#home">Home</a>
-            <a href="#CustomerInterface/restaurant.html">Restaurant</a>
-            <a href="#profile">Profile</a>
+            <a href="/templates/home.html">Home</a>
+            <a href="/templates/profile.html">Profile</a>
         </nav>
 
         <div id="cart">
             <a href="#close" class="close-button">✖</a>
-            <h2>Order Cart</h2>
+            <h2 id ="cart-list">Order Cart</h2>
             <ul>
-              <li id="cart-list">1 - RM1.00</li>
-              <li id="cart-list">2 - RM2.00</li>
-              <li id="cart-list">3 - RM3.00</li>
+              {% for remark in remarks %}
+              <li id="cart-list">{{ remark[0] }}</li> 
+              {% endfor %}
+              
             </ul>
             <div class="total">Total: $60.00</div>
-            <button class="checkout">Checkout</button>
+ 
+            <form action="/add_to_cart" method="post">
+              <button type="submit" class="checkout">Checkout</button>
+
+            </form>
           </div>
 
     </footer>

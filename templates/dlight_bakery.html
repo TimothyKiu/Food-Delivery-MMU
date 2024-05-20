@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Food_Delivery_MMU</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1 id="title">D'LIGHT BAKERY</h1> 
+
+        <form action="/templates/restaurant.html" method="get" class="searchbar">
+            <input type="search" name="query" placeholder="Type the food name." />
+            <button type="submit">🔍</button>
+        </form>
+        
+        
+        <h2>Hello, <br><i>username</i></h2>
+        
+    </header>
+
+    <main class="main">
+        {% for item in items %}
+        <div class="menu-item">
+            <h2>{{ item.name }} - RM{{ item.price }}</h2>
+            <form action="/add_to_cart" method="post">
+                <input type="hidden" name="item_name" value="{{ item.name }}">
+                <input type="hidden" name="item_price" value="{{ item.price }}">
+                <button type="submit">Add</button>
+            </form>
+            <form action="/remove_from_cart" method="post">
+                <input type="hidden" name="item_name" value="{{ item.name }}">
+                <button type="submit" class="remove">Remove</button>
+            </form>
+            <textarea readonly class="textarea">{{ cart[item.name]['quantity'] if item.name in cart else 0 }}</textarea>
+            <form action="/update_remarks" method="post">
+                <input type="hidden" name="item_name" value="{{ item.name }}">
+                <textarea name="remarks" rows="4" cols="50" placeholder="Enter your remarks here">{{ cart[item.name]['remarks'] if item.name in cart else '' }}</textarea>
+                <button type="submit">Submit Remarks</button>
+            </form>
+        </div>
+        {% endfor %}
+
+    </main>
+    
+    <footer class="footer">
+        <nav>
+            <a href="#cart" class="cart-button">🛒 <span class="cart-number">3</span></a>
+            <a href="/templates/home.html">Home</a>
+            <a href="/templates/profile.html">Profile</a>
+        </nav>
+
+        <div id="cart">
+            <a href="#close" class="close-button">✖</a>
+            <h2 id ="cart-list">Order Cart</h2>
+            <ul>
+              {% for remark in remarks %}
+              <li id="cart-list">{{ remark[0] }}</li> 
+              {% endfor %}
+              
+            </ul>
+            <div class="total">Total: $60.00</div>
+ 
+            <form action="/add_to_cart" method="post">
+              <button type="submit" class="checkout">Checkout</button>
+
+            </form>
+          </div>
+
+    </footer>
+</body>
+</html>

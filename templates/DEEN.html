@@ -8,12 +8,12 @@
 </head>
 <body>
     <header class="header">
-        <h1 id="title">Food Delivery MMU</h1> 
-<!-- 
+        <h1 id="title">DEEN</h1> 
+
         <form action="/templates/restaurant.html" method="get" class="searchbar">
-            <input type="search" name="query" placeholder="Type the restaurant name." />
+            <input type="search" name="query" placeholder="Type the food name." />
             <button type="submit">🔍</button>
-        </form> -->
+        </form>
         
         
         <h2>Hello, <br><i>username</i></h2>
@@ -21,28 +21,232 @@
     </header>
 
     <main class="main">
-       
+        <div class="menu">
+        <h2>WESTERN FOOD</h2>
+        <ul>
+          <li value="CHIKEN CHOP COMBO RICE">CHIKEN CHOP COMBO RICE - RM7.00
+          </li>
+          <li>CHIKEN CHOP COMBO FRIED RICE - RM8.50
+            <form action="/add_to_cart" method="post">
+                <label for="remarks">Customer Remarks:</label>
+                <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+                <button type="submit" class="button">Add to Cart</button>
+              </form>
+          </li>
+          <li>ROTI BAKAR - RM1.50
+            <form action="/add_to_cart" method="post">
+                <label for="remarks">Customer Remarks:</label>
+                <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+                <button type="submit" class="button">Add to Cart</button>
+              </form>
+          </li>
+          <li>SANDWICH AYAM - RM2.50
+            <form action="/add_to_cart" method="post">
+                <label for="remarks">Customer Remarks:</label>
+                <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+                <button type="submit" class="button">Add to Cart</button>
+              </form>
+          </li>
+          <li>SANDWICH SARDIN - RM2.50
+            <form action="/add_to_cart" method="post">
+                <label for="remarks">Customer Remarks:</label>
+                <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+                <button type="submit" class="button">Add to Cart</button>
+              </form>
+          </li>
+          <li value="ROTI JOHN">ROT JOHN - RM5.00
+            <form action="/add_to_cart" method="post">
+                <label for="remarks">Customer Remarks:</label>
+                <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+                <button type="submit" class="button">Add to Cart</button>
+              </form>
+          </li>
+          <li>FRIES - RM5.00
+            <form action="/add_to_cart" method="post">
+                <label for="remarks">Customer Remarks:</label>
+                <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+                <button type="submit" class="button">Add to Cart</button>
+              </form>
+          </li>
+          <li>WET FRIES - RM5.00
+            <form action="/add_to_cart" method="post">
+                <label for="remarks">Customer Remarks:</label>
+                <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+                <button type="submit" class="button">Add to Cart</button>
+              </form>
+          </li>
+          <li>FISH & CHIPS - RM11.00
+            <form action="/add_to_cart" method="post">
+                <label for="remarks">Customer Remarks:</label>
+                <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+                <button type="submit" class="button">Add to Cart</button>
+              </form>
+          </li>
+          <li>CHIKEN CHOP (REGULAR) - RM12.00
+            <form action="/add_to_cart" method="post">
+                <label for="remarks">Customer Remarks:</label>
+                <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+                <button type="submit" class="button">Add to Cart</button>
+              </form>
+          </li>
+          <li>CHIKEN GRILL - RM15.00
+            <form action="/add_to_cart" method="post">
+                <label for="remarks">Customer Remarks:</label>
+                <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+                <button type="submit" class="button">Add to Cart</button>
+              </form>
+          </li>
+          <li>LAMB CHOP - RM18.00
+            <form action="/add_to_cart" method="post">
+                <label for="remarks">Customer Remarks:</label>
+                <textarea  name="remarks" rows="4" cols="50" placeholder="Enter your remarks here"></textarea>
+                <button type="submit" class="button">Add to Cart</button>
+              </form>
+          </li>
+        </ul>
+
+        <h2>FRIED NOODLES</h2>
+        <ul>
+          <li>KUEY TIAU GORENG - RM5.00</li>
+          <li>BIHUN GORENG - RM5.00</li>
+          <li>BIHUN SINGAPORE - RM5.00</li>
+          <li>MEE GORENG - RM5.00</li>
+          <li>MEE GORENG MAMAK - RM5.00</li>
+          <li>MAGGIE GORENG - RM5.00</li>
+          <li>YEE MEE GORENG - RM6.00</li>
+          <li>HOKKIEN MEE - RM6.00</li>
+          <li>MAGGIE GORENG XL - RM7.00</li>
+        </ul>
+
+        <h2>CHINESE STYLE</h2>
+        <ul>
+          <li>NASI BUTTER CHICKEN - RM8.00</li>
+          <li>NASI BUTTER FISH - RM8.00</li>
+          <li>NASI BUTTER PRAWN - RM9.00</li>
+          <li>NASI BUTTER SQUID - RM9.00</li>
+          <li>NASI BUTTER CAMPUR - RM10.00</li>
+          <li>NASI BUTTER MILK (CN) - RM10.00</li>
+        </ul>
+
+        <h2>TOM YAM SOUP+RICE</h2>
+        <ul>
+          <li>CENDAWAN - RM7.00</li>
+          <li>AYAM - RM7.00</li>
+          <li>DAGING - RM8.00</li>
+          <li>SEA FOOD - RM8.00</li>
+          <li>CAMPUR - RM8.00</li>
+        </ul>
+
+        <h2>SOUP</h2>
+        <ul>
+          <li>MAGGIE SOUP -RM5.00 </li>
+          <li>KUEY TIAU SOUP - RM5.00</li>
+          <li>BIHUN SOUP - RM5.00</li>
+          <li>VEGETARIAN + NASI - RM6.00</li>
+          <li>CENDAWAN + NASI - RM6.00</li>
+          <li>AYAM + NASI - RM6.00</li>
+          <li>DAGING + NASI - RM7.00</li>
+          <li>KAMBING + NASI - RM10.00</li>
+        </ul>
+
+        <h2>NASI GORENG / FRIED RICE</h2>
+        <ul>
+          <li>NASI GORENG BIASA - RM5.00</li>
+          <li>NASI GORENG KAMPUNG - RM6.00</li>
+          <li>NASI GORENG CINA - RM5.00</li>
+          <li>NASI GORENG MAMAK - RM5.00</li>
+          <li>NASI GORENG TELUR (EGG) - RM5.00</li>
+          <li>NASI GORENG CILI API - RM5.00</li>
+          <li>NASI GORENG SAUSAGE - RM5.00</li>
+          <li>NASI GORENG TOMYAM - RM6.00</li>
+          <li>NASI GORENG SARDIN - RM6.00</li>
+          <li>NASI GORENG PATTAYA - RM6.00</li>
+          <li>NASI GORENG IKAN MASIN - RM6.00</li>
+          <li>NASI GORENG TOMATO - RM6.00</li>
+          <li>NASI GORENG CENDAWAN - RM6.00</li>
+          <li>NASI GORENG DAGING - RM7.00</li>
+          <li>NASI GORENG SEA FOOD - RM7.00</li>
+          <li>NASI GORENG AYAM (CHICKEN) - RM8.00</li>
+          <li>NASI GORENG PAPRIK AYAM - RM8.00</li>
+          <li>NASI GORENG MSA (EGG) - RM9.00</li>
+          <li>NASI GORENG THAI - RM9.00</li>
+          <li>NASI GORENG KAMBING - RM12.00</li>
+        </ul>
+
+        <h2>PASTA SPECIAL</h2>
+        <ul>
+          <li>CARBONARA - RM10.00</li>
+          <li>CHICKEN ALFREDO - RM10.00</li>
+          <li>BOLONESE - RM10.00</li>
+          <li>PASTA VEGETARIAN - RM10.00</li>
+          <li>MARINARA - RM12.00</li>
+          <li>CHICKEN SPICY - RM12.00</li>
+        </ul>
+        
+        <h2>HOT PLATE</h2>
+        <ul>
+          <li>CHAR KUEY TIAU - RM6.00</li>
+          <li>SIZZLING RICE - RM6.00</li>
+          <li>MEE BANDUNG - RM6.00</li>
+          <li>SIZZLING YEE MEE - RM6.00</li>
+          <li>CANTONESE YEE MEE - RM7.00</li>
+          <li>CANTONESE JUEY TIAU - RM7.00</li>
+          <li>YING YONG - RM8.00</li>
+        </ul>
+
+        <h2>BEVERAGES</h2>
+        <ul>
+          <li>TEH TARIK - </li>
+          <li>TEH O - </li>
+          <li>TEH O LIMAU - </li>
+          <li>TEH O LAICI - </li>
+          <li>NESCAFE - </li>
+          <li>NESCAFE O - </li>
+          <li>NESLO - </li>
+          <li>WHITE COFFEE - </li>
+          <li>KOPI - </li>
+          <li>KOPI O - </li>
+          <li>MILO - </li>
+          <li>MILO O - </li>
+          <li>BARLEY - </li>
+          <li>HORLICKS - </li>
+          <li>LIMAU PANAS - </li>
+          <li>LAICI - </li>
+          <li>SIRAP BANDUNG - </li>
+        </ul>
+
+        <h2>FRUIT JUICE</h2>
+        <ul>
+          <li>ORANGE JUICE - </li>
+          <li>APPLE JUICE - </li>
+          <li>WATERMELON JUICE - </li>
+          <li>EXTRA JASS - </li>
+          <li>CARROT JUICE - </li>
 
     </main>
     
     <footer class="footer">
         <nav>
             <a href="#cart" class="cart-button">🛒 <span class="cart-number">3</span></a>
-            <a href="#home">Home</a>
-            <a href="#CustomerInterface/restaurant.html">Restaurant</a>
-            <a href="#profile">Profile</a>
+            <a href="/templates/home.html">Home</a>
+            <a href="/templates/profile.html">Profile</a>
         </nav>
 
         <div id="cart">
             <a href="#close" class="close-button">✖</a>
-            <h2>Order Cart</h2>
+            <h2 id ="cart-list">Order Cart</h2>
             <ul>
-              <li id="cart-list">1 - RM1.00</li>
-              <li id="cart-list">2 - RM2.00</li>
-              <li id="cart-list">3 - RM3.00</li>
+              {% for remark in remarks %}
+              <li id="cart-list">{{ remark[0] }}</li> 
+              {% endfor %}
+              
             </ul>
             <div class="total">Total: $60.00</div>
-            <button class="checkout">Checkout</button>
+ 
+            <form action="/add_to_cart" method="post">
+              <button type="submit" class="checkout">Checkout</button>
+
+            </form>
           </div>
 
     </footer>

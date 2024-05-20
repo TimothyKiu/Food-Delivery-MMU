@@ -25,6 +25,17 @@ def menu():
 def home():
     return render_template('home.html')
 
+@app.route('/deen', methods=['GET']) 
+def deen():
+    return render_template('deen.html')
+
+@app.route('/htc', methods=['GET']) 
+def htc():
+    return render_template('htc.html')
+
+@app.route('/bakery', methods=['GET']) 
+def bakery():
+    return render_template('dlight_bakery.html')
 
 @app.route('/add_to_cart', methods=['POST', 'GET']) 
 def add_to_cart():
