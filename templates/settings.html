@@ -163,6 +163,21 @@
         cursor: pointer; /* Change cursor to pointer */
 
     }
+     #profileicon {
+        height: 30px;
+        width: 30px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://www.mcdelivery.com.sg/sg/static/1646641918821/assets/00/img/icon_profile_gray.png"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+        background-color: transparent;
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+
+    }
 </style>
 </head>
 <body>
@@ -177,7 +192,8 @@
 
 
          <div style="display:flex; flex-direction:row;">
-             <button id="settingsicon" style="margin: 21px;"></button>
+             <button id="profileicon" onclick="redirectToProfile()" style="margin: 21px;"></button>
+             <button id="settingsicon"   style="margin: 21px;"></button>
              <form method="post" id="logoutForm">
                 <button id="logouticon" type="submit" name="logOut" value="True" style="margin-left: 21px;"></button>
     {#                <button class="tabButton" type="submit" name="logOut" id="logOut" value="True" >Log Out</button>#}
@@ -192,7 +208,6 @@
         <h3 id="settingsText">Hi, {{ usernameP }}</h3>
         <!-- Button container -->
         <div id="buttonContainer">
-            <button class="tabButton" onclick="openTab('ViewDashboard')">Dashboard</button>
             <button class="tabButton" onclick="openTab('EditProfile')">Edit Profile</button>
             <button class="tabButton" onclick="openTab('Settings')">Security</button>
 
@@ -200,10 +215,7 @@
 
         <h3 id="accountInfo">Account Info:</h3>
 
-        <div id="ViewDashboard" class="tabcontent">
-            <h3>Ratings: {{ ratings }}</h3>
-            <!-- Add content related to viewing dashboard here -->
-        </div>
+
 
         <div id="EditProfile" class="tabcontent" >
 
@@ -340,6 +352,9 @@
     function refreshPage() {
             // Reload the current page
             location.reload();
+    }
+    function redirectToProfile() {
+            window.location.href = 'profile';
     }
 
     {#function toggleDelete() {#}

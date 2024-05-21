@@ -1,0 +1,4 @@
+TEH TARIK, 5.0, 3, 
+COFFEE, 0.0, 1, 
+BANANA BAR, 3.8, 1, 
+ESPRESSO, 5.5, 1, 
