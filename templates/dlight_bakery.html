@@ -16,7 +16,7 @@
         </form>
         
         
-        <h2>Hello, <br><i>username</i></h2>
+        <h2>Hello <br><i>{{ username }}</i></h2>
         
     </header>
 
@@ -49,9 +49,24 @@
                 <button type="submit">Update Remarks</button>
             </form>
 
-            <p>In Cart: {{ selected_item['quantity'] if selected_item['name'] in cart else 0 }}</p>
+            <p>In Cart: {{ cart[selected_item['name']]['quantity'] if selected_item['name'] in cart else 0 }}</p>
         {% endif %}
+    
+        <script>
+            // Store the initial scroll position
+            const initialScrollPosition = window.scrollY;
+            console.log('Initial scroll position:', initialScrollPosition);
+        
+            // Restore the scroll position after form submission
+            window.addEventListener('load', () => {
+                console.log('Restoring scroll position to:', initialScrollPosition);
+                window.scrollTo(0, initialScrollPosition);
+            });
+        </script>
+    
+
     </main>
+
     
     <footer class="footer">
         <nav>
