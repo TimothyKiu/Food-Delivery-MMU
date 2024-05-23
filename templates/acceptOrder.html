@@ -5,6 +5,22 @@
     <title>Title</title>
 </head>
 <body>
+    <p>Pending orders:</p>
+    {% for i in range(orderSize) %}
+                <div class="review-box">
+                    <div style="display:flex; flex-direction:row; ">
+                        <p>Active order from: {{ currentOrders[i] }} </p>
 
+
+
+                    </div>
+                    <form method="post">
+                        <button class="acceptOrder" name="acceptOrder" value="{{ currentOrders[i] }}">Accept</button>
+                    </form>
+
+
+                </div>
+
+    {% endfor %}
 </body>
 </html>

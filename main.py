@@ -213,6 +213,7 @@ def ratingsent():
 @app.route('/sendOrder', methods=['GET', 'POST'])
 def sendOrder():
     customerName = session.get('username')
+    session.setdefault('orderSent', False)
 
     if request.method == 'POST':
         orderConfirmed = request.form['orderConfirmed']
@@ -220,6 +221,9 @@ def sendOrder():
             insert_query = "INSERT INTO webDB.orders (customerName) VALUES (%s)"
             mycursor.execute(insert_query, (customerName,))
             db.commit()  # Commit the transaction to save changes to the database
+
+            # session['orderSent'] = True
+
             #Generate order ID/ customerName
             return redirect(url_for("acceptOrder"))
 
@@ -228,8 +232,32 @@ def sendOrder():
 
 @app.route('/acceptOrder', methods=['GET', 'POST'])
 def acceptOrder():
+
+    if session["loggedAsRunner"]:
+        currentOrders = []
+        acceptOrder = None
+
+        query = "SELECT customerName FROM webDB.orders "
+        mycursor.execute(query, )
+        ordersArray = mycursor.fetchall()
+        db.commit()  # Commit the transaction to save changes to the database
+
+        for i in range(len(ordersArray)):
+            currentOrders.append(ordersArray[i][0])
+
+        orderSize = len(currentOrders)
+
+        acceptedOrder = request.form.get('acceptOrder')
+        print(acceptedOrder)
+
+
+
+        return render_template('acceptOrder.html', currentOrders=currentOrders
+                               ,orderSize=orderSize)
+
     #This is where the runner can see all the available orders that are ready to be accepted
-    return render_template('acceptOrder.html')
+    else:
+        return "You dont have access to this page"
 
 @app.route('/orderCompleted', methods=['GET', 'POST'])
 def orderCompleted():
