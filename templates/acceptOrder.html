@@ -6,12 +6,11 @@
 </head>
 <body>
     <p>Pending orders:</p>
+    NOTE: currentOrders[i] contains only the customerName
     {% for i in range(orderSize) %}
                 <div class="review-box">
                     <div style="display:flex; flex-direction:row; ">
                         <p>Active order from: {{ currentOrders[i] }} </p>
-
-
 
                     </div>
                     <form method="post">

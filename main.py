@@ -156,8 +156,9 @@ def otherratings():
 #This is where the template will be stored in the url
 @app.route('/ratings', methods=['GET', 'POST'])
 def ratings():
-    runnerName = request.form.get('runnerName')
+    currentRateableRunner = session["currentRateableRunner"]
     customerName = session.get('username')
+
     if request.method == 'POST':
         ratings = request.form.get('rating')
         review = request.form.get('writeReview')
@@ -165,7 +166,7 @@ def ratings():
 
 
         insert_query = "INSERT INTO webDB.reviews (user_name, review_text, rating_given) VALUES (%s, %s, %s)"
-        mycursor.execute(insert_query, (runnerName, review, ratings,))
+        mycursor.execute(insert_query, (currentRateableRunner, review, ratings,))
         db.commit()  # Commit the transaction to save changes to the database
         # mycursor.execute('''CREATE TABLE IF NOT EXISTS average_reviews (
         #         ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -204,7 +205,7 @@ def ratings():
         return redirect(url_for("ratingsent"))
 
     #Draw the website template from the folder!
-    return render_template('ratings.html', runnerName=runnerName, customerName=customerName)
+    return render_template('ratings.html', currentRateableRunner=currentRateableRunner, customerName=customerName)
 
 @app.route('/ratingsent', methods=['GET', 'POST'])
 def ratingsent():
@@ -214,26 +215,42 @@ def ratingsent():
 def sendOrder():
     customerName = session.get('username')
     session.setdefault('orderSent', False)
+    session.setdefault('orderConfirmed', False)
+    orderSentTextDisplayForHTML = False
+
+    waitingForAcceptance = "Waiting for someone  to accept your order..."
 
     if request.method == 'POST':
-        orderConfirmed = request.form['orderConfirmed']
-        if request.form['orderConfirmed'] == "True":
+        orderSent = request.form['sendOrder']
+        if request.form['sendOrder'] == "True":
+
+            orderSentTextDisplayForHTML = True
             insert_query = "INSERT INTO webDB.orders (customerName) VALUES (%s)"
             mycursor.execute(insert_query, (customerName,))
             db.commit()  # Commit the transaction to save changes to the database
 
             # session['orderSent'] = True
+            findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
+            mycursor.execute(findIfOrderAccepted, (customerName,))
+            test1 = mycursor.fetchall()
 
-            #Generate order ID/ customerName
-            return redirect(url_for("acceptOrder"))
+            if test1:
+                session['orderSent'] = True
+                delete_query = "DELETE FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted = TRUE"
+                mycursor.execute(delete_query, (customerName,))
+                db.commit()
+
+                return redirect(url_for("orderInProgressCustomer"))
 
 
-    return render_template('sendOrder.html', customerName=customerName)
+
+    return render_template('sendOrder.html', customerName=customerName, orderSentTextDisplayForHTML=orderSentTextDisplayForHTML)
 
 @app.route('/acceptOrder', methods=['GET', 'POST'])
 def acceptOrder():
 
     if session["loggedAsRunner"]:
+        runnerName = session['username']
         currentOrders = []
         acceptOrder = None
 
@@ -247,10 +264,18 @@ def acceptOrder():
 
         orderSize = len(currentOrders)
 
-        acceptedOrder = request.form.get('acceptOrder')
-        print(acceptedOrder)
+        acceptedOrderCustomerName = request.form.get('acceptOrder')
+        if acceptedOrderCustomerName is not None:
+            print(acceptedOrderCustomerName)
 
+            # insert_query = "INSERT INTO webDB.orders (RunnerName) WHERE customerName = %s VALUES (%s, %s, %s)"
+            # SQL does not support insert + where commands
 
+            insert_query = "INSERT INTO webDB.confirmedOrders (runnerName, customerName) VALUES (%s, %s)"
+            mycursor.execute(insert_query, (runnerName, acceptedOrderCustomerName))
+            db.commit()  # Commit the transaction to save changes to the database
+
+            return redirect(url_for("orderInProgressRunner"))
 
         return render_template('acceptOrder.html', currentOrders=currentOrders
                                ,orderSize=orderSize)
@@ -259,9 +284,77 @@ def acceptOrder():
     else:
         return "You dont have access to this page"
 
+@app.route('/orderInProgressRunner', methods=['GET', 'POST'])
+def orderInProgressRunner():
+    if request.method == 'POST':
+        # Now, once runner press order finished. It's done!
+        runnerArrived = request.form.get("runnerArrived")
+        orderCompleted = request.form.get("orderCompleted")
+
+        if runnerArrived == "True":
+            print("x")
+
+        if orderCompleted == "True":
+            update_query = """
+                UPDATE webDB.confirmedOrders
+                SET orderCompleted = %s
+                WHERE runnerName = %s
+            """
+
+            mycursor.execute(update_query, (True, "runner1",))
+            db.commit()
+
+    return render_template('orderInProgressRunner.html')
+
+
+@app.route('/orderInProgressCustomer', methods=['GET', 'POST'])
+def orderInProgressCustomer():
+    customerName = session.get('username')
+    query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
+    mycursor.execute(query, (customerName,))
+    orderData = mycursor.fetchall()
+
+    if orderData:
+
+        runnerNameHTML = orderData[0][0]
+
+        if orderData[0][1] == True:
+
+            return redirect(url_for("orderCompletedCustomer"))
+
+
+    return render_template('orderInProgressCustomer.html' ,runnerNameHTML=runnerNameHTML)
+
 @app.route('/orderCompleted', methods=['GET', 'POST'])
-def orderCompleted():
-    return render_template('orderCompleted.html')
+def orderCompletedCustomer():
+    customerName = session.get('username')
+    session.setdefault('currentRateableRunner', None)
+    query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
+    mycursor.execute(query, (customerName,))
+    orderData = mycursor.fetchall()
+
+    runnerNameHTML = orderData[0][0]
+
+    #Now, do the yes or no, if yes, send customer to review him
+    if request.method == 'POST':
+        yesButton = request.form.get("yesButton")
+        noButton = request.form.get("noButton")
+
+        #Now delete the row containing your confirmed order in orders. NOT confirmedOrders
+        delete_query = "DELETE FROM webDB.orders WHERE customerName = %s"
+        mycursor.execute(delete_query, (customerName,))
+        db.commit()
+
+        if yesButton == "True":
+            session["currentRateableRunner"] = runnerNameHTML
+            return redirect(url_for("ratings"))
+
+        if noButton == "True":
+            return redirect(url_for("profile"))
+
+
+
+    return render_template('orderCompletedCustomer.html', runnerNameHTML=runnerNameHTML)
 
 def index():
     #Draw the website template from the folder!
@@ -393,9 +486,6 @@ def settings():
         if test1 is not None:
             phoneNumber = test1[0]
             nickname = test1[1]
-
-
-
 
 
 

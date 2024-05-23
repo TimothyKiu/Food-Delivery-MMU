@@ -7,9 +7,17 @@
 </head>
 <body>
     <p>session: {{ customerName }}</p>
-    <form method="post">
-        <button name="orderConfirmed" value="True">Confirm order</button>
-    </form>
+    {% if orderSentTextDisplayForHTML %}
+        <p>Order sent, waiting for a runner to accept...</p>
+    {% endif %}
+
+    {% if not orderSentTextDisplayForHTML %}
+
+        <form method="post">
+            <button name="sendOrder" value="True">Confirm order</button>
+        </form>
+     {% endif %}
+
 
 </body>
 </html>
