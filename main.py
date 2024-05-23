@@ -156,14 +156,16 @@ def otherratings():
 #This is where the template will be stored in the url
 @app.route('/ratings', methods=['GET', 'POST'])
 def ratings():
+    runnerName = request.form.get('runnerName')
+    customerName = session.get('username')
     if request.method == 'POST':
         ratings = request.form.get('rating')
         review = request.form.get('writeReview')
-        usernameR = request.form.get('runnerName')
+
 
 
         insert_query = "INSERT INTO webDB.reviews (user_name, review_text, rating_given) VALUES (%s, %s, %s)"
-        mycursor.execute(insert_query, (usernameR, review, ratings,))
+        mycursor.execute(insert_query, (runnerName, review, ratings,))
         db.commit()  # Commit the transaction to save changes to the database
         # mycursor.execute('''CREATE TABLE IF NOT EXISTS average_reviews (
         #         ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -202,11 +204,36 @@ def ratings():
         return redirect(url_for("ratingsent"))
 
     #Draw the website template from the folder!
-    return render_template('ratings.html')
+    return render_template('ratings.html', runnerName=runnerName, customerName=customerName)
 
 @app.route('/ratingsent', methods=['GET', 'POST'])
 def ratingsent():
     return render_template('ratingsent.html')
+
+@app.route('/sendOrder', methods=['GET', 'POST'])
+def sendOrder():
+    customerName = session.get('username')
+
+    if request.method == 'POST':
+        orderConfirmed = request.form['orderConfirmed']
+        if request.form['orderConfirmed'] == "True":
+            insert_query = "INSERT INTO webDB.orders (customerName) VALUES (%s)"
+            mycursor.execute(insert_query, (customerName,))
+            db.commit()  # Commit the transaction to save changes to the database
+            #Generate order ID/ customerName
+            return redirect(url_for("acceptOrder"))
+
+
+    return render_template('sendOrder.html', customerName=customerName)
+
+@app.route('/acceptOrder', methods=['GET', 'POST'])
+def acceptOrder():
+    #This is where the runner can see all the available orders that are ready to be accepted
+    return render_template('acceptOrder.html')
+
+@app.route('/orderCompleted', methods=['GET', 'POST'])
+def orderCompleted():
+    return render_template('orderCompleted.html')
 
 def index():
     #Draw the website template from the folder!
@@ -446,65 +473,6 @@ def settings():
 
     else:
         return redirect(url_for("settings"))
-#
-# @app.route('/testfile')
-# def testfile():
-#     if session.get('loggedIn') == True:
-#         # Retrieve the username from the session or set it to None if the key is missing
-#         usernameP = session.get('username')
-#         loggedIn = session.get('loggedIn')
-#         errorText = "placeholder"
-#
-#         query = "SELECT accumulative_reviews FROM webDB.reviews WHERE user_name = %s "
-#         mycursor.execute(query, (usernameP,))
-#         ratingsArray = mycursor.fetchall()
-#
-#         if ratingsArray:  # Check if ratingsArray is not empty
-#             ratings = round(float(ratingsArray[0][0]), 2)
-#         else:
-#             ratings = "N/A"
-#
-#         # Execute the SQL query with the username and password as parameters
-#         # This is where user enters his credentials in the HTML page, the parameter values then are run into the
-#         # query, if it finds a match it returns something back, if not then it returns null
-#         mycursor.execute(query, (usernameP,))
-#         # Fetch the result (assuming only one row is expected)
-#
-#         if request.method == 'POST':
-#             # Retrieve the value of the 'logOut' form field
-#
-#             loggedOut = request.form.get('logOut')
-#             deleteAccount = request.form.get('deleteAccount')
-#
-#             noLoginYet = "You haven't logged in!"
-#             accountDeleted = "Account successfully deleted..."
-#
-#             if loggedOut == "True":
-#                 # Remove the 'username' key from the session if the user logs out
-#                 session['username'] = None
-#                 session['loggedIn'] = False
-#                 errorText = "Logged out."
-#
-#                 return redirect(url_for("login"))
-#
-#             if deleteAccount == "True":  # works
-#                 deleteQuery = "DELETE FROM webDB.registeredAccounts WHERE user_name = %s"
-#                 mycursor.execute(deleteQuery, (session['username'],))
-#                 db.commit()
-#
-#                 session['username'] = None
-#                 session['loggedIn'] = False
-#                 errorText = "Account deleted successfully."
-#
-#                 # DO NOT DO THIS, THIS DIRECTLY TAMPERS THE CODE, USE HTML/JS
-#                 # if loggedOut == "True":
-#                 #     session['username'] = "You can't delete now! Youve already logged out..."
-#
-#         return render_template('profile.html', usernameP=usernameP, loggedIn=loggedIn, errorText=errorText,
-#                                ratings=ratings)
-#
-#     else:
-#         return redirect(url_for("login"))
 
 @app.route('/testfile')
 def testfile():
