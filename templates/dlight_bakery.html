@@ -79,11 +79,17 @@
             <a href="#close" class="close-button">✖</a>
             <h2 id ="cart-list">Order Cart</h2>
             <ul>
-              {% for remark in remarks %}
-              <li id="cart-list">{{ remark[0] }}</li> 
-              {% endfor %}
-              
+                {% for item_name, details in cart.items() %}
+                    <li id="cart-list">
+                        {{ item_name }} (Price: RM{{  '%.2f'|format(details['price']|float) }}, Quantity: {{ details['quantity'] }})
+                    </li>
+                {% endfor %}
             </ul>
+
+            <!-- {% for remark in remarks %}
+            <li id="cart-list">{{ remark[0] }}</li> 
+            {% endfor %}
+             -->
             <div class="total">Total: $60.00</div>
  
             <form action="/add_to_cart" method="post">
