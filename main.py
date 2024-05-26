@@ -213,35 +213,42 @@ def ratingsent():
 
 @app.route('/sendOrder', methods=['GET', 'POST'])
 def sendOrder():
-    customerName = session.get('username')
-    session.setdefault('orderSent', False)
-    session.setdefault('orderConfirmed', False)
-    orderSentTextDisplayForHTML = False
+    if not session["loggedAsRunner"]:
+        customerName = session.get('username')
+        session.setdefault('orderSent', False)
+        session.setdefault('orderConfirmed', False)
+        orderSentTextDisplayForHTML = False
 
-    waitingForAcceptance = "Waiting for someone  to accept your order..."
+        waitingForAcceptance = "Waiting for someone  to accept your order..."
 
-    if request.method == 'POST':
-        orderSent = request.form['sendOrder']
-        if request.form['sendOrder'] == "True":
 
-            orderSentTextDisplayForHTML = True
-            insert_query = "INSERT INTO webDB.orders (customerName) VALUES (%s)"
-            mycursor.execute(insert_query, (customerName,))
-            db.commit()  # Commit the transaction to save changes to the database
 
-            # session['orderSent'] = True
-            findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
-            mycursor.execute(findIfOrderAccepted, (customerName,))
-            test1 = mycursor.fetchall()
 
-            if test1:
-                session['orderSent'] = True
-                delete_query = "DELETE FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted = TRUE"
-                mycursor.execute(delete_query, (customerName,))
-                db.commit()
+        if request.method == 'POST':
+            orderSent = request.form['sendOrder']
+            if request.form['sendOrder'] == "True" and session['orderSent'] == False:
 
-                return redirect(url_for("orderInProgressCustomer"))
+                orderSentTextDisplayForHTML = True
+                insert_query = "INSERT INTO webDB.orders (customerName) VALUES (%s)"
+                mycursor.execute(insert_query, (customerName,))
+                db.commit()  # Commit the transaction to save changes to the database
 
+                # session['orderSent'] = True
+                findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
+                mycursor.execute(findIfOrderAccepted, (customerName,))
+                test1 = mycursor.fetchall()
+
+                #DO NOT ALLOW RUNNERS TO SEND ORDERS!
+
+                if test1:
+                    session['orderSent'] = True
+                    delete_query = "DELETE FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted = TRUE"
+                    mycursor.execute(delete_query, (customerName,))
+                    db.commit()
+
+                    return redirect(url_for("orderInProgressCustomer"))
+    else:
+        return "Runners do not have permission to send orders."
 
 
     return render_template('sendOrder.html', customerName=customerName, orderSentTextDisplayForHTML=orderSentTextDisplayForHTML)
@@ -355,6 +362,8 @@ def orderCompletedCustomer():
 
 
     return render_template('orderCompletedCustomer.html', runnerNameHTML=runnerNameHTML)
+
+
 
 def index():
     #Draw the website template from the folder!
