@@ -215,43 +215,53 @@ def ratingsent():
 def sendOrder():
     if not session["loggedAsRunner"]:
         customerName = session.get('username')
-        session.setdefault('orderSent', False)
-        session.setdefault('orderConfirmed', False)
         orderSentTextDisplayForHTML = False
+        orderSentBool = session['orderSent']
+        print("test1")
+
+        temp = []
 
         waitingForAcceptance = "Waiting for someone  to accept your order..."
-
-
-
-
         if request.method == 'POST':
             orderSent = request.form['sendOrder']
-            if request.form['sendOrder'] == "True" and session['orderSent'] == False:
+            #OrderSent == False disables user from hitting back and looping orders
+            print("test2")
+
+            #THE IF ISNT RUNNING
+            if request.form['sendOrder'] == "True" and session.get('orderSent') == False:
+                print("test3")
 
                 orderSentTextDisplayForHTML = True
                 insert_query = "INSERT INTO webDB.orders (customerName) VALUES (%s)"
                 mycursor.execute(insert_query, (customerName,))
                 db.commit()  # Commit the transaction to save changes to the database
 
-                # session['orderSent'] = True
                 findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
                 mycursor.execute(findIfOrderAccepted, (customerName,))
                 test1 = mycursor.fetchall()
+                session['orderSent'] = True
 
-                #DO NOT ALLOW RUNNERS TO SEND ORDERS!
+                temp = test1
 
-                if test1:
-                    session['orderSent'] = True
-                    delete_query = "DELETE FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted = TRUE"
-                    mycursor.execute(delete_query, (customerName,))
-                    db.commit()
+            if temp:
+                delete_query = "DELETE FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted = TRUE"
+                mycursor.execute(delete_query, (customerName,))
+                db.commit()
+                session['orderSent'] = True
+                #Delete pending order, then transfer to new page
+                return redirect(url_for("orderInProgressCustomer"))
 
-                    return redirect(url_for("orderInProgressCustomer"))
+
+
+
+
+
     else:
         return "Runners do not have permission to send orders."
 
 
-    return render_template('sendOrder.html', customerName=customerName, orderSentTextDisplayForHTML=orderSentTextDisplayForHTML)
+    return render_template('sendOrder.html', customerName=customerName, orderSentTextDisplayForHTML=orderSentTextDisplayForHTML
+                           , orderSentBool=orderSentBool)
 
 @app.route('/acceptOrder', methods=['GET', 'POST'])
 def acceptOrder():
@@ -317,6 +327,9 @@ def orderInProgressRunner():
 @app.route('/orderInProgressCustomer', methods=['GET', 'POST'])
 def orderInProgressCustomer():
     customerName = session.get('username')
+    runnerNameHTML = "placeholder"
+    #DISABLE CUSTOMER FROM FORCING BACKBUTTON
+    session['orderSent'] = True
     query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
     mycursor.execute(query, (customerName,))
     orderData = mycursor.fetchall()
