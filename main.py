@@ -213,13 +213,15 @@ def ratingsent():
 
 @app.route('/sendOrder', methods=['GET', 'POST'])
 def sendOrder():
+    #BUG DETECTED, session['orderSent'] is being turned into true by something...
     if not session["loggedAsRunner"]:
         customerName = session.get('username')
         orderSentTextDisplayForHTML = False
         orderSentBool = session['orderSent']
+        print(orderSentBool)
         print("test1")
 
-        temp = []
+        temp = None
 
         waitingForAcceptance = "Waiting for someone  to accept your order..."
         if request.method == 'POST':
@@ -228,33 +230,33 @@ def sendOrder():
             print("test2")
 
             #THE IF ISNT RUNNING
-            if request.form['sendOrder'] == "True" and session.get('orderSent') == False:
-                print("test3")
+            if request.form['sendOrder'] == "True" :
+                if session.get('orderSent') == False:
+                    print("test3")
 
-                orderSentTextDisplayForHTML = True
-                insert_query = "INSERT INTO webDB.orders (customerName) VALUES (%s)"
-                mycursor.execute(insert_query, (customerName,))
-                db.commit()  # Commit the transaction to save changes to the database
+                    orderSentTextDisplayForHTML = True
+                    insert_query = "INSERT INTO webDB.orders (customerName) VALUES (%s)"
+                    mycursor.execute(insert_query, (customerName,))
+                    db.commit()  # Commit the transaction to save changes to the database
+                    session['orderSent'] = True
 
-                findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
-                mycursor.execute(findIfOrderAccepted, (customerName,))
-                test1 = mycursor.fetchall()
-                session['orderSent'] = True
+                    # findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
+                    # mycursor.execute(findIfOrderAccepted, (customerName,))
+                    # test1 = mycursor.fetchall()
+                    # session['orderSent'] = True
 
-                temp = test1
+                if session.get('orderSent') == True:
+                    findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
+                    mycursor.execute(findIfOrderAccepted, (customerName,))
+                    test1 = mycursor.fetchall()
 
-            if temp:
-                delete_query = "DELETE FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted = TRUE"
-                mycursor.execute(delete_query, (customerName,))
-                db.commit()
-                session['orderSent'] = True
-                #Delete pending order, then transfer to new page
-                return redirect(url_for("orderInProgressCustomer"))
-
-
-
-
-
+                    if test1:
+                        #THIS LINE OF CODE ISNT RUNNING
+                        delete_query = "DELETE FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted = TRUE"
+                        mycursor.execute(delete_query, (customerName,))
+                        db.commit()
+                        #Delete pending order, then transfer to new page
+                        return redirect(url_for("orderInProgressCustomer"))
 
     else:
         return "Runners do not have permission to send orders."
@@ -329,7 +331,6 @@ def orderInProgressCustomer():
     customerName = session.get('username')
     runnerNameHTML = "placeholder"
     #DISABLE CUSTOMER FROM FORCING BACKBUTTON
-    session['orderSent'] = True
     query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
     mycursor.execute(query, (customerName,))
     orderData = mycursor.fetchall()
@@ -347,13 +348,23 @@ def orderInProgressCustomer():
 
 @app.route('/orderCompleted', methods=['GET', 'POST'])
 def orderCompletedCustomer():
-    customerName = session.get('username')
-    session.setdefault('currentRateableRunner', None)
-    query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
-    mycursor.execute(query, (customerName,))
-    orderData = mycursor.fetchall()
 
-    runnerNameHTML = orderData[0][0]
+    if session['orderSent'] == False:
+        return "You dont have access to this page"
+
+    customerName = "placeholder"
+    runnerNameHTML = "placeholder"
+
+    if session['orderSent'] == True:
+
+        customerName = session.get('username')
+        session.setdefault('currentRateableRunner', None)
+
+        query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
+        mycursor.execute(query, (customerName,))
+        orderData = mycursor.fetchall()
+
+        runnerNameHTML = orderData[0][0]
 
     #Now, do the yes or no, if yes, send customer to review him
     if request.method == 'POST':
@@ -371,7 +382,6 @@ def orderCompletedCustomer():
 
         if noButton == "True":
             return redirect(url_for("profile"))
-
 
 
     return render_template('orderCompletedCustomer.html', runnerNameHTML=runnerNameHTML)
