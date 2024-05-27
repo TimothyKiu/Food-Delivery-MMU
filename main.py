@@ -156,53 +156,60 @@ def otherratings():
 #This is where the template will be stored in the url
 @app.route('/ratings', methods=['GET', 'POST'])
 def ratings():
-    currentRateableRunner = session["currentRateableRunner"]
-    customerName = session.get('username')
+    currentRateableRunner = "placeholder"
 
-    if request.method == 'POST':
-        ratings = request.form.get('rating')
-        review = request.form.get('writeReview')
+    if session.get("currentRateableRunner") is not None:
+        currentRateableRunner = session["currentRateableRunner"]
+        customerName = session.get('username')
+
+        if request.method == 'POST':
+            ratings = request.form.get('rating')
+            review = request.form.get('writeReview')
 
 
 
-        insert_query = "INSERT INTO webDB.reviews (user_name, review_text, rating_given) VALUES (%s, %s, %s)"
-        mycursor.execute(insert_query, (currentRateableRunner, review, ratings,))
-        db.commit()  # Commit the transaction to save changes to the database
-        # mycursor.execute('''CREATE TABLE IF NOT EXISTS average_reviews (
-        #         ID INT AUTO_INCREMENT PRIMARY KEY,
-        #         Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        #         username VARCHAR(255),
-        #         total_ratings FLOAT,
-        #         rating_count INT,
-        #         average_rating FLOAT
-        #         );
-        #     ''')
+            insert_query = "INSERT INTO webDB.reviews (user_name, review_text, rating_given) VALUES (%s, %s, %s)"
+            mycursor.execute(insert_query, (currentRateableRunner, review, ratings,))
+            db.commit()  # Commit the transaction to save changes to the database
+            # mycursor.execute('''CREATE TABLE IF NOT EXISTS average_reviews (
+            #         ID INT AUTO_INCREMENT PRIMARY KEY,
+            #         Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            #         username VARCHAR(255),
+            #         total_ratings FLOAT,
+            #         rating_count INT,
+            #         average_rating FLOAT
+            #         );
+            #     ''')
 
-        # Create temporary table
-        mycursor.execute('''
+            # Create temporary table
+            mycursor.execute('''
+    
+                                    
+                INSERT INTO average_reviews (username, total_ratings, rating_count, average_rating)
+                SELECT 
+                    user_name AS username,
+                    SUM(rating_given) AS total_ratings,
+                    COUNT(*) AS rating_count,
+                    SUM(rating_given) / COUNT(*) AS average_rating
+                FROM 
+                    webDB.reviews
+                GROUP BY 
+                    user_name
+                ON DUPLICATE KEY UPDATE
+                    total_ratings = VALUES(total_ratings),
+                    rating_count = VALUES(rating_count),
+                    average_rating = VALUES(average_rating);
+    
+                    ''')
 
-                                
-            INSERT INTO average_reviews (username, total_ratings, rating_count, average_rating)
-            SELECT 
-                user_name AS username,
-                SUM(rating_given) AS total_ratings,
-                COUNT(*) AS rating_count,
-                SUM(rating_given) / COUNT(*) AS average_rating
-            FROM 
-                webDB.reviews
-            GROUP BY 
-                user_name
-            ON DUPLICATE KEY UPDATE
-                total_ratings = VALUES(total_ratings),
-                rating_count = VALUES(rating_count),
-                average_rating = VALUES(average_rating);
+            # Commit changes and close connection
+            db.commit()
 
-                ''')
+            session['currentRateableRunner'] = None
+            return redirect(url_for("ratingsent"))
 
-        # Commit changes and close connection
-        db.commit()
-
-        return redirect(url_for("ratingsent"))
+    else:
+        return "You don't have access to rate anyone..."
 
     #Draw the website template from the folder!
     return render_template('ratings.html', currentRateableRunner=currentRateableRunner, customerName=customerName)
@@ -230,7 +237,7 @@ def sendOrder():
             print("test2")
 
             #THE IF ISNT RUNNING
-            if request.form['sendOrder'] == "True" :
+            if request.form['sendOrder'] == "True":
                 if session.get('orderSent') == False:
                     print("test3")
 
@@ -285,6 +292,11 @@ def acceptOrder():
 
         acceptedOrderCustomerName = request.form.get('acceptOrder')
         if acceptedOrderCustomerName is not None:
+            query = "DELETE FROM webDB.orders WHERE customerName = %s"
+
+            mycursor.execute(query, (acceptedOrderCustomerName,))
+            db.commit()  # Commit the transaction to save changes to the database
+
             print(acceptedOrderCustomerName)
 
             # insert_query = "INSERT INTO webDB.orders (RunnerName) WHERE customerName = %s VALUES (%s, %s, %s)"
@@ -293,6 +305,8 @@ def acceptOrder():
             insert_query = "INSERT INTO webDB.confirmedOrders (runnerName, customerName) VALUES (%s, %s)"
             mycursor.execute(insert_query, (runnerName, acceptedOrderCustomerName))
             db.commit()  # Commit the transaction to save changes to the database
+
+
 
             return redirect(url_for("orderInProgressRunner"))
 
@@ -305,13 +319,18 @@ def acceptOrder():
 
 @app.route('/orderInProgressRunner', methods=['GET', 'POST'])
 def orderInProgressRunner():
+    customerName = "None"
     if request.method == 'POST':
         # Now, once runner press order finished. It's done!
         runnerArrived = request.form.get("runnerArrived")
         orderCompleted = request.form.get("orderCompleted")
 
-        if runnerArrived == "True":
-            print("x")
+        #QUERY NOT WORKING YET!
+
+        query = "SELECT customerName FROM webDB.confirmedOrders where runnerName = %s "
+        mycursor.execute(query, (session['username'],))
+        customerName = mycursor.fetchall()
+        customerNameReal = customerName[0][0]
 
         if orderCompleted == "True":
             update_query = """
@@ -323,7 +342,7 @@ def orderInProgressRunner():
             mycursor.execute(update_query, (True, "runner1",))
             db.commit()
 
-    return render_template('orderInProgressRunner.html')
+    return render_template('orderInProgressRunner.html', customerName=customerName)
 
 
 @app.route('/orderInProgressCustomer', methods=['GET', 'POST'])
@@ -349,9 +368,6 @@ def orderInProgressCustomer():
 @app.route('/orderCompleted', methods=['GET', 'POST'])
 def orderCompletedCustomer():
 
-    if session['orderSent'] == False:
-        return "You dont have access to this page"
-
     customerName = "placeholder"
     runnerNameHTML = "placeholder"
 
@@ -359,15 +375,19 @@ def orderCompletedCustomer():
 
         customerName = session.get('username')
         session.setdefault('currentRateableRunner', None)
+        session["currentRateableRunner"] = False
 
         query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
         mycursor.execute(query, (customerName,))
         orderData = mycursor.fetchall()
 
         runnerNameHTML = orderData[0][0]
+        session['orderSent'] = False
+        session["currentRateableRunner"] = runnerNameHTML
+
 
     #Now, do the yes or no, if yes, send customer to review him
-    if request.method == 'POST':
+    if request.method == 'POST' and session["currentRateableRunner"] is not None:
         yesButton = request.form.get("yesButton")
         noButton = request.form.get("noButton")
 
@@ -377,10 +397,10 @@ def orderCompletedCustomer():
         db.commit()
 
         if yesButton == "True":
-            session["currentRateableRunner"] = runnerNameHTML
             return redirect(url_for("ratings"))
 
         if noButton == "True":
+            session['currentRateableRunner'] = None
             return redirect(url_for("profile"))
 
 
