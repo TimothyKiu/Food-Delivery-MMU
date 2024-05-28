@@ -1,5 +1,5 @@
 from urllib import request
-from flask import Flask,render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from loginLogic import loginLogic
@@ -137,7 +137,7 @@ def profile():
         mycursor.execute(query, (usernameP,))
         # Fetch the result (assuming only one row is expected)
 
-        if request.method == 'POST':
+        if request.method   == 'POST':
             # Retrieve the value of the 'logOut' form field
 
             loggedOut = request.form.get('logOut')

@@ -63,7 +63,7 @@ fetch('/get_location')
         if (data.latitude && data.longitude) {
             initMap(data.latitude, data.longitude);
             // Set an interval to update the location every 5 seconds
-            setInterval(updateLocation, 5000);
+            setInterval(updateLocation, 1000);
         } else {
             alert('No initial location data available');
         }
