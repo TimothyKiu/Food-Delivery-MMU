@@ -10,9 +10,10 @@
     <h1>Rate your food!</h1>
     <h2>Rate your runner placeholder </h2>
     <form action="/ratings" method="post" class="logindiv">
+        <p>Giving review to: {{ currentRateableRunner }}</p>
+        <p>Review sent by: {{ customerName }}</p>
 
-        <label for="runnerName" class="runnerName">Runner name:</label>
-        <input id="runnerName" name="runnerName" required>
+{#        <input id="runnerName" name="runnerName" required>#}
 
          <div class="rating-css">
             <input type="radio" id="5star" name="rating" value="5" required>

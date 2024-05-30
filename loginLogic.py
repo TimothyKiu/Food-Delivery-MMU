@@ -9,6 +9,7 @@ class loginLogic:
         #firstAttempt = True
         session.setdefault('loginAttempts', -1)
         session.setdefault('loggedIn', False)
+        session.setdefault('loggedAsRunner', False)
 
         if session.get('loggedIn') == True:
             return redirect(url_for('profile'))
@@ -20,7 +21,7 @@ class loginLogic:
             password = request.form['password']
 
             # Prepare the SQL query with placeholders
-            query = "SELECT user_name, user_password FROM webDB.registeredAccounts WHERE user_name = %s"
+            query = "SELECT user_name, user_password, type FROM webDB.registeredAccounts WHERE user_name = %s"
 
             # Execute the SQL query with the username and password as parameters
             #This is where user enters his credentials in the HTML page
@@ -33,6 +34,9 @@ class loginLogic:
                 #Redirect using the function name, NOT the app.route(/example)
                 session['username'] = userdata[0]
                 session['loggedIn'] = True
+
+                if userdata[2] == 'Runner':
+                    session['loggedAsRunner'] = True
 
                 return redirect(url_for("profile", login_failed=False))
 

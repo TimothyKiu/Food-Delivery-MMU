@@ -122,22 +122,6 @@
         cursor: pointer; /* Change cursor to pointer */
 
     }
-    #searchicon {
-        bottom : -50%;
-        height: 30px;
-        width: 30px;
-        align-self: center;  /* used for the slight misalignment for edit buttons */
-        background-image: url("https://cdn.pixabay.com/photo/2017/01/13/01/22/magnifying-glass-1976105_960_720.png"); /* Set image as background */
-        background-size: cover; /* Ensure the image covers the button */
-        background-repeat: no-repeat; /* Prevent image from repeating */
-        background-color: transparent;
-
-        border: none; /* Remove border */
-        padding: 0; /* Remove padding */
-        color: transparent; /*Hides font */
-        cursor: pointer; /* Change cursor to pointer */
-
-    }
 
      #logouticon {
         height: 40px;
@@ -154,6 +138,22 @@
         cursor: pointer; /* Change cursor to pointer */
 
     }
+     #searchicon {
+        height: 30px;
+        width: 30px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://cdn.pixabay.com/photo/2017/01/13/01/22/magnifying-glass-1976105_960_720.png"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+        background-color: transparent;
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+
+    }
+
       #profileicon {
         height: 30px;
         width: 30px;
@@ -223,16 +223,29 @@
 
 
 
+
+
+
     <div id="superDiv">
+        <form method="post" style="margin-top : 30px" >
+         <label for="username" class="boxtitles">Look for user:</label>
+        <input type="text" id="username" name="username" class="loginboxes" required><br><br>
+        </form>
 
         <h3>{{ usernameP }}</h3>
+
         <h1>{{ ratings }} / 5.0</h1>
         <h3>Total reviews given: {{ totalReviews }}</h3>
-
 
      <button class="tabButton" onclick="openTab('ShowReviews')" style="display:flex; ">Show Ratings</button>
 
     </div>
+     <ul>
+         <li>Username : {{ user_name }}</li>
+         <li>Nickname : {{ nickname }}</li>
+         <li>Phone number {{ phone_number }}</li>
+     </ul>
+
 
 
 
@@ -311,8 +324,8 @@
     function redirectToSettings(){
         window.location.href = "settings"
     }
-    function redirectToSearchReviews(){
-        window.location.href = "otherratings"
+    function redirectToProfile(){
+        window.location.href = "profile"
     }
     function openTab(tabName) {
         // Hide all tab contents

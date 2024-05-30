@@ -163,6 +163,21 @@
         cursor: pointer; /* Change cursor to pointer */
 
     }
+     #profileicon {
+        height: 30px;
+        width: 30px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://www.mcdelivery.com.sg/sg/static/1646641918821/assets/00/img/icon_profile_gray.png"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+        background-color: transparent;
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+
+    }
 </style>
 </head>
 <body>
@@ -177,7 +192,8 @@
 
 
          <div style="display:flex; flex-direction:row;">
-             <button id="settingsicon" style="margin: 21px;"></button>
+             <button id="profileicon" onclick="redirectToProfile()" style="margin: 21px;"></button>
+             <button id="settingsicon"   style="margin: 21px;"></button>
              <form method="post" id="logoutForm">
                 <button id="logouticon" type="submit" name="logOut" value="True" style="margin-left: 21px;"></button>
     {#                <button class="tabButton" type="submit" name="logOut" id="logOut" value="True" >Log Out</button>#}
@@ -192,7 +208,6 @@
         <h3 id="settingsText">Hi, {{ usernameP }}</h3>
         <!-- Button container -->
         <div id="buttonContainer">
-            <button class="tabButton" onclick="openTab('ViewDashboard')">Dashboard</button>
             <button class="tabButton" onclick="openTab('EditProfile')">Edit Profile</button>
             <button class="tabButton" onclick="openTab('Settings')">Security</button>
 
@@ -200,10 +215,7 @@
 
         <h3 id="accountInfo">Account Info:</h3>
 
-        <div id="ViewDashboard" class="tabcontent">
-            <h3>Ratings: {{ ratings }}</h3>
-            <!-- Add content related to viewing dashboard here -->
-        </div>
+
 
         <div id="EditProfile" class="tabcontent" >
 
@@ -234,6 +246,7 @@
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h3>Edit password</h3>
 
+
                 <button type="button" class="editButtons" onclick="popupToggler('editPasswordPopup')">Edit</button>
 
                 <div id="editPasswordPopup" class="editPasswordPopup">
@@ -249,9 +262,7 @@
                        <label for="confirmnewpassword" class="label1">Confirm new password:</label>
                        <input type="password" id="confirmnewpassword" name="confirmnewpassword" class="loginboxes" required><br><br>
 
-                        {% if changepasssworderror %}
-                            <p>Error</p>
-                        {% endif %}
+
 
                     <div style="display: flex; justify-content: space-between;">
                         <button name="changedPassword" value="True" type="submit" id="untoggle">Change</button>
@@ -261,7 +272,16 @@
                     </form>
 
                 </div>
+
+
+
             </div>
+            {% if passwordNotSame %}
+                <p style="color: red; position: relative; top: -10px; font-size: 11px;">Error: Check your password</p>
+            {% endif %}
+            {% if not passwordNotSame and attemptedPasswordChange %}
+                <p style="color: blue; position: relative; top: -10px; font-size: 11px;">Successfully changed password</p>
+            {% endif %}
 
             <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h3>Edit phone number</h3>
@@ -333,6 +353,9 @@
             // Reload the current page
             location.reload();
     }
+    function redirectToProfile() {
+            window.location.href = 'profile';
+    }
 
     {#function toggleDelete() {#}
     {#    var popup = document.getElementById("deletePopup");#}
@@ -355,3 +378,6 @@
 
 </body>
 </html>
+
+
+

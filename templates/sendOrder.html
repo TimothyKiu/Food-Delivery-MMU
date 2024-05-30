@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+    <p>session: {{ customerName }}</p>
+    {% if orderSentTextDisplayForHTML %}
+        <p>Order sent, waiting for a runner to accept...</p>
+    {% endif %}
+
+    {% if not orderSentTextDisplayForHTML %}
+
+        <form method="post">
+            <button name="sendOrder" value="True">Confirm order</button>
+        </form>
+     {% endif %}
+
+    {% if orderSentBool %}
+        <p>You already have an pending order!</p>
+     {% endif %}
+
+
+
+</body>
+</html>
