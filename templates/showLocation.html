@@ -14,46 +14,77 @@
 <body>
 
 <div id="map"></div>
-<button onclick="updateLocation()">Update Location</button>
+<p>Blue marker is your current location, red marker is runner location.</p>
+<button onclick="updateRiderLocation()">Update Rider Location</button>
+<button onclick="updateUserLocation()">Update User Location</button>
 
 <script>
 let map;
-let marker;
+let riderMarker;
+let userMarker;
 
-function initMap(latitude, longitude) {
-    // Create a new map centered at the specified latitude and longitude
+function initMap(riderLatitude, riderLongitude) {
+    // Create a new map centered at the rider's location
     map = new google.maps.Map(document.getElementById("map"), {
         zoom: 15,
-        center: { lat: latitude, lng: longitude },
+        center: { lat: riderLatitude, lng: riderLongitude },
     });
 
-    // Create a marker at the specified location
-    marker = new google.maps.Marker({
-        position: { lat: latitude, lng: longitude },
+    // Create a marker at the rider's location
+    riderMarker = new google.maps.Marker({
+        position: { lat: riderLatitude, lng: riderLongitude },
         map: map,
-        title: "Your Location"
+        title: "Rider's Location"
     });
+
+    // Initialize user marker but don't set its position yet
+    userMarker = new google.maps.Marker({
+        map: map,
+        title: "Your Current Location",
+        icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png" // Different marker color
+    });
+
+    // Try to get the user's current location
+    updateUserLocation();
 }
 
-function updateMarkerPosition(latitude, longitude) {
-    // Update the position of the marker
-    marker.setPosition({ lat: latitude, lng: longitude });
+function updateRiderMarkerPosition(latitude, longitude) {
+    // Update the position of the rider's marker
+    riderMarker.setPosition({ lat: latitude, lng: longitude });
 
-    // Center the map to the new position
+    // Center the map to the rider's position
     map.setCenter({ lat: latitude, lng: longitude });
 }
 
-function updateLocation() {
+function updateRiderLocation() {
     fetch('/get_location')
         .then(response => response.json())
         .then(data => {
             if (data.latitude && data.longitude) {
-                updateMarkerPosition(data.latitude, data.longitude);
+                updateRiderMarkerPosition(data.latitude, data.longitude);
             } else {
-                alert('No location data available');
+                alert('No rider location data available');
             }
         })
-        .catch(error => console.error('Error fetching location data:', error));
+        .catch(error => console.error('Error fetching rider location data:', error));
+}
+
+function updateUserLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                const { latitude, longitude } = position.coords;
+                userMarker.setPosition({ lat: latitude, lng: longitude });
+                // Center the map to the user's position
+                map.setCenter({ lat: latitude, lng: longitude });
+            },
+            error => {
+                console.error('Error getting user location:', error);
+            }
+        );
+    } else {
+        alert('Geolocation is not supported by this browser.');
+    }
 }
 
 // Fetch the initial coordinates from the server and initialize the map
@@ -62,13 +93,15 @@ fetch('/get_location')
     .then(data => {
         if (data.latitude && data.longitude) {
             initMap(data.latitude, data.longitude);
-            // Set an interval to update the location every 5 seconds
-            setInterval(updateLocation, 1000);
+            // Set an interval to update the rider's location every 5 seconds
+            setInterval(updateRiderLocation, 5000);
+            // Set an interval to update the user's location every 5 seconds
+            setInterval(updateUserLocation, 5000);
         } else {
-            alert('No initial location data available');
+            alert('No initial rider location data available');
         }
     })
-    .catch(error => console.error('Error fetching initial location data:', error));
+    .catch(error => console.error('Error fetching initial rider location data:', error));
 </script>
 
 <!-- Include the Google Maps JavaScript API with your API key -->
