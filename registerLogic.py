@@ -14,6 +14,7 @@ class registerLogic:
             confirmpasswordreg = request.form['confirmpasswordreg']
 
             accountTypereg = request.form['usertype']
+
             print(accountTypereg)
 
             query = "SELECT user_name FROM webDB.registeredAccounts WHERE user_name = %s "
@@ -41,6 +42,11 @@ class registerLogic:
 
                 session['orderSent'] = False
                 print(session.get('orderSent'))
+
+                if accountTypereg == "Runner":
+                    session["loggedAsRunner"] = True
+                elif accountTypereg == "Customer":
+                    session['loggedAsCustomer'] = True
 
                 return redirect(url_for("accountcreatedsuccess"))
 

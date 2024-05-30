@@ -220,8 +220,18 @@ def ratingsent():
 
 @app.route('/sendOrder', methods=['GET', 'POST'])
 def sendOrder():
+    sentValue = None
     #BUG DETECTED, session['orderSent'] is being turned into true by something...
-    if not session["loggedAsRunner"]:
+    if session.get("loggedAsCustomer") == True:
+        findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
+        mycursor.execute(findIfOrderAccepted, (session.get('username'),))
+        test1 = mycursor.fetchall()
+        if test1:
+            #Check if any order for this person exists, if none then set back the session['sentOrder'] back to False
+            session['orderSent'] = True
+        else:
+            session['orderSent'] = False
+
         customerName = session.get('username')
         orderSentTextDisplayForHTML = False
         orderSentBool = session.get('orderSent')
@@ -257,6 +267,7 @@ def sendOrder():
                     findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
                     mycursor.execute(findIfOrderAccepted, (customerName,))
                     test1 = mycursor.fetchall()
+                    sentValue = mycursor.fetchall()
 
                     if test1:
                         #THIS LINE OF CODE ISNT RUNNING
@@ -264,10 +275,12 @@ def sendOrder():
                         mycursor.execute(delete_query, (customerName,))
                         db.commit()
                         #Delete pending order, then transfer to new page
+
+                    if test1:
                         return redirect(url_for("orderInProgressCustomer"))
 
     else:
-        return "Runners do not have permission to send orders."
+        return "You have no permission to send orders."
 
 
     return render_template('sendOrder.html', customerName=customerName, orderSentTextDisplayForHTML=orderSentTextDisplayForHTML
@@ -275,9 +288,10 @@ def sendOrder():
 
 @app.route('/acceptOrder', methods=['GET', 'POST'])
 def acceptOrder():
+    print(session.get('loggedAsRunner'))
 
-    if session["loggedAsRunner"]:
-        runnerName = session['username']
+    if (session.get("loggedAsRunner") == True) and (session.get('loggedAsRunner') != None):
+        runnerName = session.get('username')
         currentOrders = []
         acceptOrder = None
 
@@ -383,7 +397,9 @@ def orderCompletedCustomer():
         mycursor.execute(query, (customerName,))
         orderData = mycursor.fetchall()
 
-        runnerNameHTML = orderData[0][0]
+        if orderData:
+
+            runnerNameHTML = orderData[0][0]
         session['orderSent'] = False
         session["currentRateableRunner"] = runnerNameHTML
 
