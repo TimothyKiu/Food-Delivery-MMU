@@ -65,7 +65,7 @@
                 <span>{{ order.item }}</span>
                 <form action="/process_order" method="post">
                     <input type="hidden" name="order_id" value="{{ order.id }}">
-                    <button type="submit">Process Order</button>
+                    <button type="submit">Accept</button>
                 </form>
             </li>
         {% endfor %}
