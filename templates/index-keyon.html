@@ -2,13 +2,67 @@
 <html>
 <head>
     <title>Order List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #343a40;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        li {
+            background-color: #ffffff;
+            margin: 10px 0;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        form {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
     <h1>Order List</h1>
     <ul>
         {% for order in orders %}
             <li>
-                {{ order.item }}
+                <span>{{ order.item }}</span>
                 <form action="/process_order" method="post">
                     <input type="hidden" name="order_id" value="{{ order.id }}">
                     <button type="submit">Process Order</button>

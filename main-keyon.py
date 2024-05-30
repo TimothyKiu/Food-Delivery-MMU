@@ -46,7 +46,10 @@ def confirm_order():
         else:
             return "Order not found."
     elif decision == 'decline':
-        return "Order declined"
+        if orders:
+            return render_template('index-keyon.html', orders=orders)
+        else:
+            return render_template('no_comfirm_order.html')
     else:
         return "Invalid decision"
 

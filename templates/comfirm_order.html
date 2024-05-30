@@ -2,13 +2,63 @@
 <html>
 <head>
     <title>Confirm Order</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #343a40;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* Increased gap between buttons */
+        }
+
+        button {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <h1>Do you want to accept the order for {{ order.item }}?</h1>
     <form action="/comfirm_order" method="post">
         <input type="hidden" name="order_id" value="{{ order.id }}">
-        <button type="submit" name="decision" value="accept">Accept</button>
-        <button type="submit" name="decision" value="decline">Decline</button>
+        <div class="button-container">
+            <button type="submit" name="decision" value="accept">Accept</button>
+            <button type="submit" name="decision" value="decline">Decline</button>
+        </div>
     </form>
 </body>
 </html>
