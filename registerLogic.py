@@ -1,3 +1,4 @@
+
 from flask import Flask,render_template, request, redirect, url_for
 from werkzeug.security import generate_password_hash
 class registerLogic:
@@ -34,6 +35,10 @@ class registerLogic:
                 cursor.execute(insert_query, (usernamereg, hashedPassword, accountTypereg))
                 db.commit()  # Commit the transaction to save changes to the database
                 cursor.close()
+
+                #Idk where to put this, because the user cannot use the back button to reset the ordersent default value
+                session['orderSent'] = False
+                print(session.get('orderSent'))
 
                 return redirect(url_for("accountcreatedsuccess"))
 
