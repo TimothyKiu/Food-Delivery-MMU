@@ -78,16 +78,14 @@
         <div id="cart">
             <a href="#close" class="close-button">✖</a>
             <h2 id ="cart-list">Order Cart</h2>
-            <ul>
-              {% for remark in remarks %}
-              <li id="cart-list">{{ remark[0] }}</li> 
-              {% endfor %}
-              
-            </ul>
-            <div class="total">Total: $60.00</div>
- 
-            <form action="/add_to_cart" method="post">
-              <button type="submit" class="checkout">Checkout</button>
+            {% for order in orders %}
+                <p>{{ order.food_name }} - RM{{ order.unit_price }} x {{ order.quantity }} = RM{{ order.total_price }}</p>
+                <form action="/remove_from_cart" method="post">
+                    <input type="hidden" name="food_name" value="{{ order.food_name }}">
+                    <button type="submit">Remove one</button>
+                </form>
+            {% endfor %}
+            <a href="/checkout">Checkout</a>
 
             </form>
           </div>

@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from loginLogic import loginLogic
 from registerLogic import registerLogic
+from flask_sqlalchemy import SQLAlchemy
 import os
 import mysql.connector
 
@@ -794,29 +795,51 @@ def bakery():
             selected_item['remarks'] = ''
     return render_template('dlight_bakery.html', items=ITEMS, cart=cart, selected_item=selected_item)
 
+
 @app.route('/add_to_cart', methods=['POST'])
 def add_to_cart():
-    item_name = request.form.get('item_name')
-    item_price = request.form.get('item_price')
-    cart = read_cart()
-    if item_name in cart:
-        cart[item_name]['quantity'] += 1
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    user_id = session['user_id']
+    food_name = request.form.get('food_name')
+    unit_price = float(request.form.get('unit_price'))
+    remark = request.form.get('remark', '')
+
+    order = Order.query.filter_by(user_id=user_id, food_name=food_name).first()
+    if order:
+        order.quantity += 1
+        order.total_price = order.unit_price * order.quantity
     else:
-        cart[item_name] = {'price': item_price, 'quantity': 1, 'remarks': ''}
-    write_cart(cart)
+        order = Order(user_id=user_id, food_name=food_name, unit_price=unit_price, quantity=1, total_price=unit_price, remark=remark)
+        db.session.add(order)
+    db.session.commit()
     return redirect(url_for('bakery'))
 
 @app.route('/remove_from_cart', methods=['POST'])
 def remove_from_cart():
-    item_name = request.form.get('item_name')
-    cart = read_cart()
-    if item_name in cart:
-        if cart[item_name]['quantity'] > 1:
-            cart[item_name]['quantity'] -= 1
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    user_id = session['user_id']
+    food_name = request.form.get('food_name')
+
+    order = Order.query.filter_by(user_id=user_id, food_name=food_name).first()
+    if order:
+        if order.quantity > 1:
+            order.quantity -= 1
+            order.total_price = order.unit_price * order.quantity
         else:
-            del cart[item_name]
-    write_cart(cart)
+            db.session.delete(order)
+        db.session.commit()
     return redirect(url_for('bakery'))
+
+@app.route('/checkout')
+def checkout():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    user_id = session['user_id']
+    orders = Order.query.filter_by(user_id=user_id).all()
+    total_price = sum(order.total_price for order in orders)
+    return render_template('checkout.html', orders=orders, total_price=total_price)
 
 @app.route('/update_remarks', methods=['POST'])
 def update_remarks():
