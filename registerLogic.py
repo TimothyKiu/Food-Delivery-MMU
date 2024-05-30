@@ -37,6 +37,8 @@ class registerLogic:
                 cursor.close()
 
                 #Idk where to put this, because the user cannot use the back button to reset the ordersent default value
+                session.setdefault('orderSent', False)
+
                 session['orderSent'] = False
                 print(session.get('orderSent'))
 

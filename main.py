@@ -224,7 +224,7 @@ def sendOrder():
     if not session["loggedAsRunner"]:
         customerName = session.get('username')
         orderSentTextDisplayForHTML = False
-        orderSentBool = session['orderSent']
+        orderSentBool = session.get('orderSent')
         print(orderSentBool)
         print("test1")
 
@@ -238,6 +238,7 @@ def sendOrder():
 
             #THE IF ISNT RUNNING
             if request.form['sendOrder'] == "True":
+                print("test2.5")
                 if session.get('orderSent') == False:
                     print("test3")
 
@@ -327,10 +328,11 @@ def orderInProgressRunner():
 
         #QUERY NOT WORKING YET!
 
-        query = "SELECT customerName FROM webDB.confirmedOrders where runnerName = %s "
+        query = "SELECT customerName, runnerName FROM webDB.confirmedOrders where runnerName = %s "
         mycursor.execute(query, (session['username'],))
         customerName = mycursor.fetchall()
         customerNameReal = customerName[0][0]
+        runnerName = customerName[0][1]
 
         if orderCompleted == "True":
             update_query = """
@@ -339,7 +341,7 @@ def orderInProgressRunner():
                 WHERE runnerName = %s
             """
 
-            mycursor.execute(update_query, (True, "runner1",))
+            mycursor.execute(update_query, (True, runnerName,))
             db.commit()
 
     return render_template('orderInProgressRunner.html', customerName=customerName)
