@@ -220,7 +220,6 @@ def ratingsent():
 
 @app.route('/sendOrder', methods=['GET', 'POST'])
 def sendOrder():
-    sentValue = None
     #BUG DETECTED, session['orderSent'] is being turned into true by something...
     if session.get("loggedAsCustomer") == True:
         findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
@@ -288,7 +287,6 @@ def sendOrder():
 
 @app.route('/acceptOrder', methods=['GET', 'POST'])
 def acceptOrder():
-    print(session.get('loggedAsRunner'))
 
     if (session.get("loggedAsRunner") == True) and (session.get('loggedAsRunner') != None):
         runnerName = session.get('username')
@@ -334,7 +332,12 @@ def acceptOrder():
 
 @app.route('/orderInProgressRunner', methods=['GET', 'POST'])
 def orderInProgressRunner():
-    customerName = "None"
+    query = "SELECT customerName, runnerName FROM webDB.confirmedOrders where runnerName = %s "
+    mycursor.execute(query, (session['username'],))
+    customerName = mycursor.fetchall()
+    customerNameHTML = customerName[0][0]
+    runnerName = customerName[0][1]
+
     if request.method == 'POST':
         # Now, once runner press order finished. It's done!
         runnerArrived = request.form.get("runnerArrived")
@@ -342,11 +345,6 @@ def orderInProgressRunner():
 
         #QUERY NOT WORKING YET!
 
-        query = "SELECT customerName, runnerName FROM webDB.confirmedOrders where runnerName = %s "
-        mycursor.execute(query, (session['username'],))
-        customerName = mycursor.fetchall()
-        customerNameReal = customerName[0][0]
-        runnerName = customerName[0][1]
 
         if orderCompleted == "True":
             update_query = """
@@ -358,7 +356,7 @@ def orderInProgressRunner():
             mycursor.execute(update_query, (True, runnerName,))
             db.commit()
 
-    return render_template('orderInProgressRunner.html', customerName=customerName)
+    return render_template('orderInProgressRunner.html', runnerName=runnerName, customerName=customerNameHTML)
 
 
 @app.route('/orderInProgressCustomer', methods=['GET', 'POST'])
