@@ -222,10 +222,11 @@ def ratingsent():
 def sendOrder():
     #BUG DETECTED, session['orderSent'] is being turned into true by something...
     if session.get("loggedAsCustomer") == True:
-        findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
+        findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.Orders WHERE customerName = %s "
         mycursor.execute(findIfOrderAccepted, (session.get('username'),))
         test1 = mycursor.fetchall()
         if test1:
+            print("Order detected")
             #Check if any order for this person exists, if none then set back the session['sentOrder'] back to False
             session['orderSent'] = True
         else:
