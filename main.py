@@ -46,6 +46,9 @@ def register():
 
 @app.route('/otherratings', methods=['GET', 'POST'])
 def otherratings():
+    loggedAsCustomer = session.get('loggedAsCustomer')
+    loggedAsRunner = session.get('loggedAsRunner')
+
     if session.get('loggedIn') == True:
 
         usernameP = "Search for reviews"
@@ -146,7 +149,8 @@ def otherratings():
         return render_template('otherratings.html', usernameP=usernameP,
                                 ratings=ratings, reviewText=reviewText, reviewStars=reviewStars,
                                timeStamps=timeStamps, totalReviews=totalReviews, reviewSize=reviewSize,
-                               nickname=nickname, phone_number=phone_number, user_name=user_name,)
+                               nickname=nickname, phone_number=phone_number, user_name=user_name,
+                               loggedAsCustomer=loggedAsCustomer,loggedAsRunner=loggedAsRunner)
 
     else:
         return redirect(url_for("login"))
@@ -436,6 +440,10 @@ def accountcreatedsuccess():
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
+
+    loggedAsCustomer = session.get('loggedAsCustomer')
+    loggedAsRunner = session.get('loggedAsRunner')
+
     print(session.get('loggedIn'))
 
     if session.get('loggedIn') == True:
@@ -526,13 +534,17 @@ def profile():
 
         return render_template('profile.html', usernameP=usernameP, loggedIn=loggedIn,
                                errorText=errorText, ratings=ratings, reviewText=reviewText, reviewStars=reviewStars,
-                               timeStamps=timeStamps, totalReviews=totalReviews, reviewSize=reviewSize)
+                               timeStamps=timeStamps, totalReviews=totalReviews, reviewSize=reviewSize,
+                               loggedAsCustomer=loggedAsCustomer,loggedAsRunner=loggedAsRunner)
 
     else:
         return redirect(url_for("login"))
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
+    loggedAsCustomer = session.get('loggedAsCustomer')
+    loggedAsRunner = session.get('loggedAsRunner')
+
     print(session.get('loggedIn'))
 
     if session.get('loggedIn') == True:
@@ -656,7 +668,7 @@ def settings():
         return render_template('settings.html', usernameP=usernameP, loggedIn=loggedIn, errorText=errorText,
                                ratings=ratings, changepasssworderror=changepasssworderror, nickname=nickname,
                                phoneNumber=phoneNumber, passwordNotSame=passwordNotSame,
-                               attemptedPasswordChange=attemptedPasswordChange)
+                               attemptedPasswordChange=attemptedPasswordChange, loggedAsRunner=loggedAsRunner,loggedAsCustomer=loggedAsCustomer)
 
     else:
         return redirect(url_for("settings"))
