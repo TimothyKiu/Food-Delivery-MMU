@@ -4,7 +4,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from loginLogic import loginLogic
 from registerLogic import registerLogic
-from flask_sqlalchemy import SQLAlchemy
 import os
 import mysql.connector
 
@@ -16,11 +15,22 @@ db = mysql.connector.connect(
     database='webDB'
 )
 
+
 mycursor = db.cursor(buffered=True)
 
 app = Flask(__name__)
 app.secret_key = 'theSecretKeyToTheEvilPiratesTreasureHarHarHar'
-mycursor.execute("SHOW GRANTS FOR 'root'@'localhost'")
+
+
+try:
+    mycursor = db.cursor(buffered=True)
+    mycursor.execute("SHOW GRANTS FOR 'root'@'localhost'")
+except mysql.connector.Error as err:
+    print(f"Error: {err}")
+    db.close()
+    exit()
+
+
 
 
 
@@ -876,32 +886,38 @@ ITEMS.extend(deen_food)
 ITEMS.extend(htc_food)
 
 
-CART_FILE = 'cart.txt'
+# CART_FILE = 'cart.txt'
 
-def read_cart():
-    cart = {}
-    if os.path.exists(CART_FILE):
-        with open(CART_FILE, 'r') as file:
-            for line in file:
-                parts = line.strip().split(', ')
-                if len(parts) >= 3:
-                    try:
-                        item_name = parts[0]
-                        item_price = parts[1]
-                        item_quantity = int(parts[2].replace(',', ''))  # Remove any extraneous commas
-                        item_remarks = ', '.join(parts[3:]) if len(parts) > 3 else ''
-                        cart[item_name] = {'price': item_price, 'quantity': item_quantity, 'remarks': item_remarks}
-                    except ValueError as e:
-                        print(f"Error parsing line: {line}. Error: {e}")
-    return cart
+# def read_cart():
+#     cart = {}
+#     if os.path.exists(CART_FILE):
+#         with open(CART_FILE, 'r') as file:
+#             for line in file:
+#                 parts = line.strip().split(', ')
+#                 if len(parts) >= 3:
+#                     try:
+#                         item_name = parts[0]
+#                         item_price = parts[1]
+#                         item_quantity = int(parts[2].replace(',', ''))  # Remove any extraneous commas
+#                         item_remarks = ', '.join(parts[3:]) if len(parts) > 3 else ''
+#                         cart[item_name] = {'price': item_price, 'quantity': item_quantity, 'remarks': item_remarks}
+#                     except ValueError as e:
+#                         print(f"Error parsing line: {line}. Error: {e}")
+#     return cart
 
-def write_cart(cart):
-    with open(CART_FILE, 'w') as file:
-        for item_name, details in cart.items():
-            file.write(f"{item_name}, {details['price']}, {details['quantity']}, {details['remarks']}\n")
+# def write_cart(cart):
+#     with open(CART_FILE, 'w') as file:
+#         for item_name, details in cart.items():
+#             file.write(f"{item_name}, {details['price']}, {details['quantity']}, {details['remarks']}\n")
+
+mycursor.execute("SELECT * FROM Cart")
+results = mycursor.fetchall()
+
+for row in results:
+    print(row)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def index():
     store = request.args.get('store')  
     if store == 'htc':
@@ -916,92 +932,222 @@ def index():
         item_name = request.form.get('item_name')
         selected_item = next((item for item in ITEMS if item['name'] == item_name), None)
 
-    return render_template('dlight_bakery.html', items=items, cart=read_cart(), selected_item=selected_item)
+    return render_template('dlight_bakery.html', items=items, cart= {}, selected_item=selected_item)
 
 
 @app.route('/', methods=['GET', 'POST'])
 def bakery():
-    cart = read_cart()
+    
+    if 'username' in session:
+        username = session.get('username')
+    else:
+        username = "Guest"
+
+    cart = {} 
     selected_item = None
+
     if request.method == 'POST':
-        item_name = request.form.get('item_name')
-        selected_item = next((item for item in ITEMS if item['name'] == item_name), None)
-        if selected_item and item_name in cart:
-            selected_item['quantity'] = cart[item_name]['quantity']
-            selected_item['remarks'] = cart[item_name]['remarks']
-        else:
-            selected_item['quantity'] = 0
-            selected_item['remarks'] = ''
-    return render_template('dlight_bakery.html', items=ITEMS, cart=cart, selected_item=selected_item)
+        item_name = request.form.get('food_name')
+        quantity = int(request.form.get('quantity', 1))  
+
+        mycursor = db.cursor()
+        try:
+
+            existing_item_query = "SELECT * FROM cart WHERE username = %s AND food_name = %s"
+            mycursor.execute(existing_item_query, (username, item_name,))
+            existing_item = mycursor.fetchone()
+
+            if existing_item:
+                # Update quantity of existing item
+                update_quantity_query = "UPDATE Cart SET quantity = quantity + %s WHERE order_id = %s"
+                mycursor.execute(update_quantity_query, (quantity, existing_item[0]))
+            else:
+                # Insert new cart item
+                insert_item_query = "INSERT INTO Cart (order_id, food_name, price, quantity, remarks, username) VALUES (%s, %s, %s, %s, %s, %s)"
+                mycursor.execute(insert_item_query, (0, item_name, 0.0, quantity, "",username))
+
+            # Commit changes to the database
+            db.commit()
+
+
+            cart[item_name] = {'quantity': existing_item[3] + quantity} if existing_item else {'quantity': quantity}
+            selected_item = {'name': item_name, 'quantity': quantity}
+
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            db.rollback()
+        mycursor.close()
+    
+
+
+    
+    try:
+        mycursor = db.cursor(buffered=True)
+        # Fetch all items from the database (you can modify this query as needed)
+        fetch_all_items_query = "SELECT * FROM Cart WHERE username = %s"
+        mycursor.execute(fetch_all_items_query, (username,))
+        all_items = mycursor.fetchall()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        all_items = []
+
+
+# Rest of your code
+
+
+    # Assuming you have an ITEMS list (you can replace this with your actual item data)
+    # Example: ITEMS = ['Cake', 'Cookie', 'Bread']
+    return render_template('dlight_bakery.html', items=ITEMS, cart=cart, selected_item=selected_item, all_items=all_items)
 
 
 @app.route('/add_to_cart', methods=['POST'])
 def add_to_cart():
-    if 'user_id' not in session:
+    if 'username' not in session:
         return redirect(url_for('login'))
-    user_id = session['user_id']
+
+    username = session['username']
     food_name = request.form.get('food_name')
-    unit_price = float(request.form.get('unit_price'))
+    price = float(request.form.get('price'))
     remark = request.form.get('remark', '')
 
-    order = Order.query.filter_by(user_id=user_id, food_name=food_name).first()
-    if order:
-        order.quantity += 1
-        order.total_price = order.unit_price * order.quantity
+    # Create a cursor to execute SQL queries
+    cur = db.cursor()
+
+    # Check if the item already exists in the cart
+    cur.execute("SELECT * FROM Cart WHERE username = %s AND food_name = %s", (username, food_name))
+    existing_item = cur.fetchone()
+
+    if existing_item:
+        # Update quantity if item exists
+        cur.execute("UPDATE Cart SET quantity = quantity + 1 WHERE order_id = %s", (existing_item[0],))
     else:
-        order = Order(user_id=user_id, food_name=food_name, unit_price=unit_price, quantity=1, total_price=unit_price, remark=remark)
-        db.session.add(order)
-    db.session.commit()
+        # Insert new item into the cart
+        cur.execute("INSERT INTO Cart (order_id, food_name, price, quantity, remarks, username) VALUES (%s, %s, %s, %s, %s, %s)",
+                    (0, food_name, price, 1, remark, username))
+
+    # Commit changes to the database
+    db.commit()
+    cur.close()
+
     return redirect(url_for('bakery'))
 
 @app.route('/remove_from_cart', methods=['POST'])
 def remove_from_cart():
-    if 'user_id' not in session:
+    if db is None:
+        return "Error connecting to the database", 500
+
+    if 'username' not in session:
         return redirect(url_for('login'))
-    user_id = session['user_id']
+
+    username = session['username']
     food_name = request.form.get('food_name')
 
-    order = Order.query.filter_by(user_id=user_id, food_name=food_name).first()
-    if order:
-        if order.quantity > 1:
-            order.quantity -= 1
-            order.total_price = order.unit_price * order.quantity
-        else:
-            db.session.delete(order)
-        db.session.commit()
+    try:
+        mycursor = db.cursor(buffered=True)
+        # Check if the item exists in the cart
+        mycursor.execute("SELECT * FROM Cart WHERE username = %s AND food_name = %s", (username, food_name))
+        existing_item = mycursor.fetchone()
+
+        if existing_item:
+            if existing_item[4] > 1:
+                mycursor.execute("UPDATE Cart SET quantity = quantity - 1 WHERE id = %s", (existing_item[0],))
+            else:
+                mycursor.execute("DELETE FROM Cart WHERE id = %s", (existing_item[0],))
+
+            # Commit changes to the database
+            db.commit()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        mycursor.close()
+
+    db.close()
     return redirect(url_for('bakery'))
 
 @app.route('/checkout')
 def checkout():
-    if 'user_id' not in session:
+    if db is None:
+        return "Error connecting to the database", 500
+
+    if 'username' not in session:
         return redirect(url_for('login'))
-    user_id = session['user_id']
-    orders = Order.query.filter_by(user_id=user_id).all()
-    total_price = sum(order.total_price for order in orders)
+
+    username = session['username']
+
+
+    try:
+        mycursor = db.cursor(buffered=True)
+        # Fetch all items in the cart for the user
+        mycursor.execute("SELECT * FROM Cart WHERE username = %s", (username,))
+        orders = mycursor.fetchall()
+
+        # Calculate total price
+        total_price = sum(order[3] * order[4] for order in orders)  # Assuming unit_price is at index 3, quantity at index 4
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        orders = []
+        total_price = 0
+        mycursor.close()
+
+    db.close()
     return render_template('checkout.html', orders=orders, total_price=total_price)
 
 @app.route('/update_remarks', methods=['POST'])
 def update_remarks():
-    item_name = request.form.get('item_name')
+    if db is None:
+        return "Error connecting to the database", 500
+
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    username = session['username']
+    food_name = request.form.get('food_name')
     remarks = request.form.get('remarks')
-    cart = read_cart()
-    if item_name in cart:
-        cart[item_name]['remarks'] = remarks
-    write_cart(cart)
+
+    mycursor = None
+    try:
+        mycursor = db.cursor(buffered=True)
+        # Update remarks for the specified item
+        mycursor.execute("UPDATE Cart SET remarks = %s WHERE username = %s AND food_name = %s", (remarks, username, food_name))
+        db.commit()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        db.rollback()
+    finally:
+        if mycursor is not None:
+            mycursor.close()
+
+    db.close()
     return redirect(url_for('bakery'))
 
+@app.route('/search')
+def search():
+    query = request.args.get('query')
+    # Implement search logic here
+    return render_template('search_results.html', query=query)
 
-
-@app.route('/home', methods=['GET']) 
+@app.route('/home')
 def home():
-    usernameP = session.get('username', 'Guest')  # Default to 'Guest' if not set
-    return render_template('/templates/home.html', usernameP=usernameP)
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    username = session.get('username')  
+    return render_template('home.html', username=username)
 
-app.route('/profile')
-def profile():
-    # Retrieve the username from the session
-    usernameP = session.get('username', 'Guest')  # Default to 'Guest' if not set
-    return render_template('profile.html', usernameP=usernameP)
+@app.route('/profile')
+def user_profile():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    username = session.get('username') 
+    return render_template('profile.html', username=username)
+# @app.route('/home', methods=['GET']) 
+# def home():
+#     usernameP = session.get('username', 'Guest')  # Default to 'Guest' if not set
+#     return render_template('/templates/home.html', usernameP=usernameP)
+
+# app.route('/profile')
+# def profile():
+#     # Retrieve the username from the session
+#     usernameP = session.get('username', 'Guest')  # Default to 'Guest' if not set
+#     return render_template('profile.html', usernameP=usernameP)
 
 @app.route('/deen', methods=['GET']) 
 def deen():
@@ -1040,6 +1186,7 @@ def htc():
 #   return render_template('menu.html', remarks=remarks_data)
 
 
-
+mycursor.close()
+db.close()
 
 app.run(debug=True)
