@@ -4,10 +4,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from loginLogic import loginLogic
 from registerLogic import registerLogic
-import os
 import mysql.connector
+from MySQLdb import  _exceptions
 
 #NOTE: STOP RUNNING PYTHON WHENEVER YOU WANNA ALTER SQL TABLES
+
 db = mysql.connector.connect(
     host="localhost",
     user='root',
@@ -20,6 +21,7 @@ mycursor = db.cursor(buffered=True)
 
 app = Flask(__name__)
 app.secret_key = 'theSecretKeyToTheEvilPiratesTreasureHarHarHar'
+
 
 
 try:
@@ -57,6 +59,9 @@ def register():
 
 @app.route('/otherratings', methods=['GET', 'POST'])
 def otherratings():
+    loggedAsCustomer = session.get('loggedAsCustomer')
+    loggedAsRunner = session.get('loggedAsRunner')
+
     if session.get('loggedIn') == True:
 
         usernameP = "Search for reviews"
@@ -157,7 +162,8 @@ def otherratings():
         return render_template('otherratings.html', usernameP=usernameP,
                                 ratings=ratings, reviewText=reviewText, reviewStars=reviewStars,
                                timeStamps=timeStamps, totalReviews=totalReviews, reviewSize=reviewSize,
-                               nickname=nickname, phone_number=phone_number, user_name=user_name,)
+                               nickname=nickname, phone_number=phone_number, user_name=user_name,
+                               loggedAsCustomer=loggedAsCustomer,loggedAsRunner=loggedAsRunner)
 
     else:
         return redirect(url_for("login"))
@@ -232,10 +238,20 @@ def ratingsent():
 @app.route('/sendOrder', methods=['GET', 'POST'])
 def sendOrder():
     #BUG DETECTED, session['orderSent'] is being turned into true by something...
-    if not session["loggedAsRunner"]:
+    if session.get("loggedAsCustomer") == True:
+        findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.Orders WHERE customerName = %s "
+        mycursor.execute(findIfOrderAccepted, (session.get('username'),))
+        test1 = mycursor.fetchall()
+        if test1:
+            print("Order detected")
+            #Check if any order for this person exists, if none then set back the session['sentOrder'] back to False
+            session['orderSent'] = True
+        else:
+            session['orderSent'] = False
+
         customerName = session.get('username')
         orderSentTextDisplayForHTML = False
-        orderSentBool = session['orderSent']
+        orderSentBool = session.get('orderSent')
         print(orderSentBool)
         print("test1")
 
@@ -249,6 +265,7 @@ def sendOrder():
 
             #THE IF ISNT RUNNING
             if request.form['sendOrder'] == "True":
+                print("test2.5")
                 if session.get('orderSent') == False:
                     print("test3")
 
@@ -267,6 +284,7 @@ def sendOrder():
                     findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
                     mycursor.execute(findIfOrderAccepted, (customerName,))
                     test1 = mycursor.fetchall()
+                    sentValue = mycursor.fetchall()
 
                     if test1:
                         #THIS LINE OF CODE ISNT RUNNING
@@ -274,10 +292,12 @@ def sendOrder():
                         mycursor.execute(delete_query, (customerName,))
                         db.commit()
                         #Delete pending order, then transfer to new page
+
+                    if test1:
                         return redirect(url_for("orderInProgressCustomer"))
 
     else:
-        return "Runners do not have permission to send orders."
+        return "You have no permission to send orders."
 
 
     return render_template('sendOrder.html', customerName=customerName, orderSentTextDisplayForHTML=orderSentTextDisplayForHTML
@@ -286,8 +306,8 @@ def sendOrder():
 @app.route('/acceptOrder', methods=['GET', 'POST'])
 def acceptOrder():
 
-    if session["loggedAsRunner"]:
-        runnerName = session['username']
+    if (session.get("loggedAsRunner") == True) and (session.get('loggedAsRunner') != None):
+        runnerName = session.get('username')
         currentOrders = []
         acceptOrder = None
 
@@ -330,7 +350,12 @@ def acceptOrder():
 
 @app.route('/orderInProgressRunner', methods=['GET', 'POST'])
 def orderInProgressRunner():
-    customerName = "None"
+    query = "SELECT customerName, runnerName FROM webDB.confirmedOrders where runnerName = %s "
+    mycursor.execute(query, (session['username'],))
+    customerName = mycursor.fetchall()
+    customerNameHTML = customerName[0][0]
+    runnerName = customerName[0][1]
+
     if request.method == 'POST':
         # Now, once runner press order finished. It's done!
         runnerArrived = request.form.get("runnerArrived")
@@ -338,10 +363,6 @@ def orderInProgressRunner():
 
         #QUERY NOT WORKING YET!
 
-        query = "SELECT customerName FROM webDB.confirmedOrders where runnerName = %s "
-        mycursor.execute(query, (session['username'],))
-        customerName = mycursor.fetchall()
-        customerNameReal = customerName[0][0]
 
         if orderCompleted == "True":
             update_query = """
@@ -350,10 +371,10 @@ def orderInProgressRunner():
                 WHERE runnerName = %s
             """
 
-            mycursor.execute(update_query, (True, "runner1",))
+            mycursor.execute(update_query, (True, runnerName,))
             db.commit()
 
-    return render_template('orderInProgressRunner.html', customerName=customerName)
+    return render_template('orderInProgressRunner.html', runnerName=runnerName, customerName=customerNameHTML)
 
 
 @app.route('/orderInProgressCustomer', methods=['GET', 'POST'])
@@ -392,7 +413,9 @@ def orderCompletedCustomer():
         mycursor.execute(query, (customerName,))
         orderData = mycursor.fetchall()
 
-        runnerNameHTML = orderData[0][0]
+        if orderData:
+
+            runnerNameHTML = orderData[0][0]
         session['orderSent'] = False
         session["currentRateableRunner"] = runnerNameHTML
 
@@ -430,6 +453,10 @@ def accountcreatedsuccess():
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
+
+    loggedAsCustomer = session.get('loggedAsCustomer')
+    loggedAsRunner = session.get('loggedAsRunner')
+
     print(session.get('loggedIn'))
 
     if session.get('loggedIn') == True:
@@ -520,13 +547,17 @@ def profile():
 
         return render_template('profile.html', usernameP=usernameP, loggedIn=loggedIn,
                                errorText=errorText, ratings=ratings, reviewText=reviewText, reviewStars=reviewStars,
-                               timeStamps=timeStamps, totalReviews=totalReviews, reviewSize=reviewSize)
+                               timeStamps=timeStamps, totalReviews=totalReviews, reviewSize=reviewSize,
+                               loggedAsCustomer=loggedAsCustomer,loggedAsRunner=loggedAsRunner)
 
     else:
         return redirect(url_for("login"))
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
+    loggedAsCustomer = session.get('loggedAsCustomer')
+    loggedAsRunner = session.get('loggedAsRunner')
+
     print(session.get('loggedIn'))
 
     if session.get('loggedIn') == True:
@@ -650,7 +681,7 @@ def settings():
         return render_template('settings.html', usernameP=usernameP, loggedIn=loggedIn, errorText=errorText,
                                ratings=ratings, changepasssworderror=changepasssworderror, nickname=nickname,
                                phoneNumber=phoneNumber, passwordNotSame=passwordNotSame,
-                               attemptedPasswordChange=attemptedPasswordChange)
+                               attemptedPasswordChange=attemptedPasswordChange, loggedAsRunner=loggedAsRunner,loggedAsCustomer=loggedAsCustomer)
 
     else:
         return redirect(url_for("settings"))
@@ -837,46 +868,46 @@ htc_food = [
 ]
 
 bakery_food = [
-    {'name': 'VANILLA CHOCO TIWIST', 'price': 4.50, 'category': 'Pastry'},
-    {'name': 'CHICKEN CURRY PUFF', 'price': 4.50, 'category': 'Pastry'},
-    {'name': 'TUNA PUFF', 'price': 4.50, 'category': 'Pastry'},
-    {'name': 'BANANA BAR', 'price': 3.80, 'category': 'Pastry'},
-    {'name': 'CHICKEN SAUSAGE DONUT', 'price': 4.50, 'category': 'Pastry'},
-    {'name': 'GARLIC SAUSAGE ROLL', 'price': 5.50, 'category': 'Pastry'},
-    {'name': 'BBQ SAUSAGE ROLL', 'price': 5.50, 'category': 'Pastry'},
-    {'name': 'MINI CROISSANT', 'price': 2.00, 'category': 'Pastry'},
-    {'name': 'MINI CHICKEN MUSHROOM PIE', 'price': 5.50, 'category': 'Pastry'},
-    {'name': 'FIRE CRACKER SAUSAGE', 'price': 7.50, 'category': 'Pastry'},
-    {'name': 'CHOCOLATE ROLL', 'price': 3.00, 'category': 'Pastry'},
-    {'name': 'CHOCOLATE MUFFIN', 'price': 6.50, 'category': 'Pastry'},
-    {'name': 'BLUEBERRY MUFFIN', 'price': 6.50, 'category': 'Pastry'},
-    {'name': 'MINI MUFFIN RED VELVET', 'price': 2.50, 'category': 'Pastry'},
-    {'name': 'MINI MUFFIN BUTTERSCOTCH', 'price': 2.50, 'category': 'Pastry'},
-    {'name': 'CHOCOLATE CHIP COOKIES', 'price': 4.50, 'category': 'Pastry'},
-    {'name': 'DOUBLE CHOCO CHIP COOKIES', 'price': 4.50, 'category': 'Pastry'},
-    {'name': 'SPICY TUNA EGG SANDWICH', 'price': 4.00, 'category': 'Pastry'},
-    {'name': 'EGG MAYO SANDWICH', 'price': 3.50, 'category': 'Pastry'},
-    {'name': 'BIHUN GORENG', 'price': 5.00, 'category': 'Pastry'},
-    {'name': 'NASI GORENG', 'price': 5.00, 'category': 'Pastry'},
-    {'name': 'NASI LEMAK', 'price': 4.00, 'category': 'Pastry'},
-    {'name': 'COFFEE', 'price': 0.00, 'category': 'Coffee'},  # Header for Coffee category
-    {'name': 'S BLACK COFFEE', 'price': 4.00, 'category': 'Coffee'},
-    {'name': 'WHITE COFFEE', 'price': 4.00, 'category': 'Coffee'},
-    {'name': 'PREMIUM COFFEE', 'price': 0.00, 'category': 'Coffee'},  # Sub-header for Premium Coffee
-    {'name': 'ESPRESSO', 'price': 5.50, 'category': 'Coffee'},
-    {'name': 'AMERICAN', 'price': 6.50, 'category': 'Coffee'},
-    {'name': 'LATTE', 'price': 7.50, 'category': 'Coffee'},
-    {'name': 'CAPPUCCINO', 'price': 7.50, 'category': 'Coffee'},
-    {'name': 'MOCHA', 'price': 8.50, 'category': 'Coffee'},
-    {'name': 'COCONUT LATTE', 'price': 8.50, 'category': 'Coffee'},
-    {'name': 'HAZELNUT LATTE', 'price': 8.50, 'category': 'Coffee'},
-    {'name': 'FRENCH VANILLA LATTE', 'price': 8.50, 'category': 'Coffee'},
-    {'name': 'SALTED CARAMEL LATTE', 'price': 8.50, 'category': 'Coffee'},
-    {'name': 'NON COFFEE', 'price': 0.00, 'category': 'Coffee'},  # Sub-header for Non-Coffee drinks
-    {'name': 'CHOCOLATE', 'price': 7.00, 'category': 'Coffee'},
-    {'name': 'MATCHA LATTE', 'price': 7.80, 'category': 'Coffee'},
-    {'name': 'MILO', 'price': 5.00, 'category': 'Coffee'},  # Likely a mistake, categorized under Coffee
-    {'name': 'TEH TARIK', 'price': 5.00, 'category': 'Coffee'},
+    {'name': 'VANILLA CHOCO TIWIST', 'price': 4.50, 'category': 'bakery'},
+    {'name': 'CHICKEN CURRY PUFF', 'price': 4.50, 'category': 'bakery'},
+    {'name': 'TUNA PUFF', 'price': 4.50, 'category': 'bakery'},
+    {'name': 'BANANA BAR', 'price': 3.80, 'category': 'bakery'},
+    {'name': 'CHICKEN SAUSAGE DONUT', 'price': 4.50, 'category': 'bakery'},
+    {'name': 'GARLIC SAUSAGE ROLL', 'price': 5.50, 'category': 'bakery'},
+    {'name': 'BBQ SAUSAGE ROLL', 'price': 5.50, 'category': 'bakery'},
+    {'name': 'MINI CROISSANT', 'price': 2.00, 'category': 'bakery'},
+    {'name': 'MINI CHICKEN MUSHROOM PIE', 'price': 5.50, 'category': 'bakery'},
+    {'name': 'FIRE CRACKER SAUSAGE', 'price': 7.50, 'category': 'bakery'},
+    {'name': 'CHOCOLATE ROLL', 'price': 3.00, 'category': 'bakery'},
+    {'name': 'CHOCOLATE MUFFIN', 'price': 6.50, 'category': 'bakery'},
+    {'name': 'BLUEBERRY MUFFIN', 'price': 6.50, 'category': 'bakery'},
+    {'name': 'MINI MUFFIN RED VELVET', 'price': 2.50, 'category': 'bakery'},
+    {'name': 'MINI MUFFIN BUTTERSCOTCH', 'price': 2.50, 'category': 'bakery'},
+    {'name': 'CHOCOLATE CHIP COOKIES', 'price': 4.50, 'category': 'bakery'},
+    {'name': 'DOUBLE CHOCO CHIP COOKIES', 'price': 4.50, 'category': 'bakery'},
+    {'name': 'SPICY TUNA EGG SANDWICH', 'price': 4.00, 'category': 'bakery'},
+    {'name': 'EGG MAYO SANDWICH', 'price': 3.50, 'category': 'bakery'},
+    {'name': 'BIHUN GORENG', 'price': 5.00, 'category': 'bakery'},
+    {'name': 'NASI GORENG', 'price': 5.00, 'category': 'bakery'},
+    {'name': 'NASI LEMAK', 'price': 4.00, 'category': 'bakery'},
+    {'name': 'COFFEE', 'price': 0.00, 'category': 'bakery'},  # Header for Coffee category
+    {'name': 'S BLACK COFFEE', 'price': 4.00, 'category': 'bakery'},
+    {'name': 'WHITE COFFEE', 'price': 4.00, 'category': 'bakery'},
+    {'name': 'PREMIUM COFFEE', 'price': 0.00, 'category': 'bakery'},  # Sub-header for Premium Coffee
+    {'name': 'ESPRESSO', 'price': 5.50, 'category': 'bakery'},
+    {'name': 'AMERICAN', 'price': 6.50, 'category': 'bakery'},
+    {'name': 'LATTE', 'price': 7.50, 'category': 'bakery'},
+    {'name': 'CAPPUCCINO', 'price': 7.50, 'category': 'bakery'},
+    {'name': 'MOCHA', 'price': 8.50, 'category': 'bakery'},
+    {'name': 'COCONUT LATTE', 'price': 8.50, 'category': 'bakery'},
+    {'name': 'HAZELNUT LATTE', 'price': 8.50, 'category': 'bakery'},
+    {'name': 'FRENCH VANILLA LATTE', 'price': 8.50, 'category': 'bakery'},
+    {'name': 'SALTED CARAMEL LATTE', 'price': 8.50, 'category': 'bakery'},
+    {'name': 'NON COFFEE', 'price': 0.00, 'category': 'bakery'},  # Sub-header for Non-Coffee drinks
+    {'name': 'CHOCOLATE', 'price': 7.00, 'category': 'bakery'},
+    {'name': 'MATCHA LATTE', 'price': 7.80, 'category': 'bakery'},
+    {'name': 'MILO', 'price': 5.00, 'category': 'bakery'},  # Likely a mistake, categorized under Coffee
+    {'name': 'TEH TARIK', 'price': 5.00, 'category': 'bakery'},
 ]
 
 
@@ -916,16 +947,21 @@ results = mycursor.fetchall()
 for row in results:
     print(row)
 
-
+ # if request.method == 'POST':
+    #     item_name = request.form.get('item_name')
+    #     selected_item = next((item for item in ITEMS if item['name'] == item_name), None)
 @app.route('/index', methods=['GET', 'POST'])
 def index():
-    store = request.args.get('store')  
-    if store == 'htc':
-        items = htc_food
-    elif store == 'deen':
-        items = deen_food
+    if request.method == 'GET':  # Only consider store selection on GET requests
+        store = request.args.get('store')
+        if store == 'htc':
+            items = htc_food
+        elif store == 'deen':
+            items = deen_food
+        else:  # Default to bakery items for the `index` route
+            items = bakery_food  # Explicitly assign bakery food for clarity
     else:
-        items = bakery_food
+        items = []  # Clear items on POST requests to avoid stale data (optional)
 
     selected_item = None
     if request.method == 'POST':
@@ -934,14 +970,10 @@ def index():
 
     return render_template('dlight_bakery.html', items=items, cart= {}, selected_item=selected_item)
 
-
 @app.route('/', methods=['GET', 'POST'])
 def bakery():
-    
-    if 'username' in session:
-        username = session.get('username')
-    else:
-        username = "Guest"
+        
+    username = "Guest"
 
     cart = {} 
     selected_item = None
@@ -950,6 +982,7 @@ def bakery():
         item_name = request.form.get('food_name')
         quantity = int(request.form.get('quantity', 1))  
 
+        db.reconnect()
         mycursor = db.cursor()
         try:
 
@@ -977,8 +1010,6 @@ def bakery():
             print(f"Error: {err}")
             db.rollback()
         mycursor.close()
-    
-
 
     
     try:
@@ -991,55 +1022,43 @@ def bakery():
         print(f"Error: {err}")
         all_items = []
 
-
-# Rest of your code
-
-
-    # Assuming you have an ITEMS list (you can replace this with your actual item data)
-    # Example: ITEMS = ['Cake', 'Cookie', 'Bread']
     return render_template('dlight_bakery.html', items=ITEMS, cart=cart, selected_item=selected_item, all_items=all_items)
 
 
 @app.route('/add_to_cart', methods=['POST'])
 def add_to_cart():
-    if 'username' not in session:
-        return redirect(url_for('login'))
 
-    username = session['username']
+
+    username = "Guest"
     food_name = request.form.get('food_name')
     price = float(request.form.get('price'))
     remark = request.form.get('remark', '')
 
     # Create a cursor to execute SQL queries
-    cur = db.cursor()
+    mycursor = db.cursor()
 
     # Check if the item already exists in the cart
-    cur.execute("SELECT * FROM Cart WHERE username = %s AND food_name = %s", (username, food_name))
-    existing_item = cur.fetchone()
+    mycursor.execute("SELECT * FROM Cart WHERE username = %s AND food_name = %s", (username, food_name))
+    existing_item = mycursor.fetchone()
 
     if existing_item:
         # Update quantity if item exists
-        cur.execute("UPDATE Cart SET quantity = quantity + 1 WHERE order_id = %s", (existing_item[0],))
+        mycursor.execute("UPDATE Cart SET quantity = quantity + 1 WHERE order_id = %s", (existing_item[0],))
     else:
         # Insert new item into the cart
-        cur.execute("INSERT INTO Cart (order_id, food_name, price, quantity, remarks, username) VALUES (%s, %s, %s, %s, %s, %s)",
+        mycursor.execute("INSERT INTO Cart (order_id, food_name, price, quantity, remarks, username) VALUES (%s, %s, %s, %s, %s, %s)",
                     (0, food_name, price, 1, remark, username))
 
     # Commit changes to the database
     db.commit()
-    cur.close()
+    mycursor.close()
 
     return redirect(url_for('bakery'))
 
 @app.route('/remove_from_cart', methods=['POST'])
 def remove_from_cart():
-    if db is None:
-        return "Error connecting to the database", 500
 
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    username = session['username']
+    username = "Guest"
     food_name = request.form.get('food_name')
 
     try:
@@ -1071,7 +1090,7 @@ def checkout():
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    username = session['username']
+    username = "Guest"
 
 
     try:
@@ -1096,10 +1115,7 @@ def update_remarks():
     if db is None:
         return "Error connecting to the database", 500
 
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    username = session['username']
+    username = "Guest"
     food_name = request.form.get('food_name')
     remarks = request.form.get('remarks')
 
@@ -1107,7 +1123,7 @@ def update_remarks():
     try:
         mycursor = db.cursor(buffered=True)
         # Update remarks for the specified item
-        mycursor.execute("UPDATE Cart SET remarks = %s WHERE username = %s AND food_name = %s", (remarks, username, food_name))
+        mycursor.execute("UPDATE Cart SET remarks = %s WHERE username = %s AND food_name = %s", (remarks, username, food_name,))
         db.commit()
     except mysql.connector.Error as err:
         print(f"Error: {err}")
@@ -1127,16 +1143,14 @@ def search():
 
 @app.route('/home')
 def home():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-    username = session.get('username')  
+    
+    username = "Guest"  
     return render_template('home.html', username=username)
 
 @app.route('/profile')
 def user_profile():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-    username = session.get('username') 
+
+    username = "Guest"
     return render_template('profile.html', username=username)
 # @app.route('/home', methods=['GET']) 
 # def home():

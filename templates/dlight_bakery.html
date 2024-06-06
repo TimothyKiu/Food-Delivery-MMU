@@ -10,7 +10,7 @@
     <header class="header">
         <h1 id="title">D'LIGHT BAKERY</h1> 
 
-        <form action="/templates/restaurant.html" method="get" class="searchbar">
+        <form action="/" method="get" class="searchbar">
             <input type="search" name="query" placeholder="Type the food name." />
             <button type="submit">🔍</button>
         </form>
@@ -21,7 +21,7 @@
     </header>
 
     <main class="main">
-        {% for item in items %}
+        {% for item in items if item['category'] == 'bakery' %}
             <form action="/" method="post">
                 <input type="hidden" name="item_name" value="{{ item['name'] }}">
                 <button type="submit">{{ item['name'] }}</button>
@@ -52,27 +52,14 @@
             <p>In Cart: {{ cart[selected_item['name']]['quantity'] if selected_item['name'] in cart else 0 }}</p>
         {% endif %}
     
-        <script>
-            // Store the initial scroll position
-            const initialScrollPosition = window.scrollY;
-            console.log('Initial scroll position:', initialScrollPosition);
-        
-            // Restore the scroll position after form submission
-            window.addEventListener('load', () => {
-                console.log('Restoring scroll position to:', initialScrollPosition);
-                window.scrollTo(0, initialScrollPosition);
-            });
-        </script>
-    
-
     </main>
 
     
     <footer class="footer">
         <nav>
             <a href="#cart" class="cart-button">🛒 <span class="cart-number">3</span></a>
-            <a href="/home.html">Home</a>
-            <a href="/profile.html">Profile</a>
+            <a href="/home">Home</a>
+            <a href="/profile">Profile</a>
 
         </nav>
 

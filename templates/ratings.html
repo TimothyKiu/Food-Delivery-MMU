@@ -4,40 +4,53 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" type="text/css" href="/static/ratings.css">
+    <style>
+
+    </style>
 
 </head>
 <body>
-    <h1>Rate your food!</h1>
-    <h2>Rate your runner placeholder </h2>
-    <form action="/ratings" method="post" class="logindiv">
-        <p>Giving review to: {{ currentRateableRunner }}</p>
-        <p>Review sent by: {{ customerName }}</p>
 
-{#        <input id="runnerName" name="runnerName" required>#}
-
-         <div class="rating-css">
-            <input type="radio" id="5star" name="rating" value="5" required>
-            <label class="star" for="5star">&#9733;</label>
-
-            <input type="radio" id="4star" name="rating" value="4" required>
-            <label class="star" for="4star">&#9733;</label>
-
-            <input type="radio" id="3star" name="rating" value="3" required>
-            <label class="star" for="3star">&#9733;</label>
-
-            <input type="radio" id="2star" name="rating" value="2" required>
-            <label class="star" for="2star">&#9733;</label>
-
-            <input type="radio" id="1star" name="rating" value="1" required>
-            <label class="star" for="1star">&#9733;</label>
+    <div id="ratings" style="display:flex; flex-direction:column; align-items: center; justify-content: center;">
+        <div>
+            <h2>Rate your runner!</h2>
         </div>
+        <form action="/ratings" method="post" class="logindiv">
 
-        <label for="writeReview" class="writeReview">Write a review:</label>
-                <input id="customerTick" name="writeReview" >
+            <p>Giving review to: {{ currentRateableRunner }}</p>
+            <p>Review sent by: {{ customerName }}</p>
 
-        <button type="submit" id="submitReview">Submit review</button>
+    {#        <input id="runnerName" name="runnerName" required>#}
+             <div>
+                 <div class="rating-css" style="display:flex;align-items: center; justify-content: center;">
+                    <input type="radio" id="5star" name="rating" value="5" required>
+                    <label class="star" for="5star">&#9733;</label>
 
-    </form>
+                    <input type="radio" id="4star" name="rating" value="4" required>
+                    <label class="star" for="4star">&#9733;</label>
+
+                    <input type="radio" id="3star" name="rating" value="3" required>
+                    <label class="star" for="3star">&#9733;</label>
+
+                    <input type="radio" id="2star" name="rating" value="2" required>
+                    <label class="star" for="2star">&#9733;</label>
+
+                    <input type="radio" id="1star" name="rating" value="1" required>
+                    <label class="star" for="1star">&#9733;</label>
+                </div>
+             </div>
+
+            <label for="writeReview" ></label>
+                    <input id="writeReview" name="writeReview" >
+
+            <div>
+                <button type="submit" id="submitReview" style="margin-top:10%">Submit review</button>
+            </div>
+
+
+        </form>
+    </div>
+
 
 </body>
 </html>
