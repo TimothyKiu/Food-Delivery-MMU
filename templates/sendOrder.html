@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+        // Set the interval to refresh the page every 5000 milliseconds (5 seconds)
+        setInterval(function() {
+            location.reload();
+        }, 5000);
+    </script>
+
+</head>
+<body>
+    <p>session: {{ customerName }}</p>
+    {% if orderSentTextDisplayForHTML %}
+        <p>Order sent, waiting for a runner to accept...</p>
+    {% endif %}
+
+    {% if not orderSentTextDisplayForHTML %}
+
+        <form method="post">
+            <button name="sendOrder" value="True">Confirm order</button>
+        </form>
+     {% endif %}
+
+    {% if orderSentBool %}
+        <p>You already have an pending order!</p>
+     {% endif %}
+
+
+
+</body>
+</html>

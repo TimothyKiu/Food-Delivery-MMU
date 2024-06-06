@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+        // Set the interval to refresh the page every 5000 milliseconds (5 seconds)
+        setInterval(function() {
+            location.reload();
+        }, 5000);
+    </script>
+
+</head>
+<body>
+    <h1>Order completed, would you like to give a review to {{ runnerNameHTML }}?</h1>
+
+    <form method="post">
+        <button name="yesButton" value="True">Yes</button>
+        <button name="noButton" value="True">No</button>
+    </form>
+
+
+</body>
+</html>
