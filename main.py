@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from loginLogic import loginLogic
 from registerLogic import registerLogic
 import mysql.connector
-from MySQLdb import  _exceptions
+
 
 #NOTE: STOP RUNNING PYTHON WHENEVER YOU WANNA ALTER SQL TABLES
 
