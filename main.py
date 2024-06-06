@@ -1049,11 +1049,11 @@ def remove_from_cart():
 
         if existing_item:
             if existing_item[4] > 1:
-                quantity = existing_item[4] - 1
-                total_price = existing_item[2] * quantity
-                mycursor.execute("UPDATE Cart SET quantity = %s, total_price = %s WHERE order_id = %s", (quantity, total_price, existing_item[0]))
+                new_quantity = existing_item[4] - 1
+                new_total_price = existing_item[2] * new_quantity
+                mycursor.execute("UPDATE Cart SET quantity = %s, total_price = %s WHERE order_id = %s", (new_quantity, new_total_price, existing_item[0]))
             else:
-                mycursor.execute("DELETE FROM Cart WHERE order_id = %s", (existing_item[0],))
+                mycursor.execute("DELETE FROM Cart WHERE order_id = %s", (existing_item[0]))
             # if existing_item[4] > 1:
             #     mycursor.execute("UPDATE Cart SET quantity = quantity - 1 WHERE id = %s", (existing_item[0],))
             # else:
@@ -1063,17 +1063,14 @@ def remove_from_cart():
             db.commit()
     except mysql.connector.Error as err:
         print(f"Error: {err}")
+        db.rollback()
+    finally:
         mycursor.close()
-
-    db.close()
     return redirect(url_for('bakery'))
 
 
 @app.route('/update_remarks', methods=['POST'])
 def update_remarks():
-    # if db is None:
-    #     return "Error connecting to the database", 500
-
     username = "Guest"
     food_name = request.form.get('item_name')
     remark = request.form.get('remarks')
@@ -1081,17 +1078,14 @@ def update_remarks():
     db.reconnect()
     try:
         mycursor = db.cursor(buffered=True)
-        # Update remarks for the specified item
-        mycursor.execute("UPDATE Cart SET remarks = %s WHERE username = %s AND food_name = %s", (remark, username, food_name,))
+        mycursor.execute("UPDATE Cart SET remark = %s WHERE username = %s AND food_name = %s", (remark, username, food_name))
         db.commit()
     except mysql.connector.Error as err:
         print(f"Error: {err}")
         db.rollback()
     finally:
-        if mycursor is not None:
-            mycursor.close()
+        mycursor.close()
 
-    db.close()
     return redirect(url_for('bakery'))
 
 @app.route('/checkout')
@@ -1120,7 +1114,7 @@ def checkout():
         mycursor.close()
 
     db.close()
-    return render_template('checkout.html', orders=orders, total_price=total_price)
+    return redirect(url_for('bakery'), orders=orders, total_price=total_price)
 
 @app.route('/search')
 def search():
