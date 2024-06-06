@@ -4,10 +4,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from loginLogic import loginLogic
 from registerLogic import registerLogic
-
 import mysql.connector
+from MySQLdb import  _exceptions
 
 #NOTE: STOP RUNNING PYTHON WHENEVER YOU WANNA ALTER SQL TABLES
+
 db = mysql.connector.connect(
     host="localhost",
     user='root',
@@ -15,11 +16,23 @@ db = mysql.connector.connect(
     database='webDB'
 )
 
+
 mycursor = db.cursor(buffered=True)
 
 app = Flask(__name__)
 app.secret_key = 'theSecretKeyToTheEvilPiratesTreasureHarHarHar'
-mycursor.execute("SHOW GRANTS FOR 'root'@'localhost'")
+
+
+
+try:
+    mycursor = db.cursor(buffered=True)
+    mycursor.execute("SHOW GRANTS FOR 'root'@'localhost'")
+except mysql.connector.Error as err:
+    print(f"Error: {err}")
+    db.close()
+    exit()
+
+
 
 
 
@@ -673,9 +686,508 @@ def settings():
     else:
         return redirect(url_for("settings"))
 
-@app.route('/testfile')
-def testfile():
-    return render_template('testfile.html')
+# @app.route('/testfile')
+# def testfile():
+#     return render_template('testfile.html')
 
+deen_food = [
+    {'name': 'CHICKEN CHOP COMBO (Rice)', 'price': 7.00, 'category': 'Western'},
+    {'name': 'CHICKEN CHOP COMBO (Fried Rice)', 'price': 8.50, 'category': 'Western'},
+    {'name': 'ROTI BAKAR', 'price': 1.50, 'category': 'Western'},
+    {'name': 'SANDWICH AYAM', 'price': 2.50, 'category': 'Western'},
+    {'name': 'SANDWICH SARDIN', 'price': 2.50, 'category': 'Western'},
+    {'name': 'ROT JOHN', 'price': 5.00, 'category': 'Western'},
+    {'name': 'FRIES', 'price': 5.00, 'category': 'Western'},
+    {'name': 'WET FRIES', 'price': 5.00, 'category': 'Western'},
+    {'name': 'FISH & CHIPS', 'price': 11.00, 'category': 'Western'},
+    {'name': 'CHICKEN CHOP (REGULAR)', 'price': 12.00, 'category': 'Western'},
+    {'name': 'CHICKEN GRILL', 'price': 15.00, 'category': 'Western'},
+    {'name': 'LAMB CHOP', 'price': 18.00, 'category': 'Western'},
+    {'name': 'FRIED NOODLES', 'price': 5.00, 'category': 'Chinese'},
+    {'name': 'KUEY TIAU GOREN', 'price': 5.00, 'category': 'Chinese'},
+    {'name': 'BIHUN GOREN', 'price': 5.00, 'category': 'Chinese'},
+    {'name': 'BIHUN SINGAPORE', 'price': 5.00, 'category': 'Chinese'},
+    {'name': 'MEE GOREN', 'price': 5.00, 'category': 'Chinese'},
+    {'name': 'MEE GORENG MAMAK', 'price': 5.00, 'category': 'Chinese'},
+    {'name': 'MAGGIE GOREN', 'price': 5.00, 'category': 'Chinese'},
+    {'name': 'YEE MEE GOREN', 'price': 6.00, 'category': 'Chinese'},
+    {'name': 'HOKKIEN MEE', 'price': 6.00, 'category': 'Chinese'},
+    {'name': 'MAGGIE GORENG XLR', 'price': 7.00, 'category': 'Chinese'},
+    {'name': 'CHINESE STYLE', 'price': 0.00, 'category': 'Chinese'},  # Header for Chinese-style dishes
+    {'name': 'NASI BUTTER CHICKEN', 'price': 8.00, 'category': 'Chinese'},
+    {'name': 'NASI BUTTER FISH', 'price': 8.00, 'category': 'Chinese'},
+    {'name': 'NASI BUTTER PRAWN', 'price': 9.00, 'category': 'Chinese'},
+    {'name': 'NASI BUTTER SQUID', 'price': 9.00, 'category': 'Chinese'},
+    {'name': 'NASI BUTTER CAMPUR', 'price': 10.00, 'category': 'Chinese'},
+    {'name': 'NASI BUTTER MILK (CN)', 'price': 10.00, 'category': 'Chinese'},
+    {'name': 'TOM YAM SOUP + RICE', 'price': 7.00, 'category': 'Soups'},
+    {'name': 'TOM YAM SOUP (CENDAWAN)', 'price': 7.00, 'category': 'Soups'},
+    {'name': 'TOM YAM SOUP (AYAM)', 'price': 7.00, 'category': 'Soups'},
+    {'name': 'TOM YAM SOUP (DAGING)', 'price': 8.00, 'category': 'Soups'},
+    {'name': 'TOM YAM SOUP (SEA FOOD)', 'price': 8.00, 'category': 'Soups'},
+    {'name': 'TOM YAM SOUP (CAMPUR)', 'price': 8.50, 'category': 'Soups'},
+    {'name': 'MAGGIE SOUP', 'price': 5.00, 'category': 'Soups'},
+    {'name': 'KUEY TIAU SOUP', 'price': 5.00, 'category': 'Soups'},
+    {'name': 'BIHUN SOUP', 'price': 5.00, 'category': 'Soups'},
+    {'name': 'VEGETARIAN + NASI', 'price': 6.00, 'category': 'Soups'},
+    {'name': 'CENDAWAN + NASI', 'price': 6.00, 'category': 'Soups'},
+    {'name': 'AYAM + NASI', 'price': 6.00, 'category': 'Soups'},  # Likely a mistake on the menu, assuming this should not be Vegetarian
+    {'name': 'DAGING + NASI', 'price': 7.00, 'category': 'Soups'},  # Likely a mistake on the menu, assuming this should not be Vegetarian
+    {'name': 'KAMBING + NASI', 'price': 10.00, 'category': 'Soups'},
+    {'name': 'NASI GORENG / FRIED RICE', 'price': 0.00, 'category': 'Nasi Goreng'},  # Header for Nasi Goreng dishes
+    {'name': 'NASI GORENG BIASA (RM5)', 'price': 5.00, 'category': 'Nasi Goreng'},  # Assuming "BIASA" means "Normal"
+    {'name': 'NASI GORENG KAMPUNG', 'price': 6.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG CIN', 'price': 5.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG MAMAK', 'price': 5.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG TELUR (EGG)', 'price': 5.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG CILI API', 'price': 5.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG SAUSAGE', 'price': 5.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG TOMYAM', 'price': 6.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG SARDIN', 'price': 6.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG PATTAYA', 'price': 6.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG IKAN MASIN', 'price': 6.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG TOMATO', 'price': 6.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG CENDAWAN', 'price': 6.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG DAGING', 'price': 7.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG SEA FOOD', 'price': 7.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG AYAM (CHICKEN)', 'price': 8.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG PAPRIK AYAM', 'price': 8.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG MSA (EGG)', 'price': 9.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG THAI', 'price': 9.00, 'category': 'Nasi Goreng'},
+    {'name': 'NASI GORENG KAMBING', 'price': 12.00, 'category': 'Nasi Goreng'},
+    {'name': 'PASTA SPECIAL', 'price': 0.00, 'category': 'Pasta'},  # Header for Pasta dishes
+    {'name': 'CARBONARA', 'price': 10.00, 'category': 'Pasta'},
+    {'name': 'CHICKEN ALFRED', 'price': 10.00, 'category': 'Pasta'},
+    {'name': 'BOLONESE', 'price': 10.00, 'category': 'Pasta'},
+    {'name': 'PASTA VEGETARIAN', 'price': 10.00, 'category': 'Pasta'},
+    {'name': 'MARINARA', 'price': 12.00, 'category': 'Pasta'},
+    {'name': 'CHICKEN SPICY', 'price': 12.00, 'category': 'Pasta'},
+    {'name': 'HOT PLATE', 'price': 0.00, 'category': 'Other'},  # Header for Hot Plate dishes
+    {'name': 'CHAR KUEY TIAU', 'price': 6.00, 'category': 'Other'},
+    {'name': 'SIZZLING RICE', 'price': 6.00, 'category': 'Other'},
+    {'name': 'MEE BANDUNG', 'price': 6.00, 'category': 'Other'},
+    {'name': 'SIZZLING YEE MEE', 'price': 6.50, 'category': 'Other'},
+    {'name': 'CANTONESE YEE MEE', 'price': 7.00, 'category': 'Other'},
+    {'name': 'CANTONESE JUEY TIAU', 'price': 7.00, 'category': 'Other'},
+    {'name': 'YING YONG', 'price': 8.00, 'category': 'Other'},
+    {'name': 'TEH TARIK', 'price': 2.00, 'category': 'Drinks'},  # Assuming Teh refers to Tea
+    {'name': 'TEH O', 'price': 1.50, 'category': 'Drinks'},
+    {'name': 'TEH O LIMAU', 'price': 2.00, 'category': 'Drinks'},
+    {'name': 'TEH O LAICI', 'price': 3.50, 'category': 'Drinks'},
+    {'name': 'NESCAFE', 'price': 2.50, 'category': 'Drinks'},
+    {'name': 'NESCAFE O', 'price': 2.00, 'category': 'Drinks'},
+    {'name': 'NESLO', 'price': 3.00, 'category': 'Drinks'},
+    {'name': 'WHITE COFFEE', 'price': 3.00, 'category': 'Drinks'},
+    {'name': 'KOPI', 'price': 2.00, 'category': 'Drinks'},
+    {'name': 'KOPI O', 'price': 1.50, 'category': 'Drinks'},
+    {'name': 'MILO', 'price': 2.50, 'category': 'Drinks'},
+    {'name': 'MILO O', 'price': 2.50, 'category': 'Drinks'},
+    {'name': 'BARLEY', 'price': 2.00, 'category': 'Drinks'},
+    {'name': 'HORLICKS', 'price': 3.00, 'category': 'Drinks'},
+    {'name': 'LIMAU PANAS', 'price': 2.00, 'category': 'Drinks'},
+    {'name': 'LAICI', 'price': 3.00, 'category': 'Drinks'},  # Assuming referring to juice
+    {'name': 'SIRAP BANDUNG', 'price': 2.00, 'category': 'Drinks'},
+    {'name': 'FRUIT JUICE', 'price': 0.00, 'category': 'Drinks'},  # Header for Fruit Juices
+    {'name': 'ORANGE JUICE', 'price': 4.00, 'category': 'Drinks'},
+    {'name': 'APPLE JUICE', 'price': 4.00, 'category': 'Drinks'},
+    {'name': 'WATERMELON JUICE', 'price': 4.00, 'category': 'Drinks'},
+    {'name': 'EXTRA JASS', 'price': 3.50, 'category': 'Drinks'},
+    {'name': 'CARROT JUICE', 'price': 4.00, 'category': 'Drinks'},
+]
+
+htc_food = [
+    {'name': 'GORENG-GORENG', 'price': 0.00, 'category': 'Goreng'},  # Header for goreng dishes
+    {'name': 'NASI GORENG', 'price': 4.50, 'category': 'Goreng'},
+    {'name': 'NASI GORENG DOUBLE', 'price': 6.00, 'category': 'Goreng'},
+    {'name': 'NASI GORENG CILI PADIR', 'price': 6.00, 'category': 'Goreng'},
+    {'name': 'NASI GORENG CINAR', 'price': 5.00, 'category': 'Goreng'},
+    {'name': 'NASI GORENG KAMPUNG', 'price': 6.00, 'category': 'Goreng'},
+    {'name': 'NASI GORENG AYAM', 'price': 8.00, 'category': 'Goreng'},
+    {'name': 'NASI GORENG KAMPUNG [AYAM]', 'price': 9.00, 'category': 'Goreng'},
+    {'name': 'NASI GORENG PATTAYA', 'price': 6.00, 'category': 'Goreng'},
+    {'name': 'MAGGI', 'price': 4.50, 'category': 'Goreng'},
+    {'name': 'MAGGI DOUBLE', 'price': 7.00, 'category': 'Goreng'},
+    {'name': 'MAGGI DOUBLE AYAM', 'price': 10.00, 'category': 'Goreng'},
+    {'name': 'MEE', 'price': 4.50, 'category': 'Goreng'},
+    {'name': 'BIHUN', 'price': 4.50, 'category': 'Goreng'},
+    {'name': 'KUEY TEOW', 'price': 4.50, 'category': 'Goreng'},
+    {'name': 'ROJAK', 'price': 4.50, 'category': 'Goreng'},
+    {'name': 'TELUR MATA', 'price': 1.00, 'category': 'Goreng'},
+    {'name': 'TELUR DADAR', 'price': 1.50, 'category': 'Goreng'},
+    {'name': 'MEE/KUE TEOW/BIHUN', 'price': 4.50, 'category': 'Goreng'},  # Assuming this refers to a combo
+    {'name': 'MEE/NASI GORENG', 'price': 4.50, 'category': 'Goreng'},  # Assuming this refers to a combo
+    {'name': 'KUE TEOW/BIHUN GORENG', 'price': 4.50, 'category': 'Goreng'},  # Assuming this refers to a combo
+    {'name': 'ROJAK BIASA', 'price': 5.50, 'category': 'Goreng'},
+    {'name': 'ROJAK TELUR', 'price': 5.50, 'category': 'Goreng'},
+    {'name': 'ROJAK MEE/MEE', 'price': 5.50, 'category': 'Goreng'},  # Assuming this is a typo and should be "ROJAK MEE/BIHUN"
+    {'name': 'ROTI CANAI', 'price': 0.00, 'category': 'Roti'},  # Header for Roti dishes
+    {'name': 'BIAS', 'price': 1.20, 'category': 'Roti'},
+    {'name': 'TELUR', 'price': 2.50, 'category': 'Roti'},
+    {'name': 'TELUR BAWANG', 'price': 3.00, 'category': 'Roti'},
+    {'name': 'BAWANG', 'price': 2.00, 'category': 'Roti'},
+    {'name': 'PLANTAR', 'price': 2.50, 'category': 'Roti'},
+    {'name': 'BOOM', 'price': 2.50, 'category': 'Roti'},
+    {'name': 'CHEESE', 'price': 3.00, 'category': 'Roti'},
+    {'name': 'TELUR CHEESE', 'price': 4.00, 'category': 'Roti'},
+    {'name': 'SARDINE', 'price': 4.00, 'category': 'Roti'},
+    {'name': 'KAYA', 'price': 2.50, 'category': 'Roti'},
+    {'name': 'MADU', 'price': 2.50, 'category': 'Roti'},
+    {'name': 'PISANG', 'price': 3.00, 'category': 'Roti'},
+    {'name': 'TOSAI', 'price': 0.00, 'category': 'Tosai'},  # Header for Tosai dishes
+    {'name': 'BIAS', 'price': 2.00, 'category': 'Tosai'},
+    {'name': 'TELUR', 'price': 3.00, 'category': 'Tosai'},
+    {'name': 'BAWANG', 'price': 3.00, 'category': 'Tosai'},
+    {'name': 'MASALA', 'price': 3.50, 'category': 'Tosai'},
+    {'name': 'GHEE', 'price': 3.00, 'category': 'Tosai'},
+    {'name': 'MURTABAK', 'price': 4.50, 'category': 'Murtabak'},
+    {'name': 'CAPATI', 'price': 2.00, 'category': 'Others'},
+    {'name': 'SPECIAL', 'price': 0.00, 'category': 'Others'},  # Header for Special dishes
+    {'name': 'ROTI BAKAR', 'price': 1.50, 'category': 'Others'},
+    {'name': 'ROTI BAKAR TELUR', 'price': 3.00, 'category': 'Others'},
+    {'name': 'ROTI BAKAR SARDIN', 'price': 4.00, 'category': 'Others'},
+    {'name': 'MINUMAN', 'price': 0.00, 'category': 'Drinks'},  # Header for Drinks
+    {'name': 'AIS TEH', 'price': 2.30, 'category': 'Drinks'},
+    {'name': 'TEH O', 'price': 2.00, 'category': 'Drinks'},
+    {'name': 'KOPI', 'price': 2.30, 'category': 'Drinks'},
+    {'name': 'KOPI O', 'price': 2.00, 'category': 'Drinks'},
+    {'name': 'MILO', 'price': 2.80, 'category': 'Drinks'},
+    {'name': 'MILO O', 'price': 2.50, 'category': 'Drinks'},
+    {'name': 'NESCAFE O', 'price': 2.50, 'category': 'Drinks'},
+    {'name': 'NESCAFE', 'price': 2.80, 'category': 'Drinks'},
+    {'name': 'BRU', 'price': 3.00, 'category': 'Drinks'},
+    {'name': 'HORLICKS', 'price': 3.00, 'category': 'Drinks'},
+    {'name': 'TEH LIMAU', 'price': 2.30, 'category': 'Drinks'},
+    {'name': 'AIR SIRAP', 'price': 2.30, 'category': 'Drinks'},
+    {'name': 'SIRAP LIMAU', 'price': 2.30, 'category': 'Drinks'},
+    {'name': 'JUS BUAH-BUAHAN', 'price': 0.00, 'category': 'Drinks'},  # Header for Fruit Juices
+    {'name': 'OREN/EPAL', 'price': 3.50, 'category': 'Drinks'},
+    {'name': 'BELIMBING', 'price': 3.50, 'category': 'Drinks'},
+    {'name': 'MANGGA/KAROT', 'price': 3.50, 'category': 'Drinks'},
+    {'name': 'ASAM JAWA', 'price': 2.80, 'category': 'Drinks'},
+    {'name': 'BARLI', 'price': 2.80, 'category': 'Drinks'}
+]
+
+bakery_food = [
+    {'name': 'VANILLA CHOCO TIWIST', 'price': 4.50, 'category': 'bakery'},
+    {'name': 'CHICKEN CURRY PUFF', 'price': 4.50, 'category': 'bakery'},
+    {'name': 'TUNA PUFF', 'price': 4.50, 'category': 'bakery'},
+    {'name': 'BANANA BAR', 'price': 3.80, 'category': 'bakery'},
+    {'name': 'CHICKEN SAUSAGE DONUT', 'price': 4.50, 'category': 'bakery'},
+    {'name': 'GARLIC SAUSAGE ROLL', 'price': 5.50, 'category': 'bakery'},
+    {'name': 'BBQ SAUSAGE ROLL', 'price': 5.50, 'category': 'bakery'},
+    {'name': 'MINI CROISSANT', 'price': 2.00, 'category': 'bakery'},
+    {'name': 'MINI CHICKEN MUSHROOM PIE', 'price': 5.50, 'category': 'bakery'},
+    {'name': 'FIRE CRACKER SAUSAGE', 'price': 7.50, 'category': 'bakery'},
+    {'name': 'CHOCOLATE ROLL', 'price': 3.00, 'category': 'bakery'},
+    {'name': 'CHOCOLATE MUFFIN', 'price': 6.50, 'category': 'bakery'},
+    {'name': 'BLUEBERRY MUFFIN', 'price': 6.50, 'category': 'bakery'},
+    {'name': 'MINI MUFFIN RED VELVET', 'price': 2.50, 'category': 'bakery'},
+    {'name': 'MINI MUFFIN BUTTERSCOTCH', 'price': 2.50, 'category': 'bakery'},
+    {'name': 'CHOCOLATE CHIP COOKIES', 'price': 4.50, 'category': 'bakery'},
+    {'name': 'DOUBLE CHOCO CHIP COOKIES', 'price': 4.50, 'category': 'bakery'},
+    {'name': 'SPICY TUNA EGG SANDWICH', 'price': 4.00, 'category': 'bakery'},
+    {'name': 'EGG MAYO SANDWICH', 'price': 3.50, 'category': 'bakery'},
+    {'name': 'BIHUN GORENG', 'price': 5.00, 'category': 'bakery'},
+    {'name': 'NASI GORENG', 'price': 5.00, 'category': 'bakery'},
+    {'name': 'NASI LEMAK', 'price': 4.00, 'category': 'bakery'},
+    {'name': 'COFFEE', 'price': 0.00, 'category': 'bakery'},  # Header for Coffee category
+    {'name': 'S BLACK COFFEE', 'price': 4.00, 'category': 'bakery'},
+    {'name': 'WHITE COFFEE', 'price': 4.00, 'category': 'bakery'},
+    {'name': 'PREMIUM COFFEE', 'price': 0.00, 'category': 'bakery'},  # Sub-header for Premium Coffee
+    {'name': 'ESPRESSO', 'price': 5.50, 'category': 'bakery'},
+    {'name': 'AMERICAN', 'price': 6.50, 'category': 'bakery'},
+    {'name': 'LATTE', 'price': 7.50, 'category': 'bakery'},
+    {'name': 'CAPPUCCINO', 'price': 7.50, 'category': 'bakery'},
+    {'name': 'MOCHA', 'price': 8.50, 'category': 'bakery'},
+    {'name': 'COCONUT LATTE', 'price': 8.50, 'category': 'bakery'},
+    {'name': 'HAZELNUT LATTE', 'price': 8.50, 'category': 'bakery'},
+    {'name': 'FRENCH VANILLA LATTE', 'price': 8.50, 'category': 'bakery'},
+    {'name': 'SALTED CARAMEL LATTE', 'price': 8.50, 'category': 'bakery'},
+    {'name': 'NON COFFEE', 'price': 0.00, 'category': 'bakery'},  # Sub-header for Non-Coffee drinks
+    {'name': 'CHOCOLATE', 'price': 7.00, 'category': 'bakery'},
+    {'name': 'MATCHA LATTE', 'price': 7.80, 'category': 'bakery'},
+    {'name': 'MILO', 'price': 5.00, 'category': 'bakery'},  # Likely a mistake, categorized under Coffee
+    {'name': 'TEH TARIK', 'price': 5.00, 'category': 'bakery'},
+]
+
+
+ITEMS = []
+ITEMS.extend(bakery_food)
+ITEMS.extend(deen_food)
+ITEMS.extend(htc_food)
+
+
+mycursor.execute("SELECT * FROM Cart")
+results = mycursor.fetchall()
+
+for row in results:
+    print(row)
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'GET':  # Only consider store selection on GET requests
+        store = request.args.get('store')
+        if store == 'htc':
+            items = htc_food
+        elif store == 'deen':
+            items = deen_food
+        else:  # Default to bakery items for the `index` route
+            items = bakery_food  # Explicitly assign bakery food for clarity
+    else:
+        items = []  # Clear items on POST requests to avoid stale data (optional)
+
+    selected_item = None
+    if request.method == 'POST':
+        item_name = request.form.get('item_name')
+        selected_item = next((item for item in ITEMS if item['name'] == item_name), None)
+
+    return render_template('dlight_bakery.html', items=items, cart= {}, selected_item=selected_item)
+
+@app.route('/', methods=['GET', 'POST'])
+def bakery():
+        
+    username = "Guest"
+    cart = {}
+    selected_item = None
+
+    if request.method == 'POST':
+        item_name = request.form.get('item_name')  # corrected form field name
+        quantity = int(request.form.get('quantity', 1))
+
+        db.reconnect()
+        mycursor = db.cursor()
+        try:
+            existing_item_query = "SELECT * FROM cart WHERE username = %s AND food_name = %s"
+            mycursor.execute(existing_item_query, (username, item_name))
+            existing_item = mycursor.fetchone()
+
+            if existing_item:
+                update_quantity_query = "UPDATE Cart SET quantity = quantity + %s, total_price = price * (quantity + %s) WHERE order_id = %s"
+                mycursor.execute(update_quantity_query, (quantity, quantity, existing_item[0]))
+            else:
+                insert_item_query = "INSERT INTO Cart (order_id, food_name, price, quantity, total_price, remark, username) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                mycursor.execute(insert_item_query, (0, item_name, 0.0, quantity, 0.0 * quantity, "", username))
+
+            db.commit()
+            cart[item_name] = {'quantity': existing_item[3] + quantity, 'total_price': existing_item[2] * (existing_item[3] + quantity)} if existing_item else {'quantity': quantity, 'total_price': 0.0 * quantity}
+            selected_item = {'name': item_name, 'quantity': quantity}
+            #     update_quantity_query = "UPDATE Cart SET quantity = quantity + %s WHERE order_id = %s"
+            #     mycursor.execute(update_quantity_query, (quantity, existing_item[0]))
+            # else:
+            #     insert_item_query = "INSERT INTO Cart (order_id, food_name, price, quantity, remark, username) VALUES (%s, %s, %s, %s, %s, %s)"
+            #     mycursor.execute(insert_item_query, (0, item_name, 0.0, quantity, "", username))
+
+            # db.commit()
+            # cart[item_name] = {'quantity': existing_item[3] + quantity} if existing_item else {'quantity': quantity}
+            # selected_item = {'name': item_name, 'quantity': quantity}
+
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            db.rollback()
+        finally:
+            mycursor.close()
+
+    
+    try:
+        mycursor = db.cursor(buffered=True)
+        fetch_all_items_query = "SELECT * FROM Cart WHERE username = %s"
+        mycursor.execute(fetch_all_items_query, (username,))
+        all_items = mycursor.fetchall()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        all_items = []
+    finally:
+        mycursor.close()
+
+    return render_template('dlight_bakery.html', items=ITEMS, cart=cart, selected_item=selected_item, all_items=all_items)
+
+
+@app.route('/add_to_cart', methods=['POST'])
+def add_to_cart():
+    username = "Guest"
+    food_name = request.form.get('item_name')  # corrected form field name
+    price = float(request.form.get('item_price', 0.0))  # corrected form field name
+    remark = request.form.get('remark', '')
+
+    db.reconnect()
+    mycursor = db.cursor()
+    try:
+        mycursor.execute("SELECT * FROM Cart WHERE username = %s AND food_name = %s", (username, food_name))
+        existing_item = mycursor.fetchone()
+
+        if existing_item:
+            new_quantity = existing_item[4] + 1
+            new_total_price = price * new_quantity
+            mycursor.execute("UPDATE Cart SET quantity = %s, total_price = %s WHERE order_id = %s", (new_quantity, new_total_price, existing_item[0]))
+        else:
+            total_price = price * 1
+            mycursor.execute("INSERT INTO Cart (order_id, food_name, price, quantity, total_price, remark, username) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                             (0, food_name, price, 1, total_price, remark, username))
+        #     mycursor.execute("UPDATE Cart SET quantity = quantity + 1 WHERE order_id = %s", (existing_item[0],))
+        # else:
+        #     mycursor.execute("INSERT INTO Cart (order_id, food_name, price, quantity, remark, username) VALUES (%s, %s, %s, %s, %s, %s)",
+        #                      (0, food_name, price, 1, remark, username))
+        db.commit()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        db.rollback()
+    finally:
+        mycursor.close()
+    return redirect(url_for('bakery'))
+
+@app.route('/remove_from_cart', methods=['POST'])
+def remove_from_cart():
+
+    username = "Guest"
+    food_name = request.form.get('item_name')
+
+    db.reconnect()
+    try:
+        mycursor = db.cursor(buffered=True)
+        mycursor.execute("SELECT * FROM Cart WHERE username = %s AND food_name = %s", (username, food_name))
+        existing_item = mycursor.fetchone()
+
+        if existing_item:
+            if existing_item[4] > 1:
+                quantity = existing_item[4] - 1
+                total_price = existing_item[2] * quantity
+                mycursor.execute("UPDATE Cart SET quantity = %s, total_price = %s WHERE order_id = %s", (quantity, total_price, existing_item[0]))
+            else:
+                mycursor.execute("DELETE FROM Cart WHERE order_id = %s", (existing_item[0],))
+            # if existing_item[4] > 1:
+            #     mycursor.execute("UPDATE Cart SET quantity = quantity - 1 WHERE id = %s", (existing_item[0],))
+            # else:
+            #     mycursor.execute("DELETE FROM Cart WHERE id = %s", (existing_item[0],))
+
+            # Commit changes to the database
+            db.commit()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        mycursor.close()
+
+    db.close()
+    return redirect(url_for('bakery'))
+
+
+@app.route('/update_remarks', methods=['POST'])
+def update_remarks():
+    # if db is None:
+    #     return "Error connecting to the database", 500
+
+    username = "Guest"
+    food_name = request.form.get('item_name')
+    remark = request.form.get('remarks')
+
+    db.reconnect()
+    try:
+        mycursor = db.cursor(buffered=True)
+        # Update remarks for the specified item
+        mycursor.execute("UPDATE Cart SET remarks = %s WHERE username = %s AND food_name = %s", (remark, username, food_name,))
+        db.commit()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        db.rollback()
+    finally:
+        if mycursor is not None:
+            mycursor.close()
+
+    db.close()
+    return redirect(url_for('bakery'))
+
+@app.route('/checkout')
+def checkout():
+    if db is None:
+        return "Error connecting to the database", 500
+
+    if 'username' not in session:
+        return redirect(url_for('sendOrder'))
+
+    username = "Guest"
+
+
+    try:
+        mycursor = db.cursor(buffered=True)
+        # Fetch all items in the cart for the user
+        mycursor.execute("SELECT * FROM Cart WHERE username = %s", (username,))
+        orders = mycursor.fetchall()
+
+        # Calculate total price
+        total_price = sum(order[3] * order[4] for order in orders)  # Assuming unit_price is at index 3, quantity at index 4
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        orders = []
+        total_price = 0
+        mycursor.close()
+
+    db.close()
+    return render_template('checkout.html', orders=orders, total_price=total_price)
+
+@app.route('/search')
+def search():
+    query = request.args.get('query')
+    # Implement search logic here
+    return render_template('search_results.html', query=query)
+
+@app.route('/home')
+def home():
+    
+    username = "Guest"  
+    return render_template('home.html', username=username)
+
+@app.route('/profile')
+def user_profile():
+
+    username = "Guest"
+    return render_template('profile.html', username=username)
+# @app.route('/home', methods=['GET']) 
+# def home():
+#     usernameP = session.get('username', 'Guest')  # Default to 'Guest' if not set
+#     return render_template('/templates/home.html', usernameP=usernameP)
+
+# app.route('/profile')
+# def profile():
+#     # Retrieve the username from the session
+#     usernameP = session.get('username', 'Guest')  # Default to 'Guest' if not set
+#     return render_template('profile.html', usernameP=usernameP)
+
+@app.route('/deen', methods=['GET']) 
+def deen():
+    return render_template('deen.html')
+
+@app.route('/htc', methods=['GET']) 
+def htc():
+    return render_template('htc.html')
+
+# @app.route('/add_to_cart', methods=['POST', 'GET']) 
+# def add_to_cart():
+#     if request.method == 'POST':
+        
+
+#         # remarks = request.form['remarks']
+#         # testvalue = "x"
+#         # print(remarks)
+#         # sql = "INSERT INTO customer.user_remarks (remarks, username) VALUES (%s, %s)"
+    
+#         # cursor.execute(sql, (remarks, testvalue))
+#         # db.commit()
+        
+#         with open("remarks.txt", "a") as file:
+#             file.write(remarks + "\n")
+#         print(remarks)
+
+#     return render_template("menu.html", remarks=remarks, testvalue=testvalue)
+
+# @app.route('/')  # Assuming you want to display remarks on the root route
+# def display_remarks():
+#   # Connect to database (省略 - omitted for brevity)
+#   cursor = db.cursor()
+#   cursor.execute("SELECT remarks FROM user_remarks")
+#   remarks_data = cursor.fetchall()  # Fetch all remarks as a list of tuples
+#   cursor.close()  # Close the cursor
+#   return render_template('menu.html', remarks=remarks_data)
+
+
+mycursor.close()
+db.close()
 
 app.run(debug=True)
