@@ -917,40 +917,13 @@ ITEMS.extend(deen_food)
 ITEMS.extend(htc_food)
 
 
-# CART_FILE = 'cart.txt'
-
-# def read_cart():
-#     cart = {}
-#     if os.path.exists(CART_FILE):
-#         with open(CART_FILE, 'r') as file:
-#             for line in file:
-#                 parts = line.strip().split(', ')
-#                 if len(parts) >= 3:
-#                     try:
-#                         item_name = parts[0]
-#                         item_price = parts[1]
-#                         item_quantity = int(parts[2].replace(',', ''))  # Remove any extraneous commas
-#                         item_remarks = ', '.join(parts[3:]) if len(parts) > 3 else ''
-#                         cart[item_name] = {'price': item_price, 'quantity': item_quantity, 'remarks': item_remarks}
-#                     except ValueError as e:
-#                         print(f"Error parsing line: {line}. Error: {e}")
-#     return cart
-
-# def write_cart(cart):
-#     with open(CART_FILE, 'w') as file:
-#         for item_name, details in cart.items():
-#             file.write(f"{item_name}, {details['price']}, {details['quantity']}, {details['remarks']}\n")
-
 mycursor.execute("SELECT * FROM Cart")
 results = mycursor.fetchall()
 
 for row in results:
     print(row)
 
- # if request.method == 'POST':
-    #     item_name = request.form.get('item_name')
-    #     selected_item = next((item for item in ITEMS if item['name'] == item_name), None)
-@app.route('/index', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':  # Only consider store selection on GET requests
         store = request.args.get('store')
@@ -974,104 +947,117 @@ def index():
 def bakery():
         
     username = "Guest"
-
-    cart = {} 
+    cart = {}
     selected_item = None
 
     if request.method == 'POST':
-        item_name = request.form.get('food_name')
-        quantity = int(request.form.get('quantity', 1))  
+        item_name = request.form.get('item_name')  # corrected form field name
+        quantity = int(request.form.get('quantity', 1))
 
         db.reconnect()
         mycursor = db.cursor()
         try:
-
             existing_item_query = "SELECT * FROM cart WHERE username = %s AND food_name = %s"
-            mycursor.execute(existing_item_query, (username, item_name,))
+            mycursor.execute(existing_item_query, (username, item_name))
             existing_item = mycursor.fetchone()
 
             if existing_item:
-                # Update quantity of existing item
-                update_quantity_query = "UPDATE Cart SET quantity = quantity + %s WHERE order_id = %s"
-                mycursor.execute(update_quantity_query, (quantity, existing_item[0]))
+                update_quantity_query = "UPDATE Cart SET quantity = quantity + %s, total_price = price * (quantity + %s) WHERE order_id = %s"
+                mycursor.execute(update_quantity_query, (quantity, quantity, existing_item[0]))
             else:
-                # Insert new cart item
-                insert_item_query = "INSERT INTO Cart (order_id, food_name, price, quantity, remarks, username) VALUES (%s, %s, %s, %s, %s, %s)"
-                mycursor.execute(insert_item_query, (0, item_name, 0.0, quantity, "",username))
+                insert_item_query = "INSERT INTO Cart (order_id, food_name, price, quantity, total_price, remark, username) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                mycursor.execute(insert_item_query, (0, item_name, 0.0, quantity, 0.0 * quantity, "", username))
 
-            # Commit changes to the database
             db.commit()
-
-
-            cart[item_name] = {'quantity': existing_item[3] + quantity} if existing_item else {'quantity': quantity}
+            cart[item_name] = {'quantity': existing_item[3] + quantity, 'total_price': existing_item[2] * (existing_item[3] + quantity)} if existing_item else {'quantity': quantity, 'total_price': 0.0 * quantity}
             selected_item = {'name': item_name, 'quantity': quantity}
+            #     update_quantity_query = "UPDATE Cart SET quantity = quantity + %s WHERE order_id = %s"
+            #     mycursor.execute(update_quantity_query, (quantity, existing_item[0]))
+            # else:
+            #     insert_item_query = "INSERT INTO Cart (order_id, food_name, price, quantity, remark, username) VALUES (%s, %s, %s, %s, %s, %s)"
+            #     mycursor.execute(insert_item_query, (0, item_name, 0.0, quantity, "", username))
+
+            # db.commit()
+            # cart[item_name] = {'quantity': existing_item[3] + quantity} if existing_item else {'quantity': quantity}
+            # selected_item = {'name': item_name, 'quantity': quantity}
 
         except mysql.connector.Error as err:
             print(f"Error: {err}")
             db.rollback()
-        mycursor.close()
+        finally:
+            mycursor.close()
 
     
     try:
         mycursor = db.cursor(buffered=True)
-        # Fetch all items from the database (you can modify this query as needed)
         fetch_all_items_query = "SELECT * FROM Cart WHERE username = %s"
         mycursor.execute(fetch_all_items_query, (username,))
         all_items = mycursor.fetchall()
     except mysql.connector.Error as err:
         print(f"Error: {err}")
         all_items = []
+    finally:
+        mycursor.close()
 
     return render_template('dlight_bakery.html', items=ITEMS, cart=cart, selected_item=selected_item, all_items=all_items)
 
 
 @app.route('/add_to_cart', methods=['POST'])
 def add_to_cart():
-
-
     username = "Guest"
-    food_name = request.form.get('food_name')
-    price = float(request.form.get('price'))
+    food_name = request.form.get('item_name')  # corrected form field name
+    price = float(request.form.get('item_price', 0.0))  # corrected form field name
     remark = request.form.get('remark', '')
 
-    # Create a cursor to execute SQL queries
+    db.reconnect()
     mycursor = db.cursor()
+    try:
+        mycursor.execute("SELECT * FROM Cart WHERE username = %s AND food_name = %s", (username, food_name))
+        existing_item = mycursor.fetchone()
 
-    # Check if the item already exists in the cart
-    mycursor.execute("SELECT * FROM Cart WHERE username = %s AND food_name = %s", (username, food_name))
-    existing_item = mycursor.fetchone()
-
-    if existing_item:
-        # Update quantity if item exists
-        mycursor.execute("UPDATE Cart SET quantity = quantity + 1 WHERE order_id = %s", (existing_item[0],))
-    else:
-        # Insert new item into the cart
-        mycursor.execute("INSERT INTO Cart (order_id, food_name, price, quantity, remarks, username) VALUES (%s, %s, %s, %s, %s, %s)",
-                    (0, food_name, price, 1, remark, username))
-
-    # Commit changes to the database
-    db.commit()
-    mycursor.close()
-
+        if existing_item:
+            new_quantity = existing_item[4] + 1
+            new_total_price = price * new_quantity
+            mycursor.execute("UPDATE Cart SET quantity = %s, total_price = %s WHERE order_id = %s", (new_quantity, new_total_price, existing_item[0]))
+        else:
+            total_price = price * 1
+            mycursor.execute("INSERT INTO Cart (order_id, food_name, price, quantity, total_price, remark, username) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                             (0, food_name, price, 1, total_price, remark, username))
+        #     mycursor.execute("UPDATE Cart SET quantity = quantity + 1 WHERE order_id = %s", (existing_item[0],))
+        # else:
+        #     mycursor.execute("INSERT INTO Cart (order_id, food_name, price, quantity, remark, username) VALUES (%s, %s, %s, %s, %s, %s)",
+        #                      (0, food_name, price, 1, remark, username))
+        db.commit()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        db.rollback()
+    finally:
+        mycursor.close()
     return redirect(url_for('bakery'))
 
 @app.route('/remove_from_cart', methods=['POST'])
 def remove_from_cart():
 
     username = "Guest"
-    food_name = request.form.get('food_name')
+    food_name = request.form.get('item_name')
 
+    db.reconnect()
     try:
         mycursor = db.cursor(buffered=True)
-        # Check if the item exists in the cart
         mycursor.execute("SELECT * FROM Cart WHERE username = %s AND food_name = %s", (username, food_name))
         existing_item = mycursor.fetchone()
 
         if existing_item:
             if existing_item[4] > 1:
-                mycursor.execute("UPDATE Cart SET quantity = quantity - 1 WHERE id = %s", (existing_item[0],))
+                quantity = existing_item[4] - 1
+                total_price = existing_item[2] * quantity
+                mycursor.execute("UPDATE Cart SET quantity = %s, total_price = %s WHERE order_id = %s", (quantity, total_price, existing_item[0]))
             else:
-                mycursor.execute("DELETE FROM Cart WHERE id = %s", (existing_item[0],))
+                mycursor.execute("DELETE FROM Cart WHERE order_id = %s", (existing_item[0],))
+            # if existing_item[4] > 1:
+            #     mycursor.execute("UPDATE Cart SET quantity = quantity - 1 WHERE id = %s", (existing_item[0],))
+            # else:
+            #     mycursor.execute("DELETE FROM Cart WHERE id = %s", (existing_item[0],))
 
             # Commit changes to the database
             db.commit()
@@ -1082,13 +1068,39 @@ def remove_from_cart():
     db.close()
     return redirect(url_for('bakery'))
 
+
+@app.route('/update_remarks', methods=['POST'])
+def update_remarks():
+    # if db is None:
+    #     return "Error connecting to the database", 500
+
+    username = "Guest"
+    food_name = request.form.get('item_name')
+    remark = request.form.get('remarks')
+
+    db.reconnect()
+    try:
+        mycursor = db.cursor(buffered=True)
+        # Update remarks for the specified item
+        mycursor.execute("UPDATE Cart SET remarks = %s WHERE username = %s AND food_name = %s", (remark, username, food_name,))
+        db.commit()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        db.rollback()
+    finally:
+        if mycursor is not None:
+            mycursor.close()
+
+    db.close()
+    return redirect(url_for('bakery'))
+
 @app.route('/checkout')
 def checkout():
     if db is None:
         return "Error connecting to the database", 500
 
     if 'username' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('sendOrder'))
 
     username = "Guest"
 
@@ -1109,31 +1121,6 @@ def checkout():
 
     db.close()
     return render_template('checkout.html', orders=orders, total_price=total_price)
-
-@app.route('/update_remarks', methods=['POST'])
-def update_remarks():
-    if db is None:
-        return "Error connecting to the database", 500
-
-    username = "Guest"
-    food_name = request.form.get('food_name')
-    remarks = request.form.get('remarks')
-
-    mycursor = None
-    try:
-        mycursor = db.cursor(buffered=True)
-        # Update remarks for the specified item
-        mycursor.execute("UPDATE Cart SET remarks = %s WHERE username = %s AND food_name = %s", (remarks, username, food_name,))
-        db.commit()
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        db.rollback()
-    finally:
-        if mycursor is not None:
-            mycursor.close()
-
-    db.close()
-    return redirect(url_for('bakery'))
 
 @app.route('/search')
 def search():
