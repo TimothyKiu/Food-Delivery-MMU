@@ -1049,9 +1049,9 @@ def remove_from_cart():
 
         if existing_item:
             if existing_item[4] > 1:
-                quantity = existing_item[4] - 1
-                total_price = existing_item[2] * quantity
-                mycursor.execute("UPDATE Cart SET quantity = %s, total_price = %s WHERE order_id = %s", (quantity, total_price, existing_item[0]))
+                new_quantity = existing_item[4] - 1
+                new_total_price = existing_item[2] * new_quantity
+                mycursor.execute("UPDATE Cart SET quantity = %s, total_price = %s WHERE order_id = %s", (new_quantity, new_total_price, existing_item[0]))
             else:
                 mycursor.execute("DELETE FROM Cart WHERE order_id = %s", (existing_item[0],))
             # if existing_item[4] > 1:
@@ -1082,7 +1082,7 @@ def update_remarks():
     try:
         mycursor = db.cursor(buffered=True)
         # Update remarks for the specified item
-        mycursor.execute("UPDATE Cart SET remarks = %s WHERE username = %s AND food_name = %s", (remark, username, food_name,))
+        mycursor.execute("UPDATE Cart SET remark = %s WHERE username = %s AND food_name = %s", (remark, username, food_name,))
         db.commit()
     except mysql.connector.Error as err:
         print(f"Error: {err}")
