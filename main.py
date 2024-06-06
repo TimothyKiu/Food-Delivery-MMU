@@ -24,18 +24,6 @@ app.secret_key = 'theSecretKeyToTheEvilPiratesTreasureHarHarHar'
 
 
 
-try:
-    mycursor = db.cursor(buffered=True)
-    mycursor.execute("SHOW GRANTS FOR 'root'@'localhost'")
-except mysql.connector.Error as err:
-    print(f"Error: {err}")
-    db.close()
-    exit()
-
-
-
-
-
 # Dummy data for testing purposes
 users = {'john': 'password',
          'jane': 'password123',
