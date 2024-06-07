@@ -24,7 +24,7 @@ db = mysql.connector.connect(
 mycursor = db.cursor(buffered=True)
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
 app.secret_key = 'theSecretKeyToTheEvilPiratesTreasureHarHarHar'
 mycursor.execute("SHOW GRANTS FOR 'root'@'localhost'")
 
@@ -612,6 +612,7 @@ def settings():
         phoneNumber = "placeholder"
 
         # Retrieve the username from the session or set it to None if the key is missing
+        mycursor = db.cursor(buffered=True)
         query = "SELECT phone_number, nickname FROM webDB.registeredAccounts WHERE user_name = %s "
         mycursor.execute(query, (usernameP,))
         test1 = mycursor.fetchone()
@@ -733,7 +734,7 @@ def getLocation():
 
         runnerName = session.get('username')
         if session.get('loggedAsRunner'):
-
+            mycursor = db.cursor(buffered=True)
             query = "SELECT customerName, runnerName FROM webDB.confirmedOrders where runnerName = %s AND orderCompleted IS NULL "
             mycursor.execute(query, (runnerName,))
             dataSet = mycursor.fetchall()
@@ -763,6 +764,7 @@ def getLocation():
                     return redirect('profile')
 
             if request.method == 'POST':
+                mycursor = db.cursor(buffered=True)
                 # AUTO LOCATION UPDATER
                 data = request.get_json()
                 latitude = data['latitude']
