@@ -1,109 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Map with Marker</title>
-<style>
-    #map {
-        height: 600px;
-        width: 100%;
-    }
-</style>
+    <title>MMU_FoodDeliveryWebsite</title>
+    <style>
+        /* Adjust the size of the map container */
+        #map {
+            height: 500px; /* You can change the height to any value you want */
+            width: 50%;   /* The width can also be adjusted as needed */
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBMr9hac9m2PJhb9oQHzbMsTdxlLNzB0A&callback=initMap" async defer></script>
+    <script>
+        var map;
+        var userMarker;
+        var locationMarkers = [];
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 17,
+                center: {lat: 0, lng: 0} // Default center before geolocation
+            });
+
+            // Try HTML5 geolocation.
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    // Set the center of the map to the user's location
+                    map.setCenter(pos);
+
+                    // Add a marker for the user's location
+                    userMarker = new google.maps.Marker({
+                        position: pos,
+                        map: map,
+                        title: 'Your Location'
+                    });
+                }, function() {
+                    handleLocationError(true, map.getCenter());
+                });
+            } else {
+                // Browser doesn't support Geolocation
+                handleLocationError(false, map.getCenter());
+            }
+
+            function handleLocationError(browserHasGeolocation, pos) {
+                console.log(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+            }
+
+            // Fetch and update locations every 5 seconds
+            fetchAndUpdateLocations();
+            setInterval(fetchAndUpdateLocations, 5000);
+        }
+
+        function fetchAndUpdateLocations() {
+            fetch('/locations')
+                .then(response => response.json())
+                .then(locations => {
+                    // Remove old markers
+                    locationMarkers.forEach(marker => marker.setMap(null));
+                    locationMarkers = [];
+
+                    // Add new markers
+                    locations.forEach(function(location) {
+                        var marker = new google.maps.Marker({
+                            position: {lat: parseFloat(location.latitude), lng: parseFloat(location.longitude)},
+                            map: map,
+                            title: 'Fetched Location',
+                            icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+                        });
+                        locationMarkers.push(marker);
+                    });
+                });
+        }
+    </script>
 </head>
 <body>
-
-<div id="map"></div>
-<p>Blue marker is your current location, red marker is runner location.</p>
-
-<script>
-let map;
-let riderMarker;
-let userMarker;
-
-function initMap(riderLatitude, riderLongitude) {
-    // Create a new map centered at the rider's location
-    map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 15,
-        center: { lat: riderLatitude, lng: riderLongitude },
-    });
-
-    // Create a marker at the rider's location
-    riderMarker = new google.maps.Marker({
-        position: { lat: riderLatitude, lng: riderLongitude },
-        map: map,
-        title: "Rider's Location"
-    });
-
-    // Initialize user marker but don't set its position yet
-    userMarker = new google.maps.Marker({
-        map: map,
-        title: "Your Current Location",
-        icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png" // Different marker color
-    });
-
-    // Try to get the user's current location
-    updateUserLocation();
-}
-
-function updateRiderMarkerPosition(latitude, longitude) {
-    // Update the position of the rider's marker
-    riderMarker.setPosition({ lat: latitude, lng: longitude });
-
-    // Center the map to the rider's position
-    map.setCenter({ lat: latitude, lng: longitude });
-}
-
-function updateRiderLocation() {
-    fetch('/get_location')
-        .then(response => response.json())
-        .then(data => {
-            if (data.latitude && data.longitude) {
-                updateRiderMarkerPosition(data.latitude, data.longitude);
-            } else {
-                alert('No rider location data available');
-            }
-        })
-        .catch(error => console.error('Error fetching rider location data:', error));
-}
-
-function updateUserLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            position => {
-                const { latitude, longitude } = position.coords;
-                userMarker.setPosition({ lat: latitude, lng: longitude });
-                // Center the map to the user's position
-                map.setCenter({ lat: latitude, lng: longitude });
-            },
-            error => {
-                console.error('Error getting user location:', error);
-            }
-        );
-    } else {
-        alert('Geolocation is not supported by this browser.');
-    }
-}
-
-// Fetch the initial coordinates from the server and initialize the map
-fetch('/get_location')
-    .then(response => response.json())
-    .then(data => {
-        if (data.latitude && data.longitude) {
-            initMap(data.latitude, data.longitude);
-            // Set an interval to update the rider's location every 5 seconds
-            setInterval(updateRiderLocation, 5000);
-            // Set an interval to update the user's location every 5 seconds
-            setInterval(updateUserLocation, 5000);
-        } else {
-            alert('No initial rider location data available');
-        }
-    })
-    .catch(error => console.error('Error fetching initial rider location data:', error));
-</script>
-
-<!-- Include the Google Maps JavaScript API with your API key -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBMr9hac9m2PJhb9oQHzbMsTdxlLNzB0A&callback=initMap" async defer></script>
-
+    <h1>My Map</h1>
+    <div id="map"></div>
 </body>
 </html>

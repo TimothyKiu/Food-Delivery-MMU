@@ -7,29 +7,25 @@ db_config = {
     'host': "localhost",
     'user': 'root',
     'passwd': '0000',
-    'database': 'location_database'
+    'database': 'webdb'
 }
 
+def get_locations():
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT latitude, longitude FROM location WHERE order_id = 1")
+    locations = cursor.fetchall()
+    conn.close()
+    return locations
+
 @app.route('/')
-def showLocation():
+def index():
     return render_template('showLocation.html')
 
-@app.route('/get_location')
-def get_location():
-    conn = mysql.connector.connect(**db_config)
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT latitude, longitude FROM location ORDER BY id DESC LIMIT 1")  # Fetch latest coordinates
-    result = cursor.fetchone()
-
-    cursor.close()
-    conn.close()
-
-    if result:
-        latitude, longitude = result
-        return jsonify({'latitude': latitude, 'longitude': longitude})
-    else:
-        return jsonify({'error': 'No data found'}), 404
+@app.route('/locations')
+def locations():
+    locations = get_locations()
+    return jsonify(locations)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)

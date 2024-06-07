@@ -52,10 +52,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>Do you want to accept the order for {{ order.item }}?</h1>
+        <h1>Do you want to accept the order for {{ order.FoodOrdered }}?</h1>
         <form action="/comfirm_order" method="post">
-            <input type="hidden" name="order_id" value="{{ order.id }}">
-            <button type="submit" name="decision" value="accept">Yes</button>
+            <input type="hidden" name="order_id" value="{{ order.ID }}">
+            <button type="submit" name="decision" value="accept" class ="yes">Yes</button>
             <button type="submit" name="decision" value="decline" class="no">No</button>
         </form>
     </div>

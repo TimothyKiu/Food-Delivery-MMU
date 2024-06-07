@@ -47,7 +47,6 @@
             cursor: pointer;
             font-size: 16px;
         }
-
         button:hover {
             background-color: #0056b3;
         }
@@ -62,9 +61,9 @@
     <ul>
         {% for order in orders %}
             <li>
-                <span>{{ order.item }}</span>
+                <span>{{ order.FoodOrdered }}</span>
                 <form action="/process_order" method="post">
-                    <input type="hidden" name="order_id" value="{{ order.id }}">
+                    <input type="hidden" name="order_id" value="{{ order.ID }}">
                     <button type="submit">Accept</button>
                 </form>
             </li>
