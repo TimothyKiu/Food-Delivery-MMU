@@ -271,6 +271,7 @@ def sendOrder():
 
                 if session.get('orderSent') == True:
 
+
                     #FIND IF ORDER ACCEPTED
                     findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
                     mycursor.execute(findIfOrderAccepted, (customerName,))
@@ -303,7 +304,7 @@ def acceptOrder():
         acceptOrder = None
 
         query = "SELECT customerName FROM webDB.orders "
-        mycursor.execute(query, )
+        mycursor.execute(query)
         ordersArray = mycursor.fetchall()
         db.commit()  # Commit the transaction to save changes to the database
 
@@ -372,6 +373,7 @@ def orderInProgressCustomer():
         runnerNameHTML = "placeholder"
         #DISABLE CUSTOMER FROM FORCING BACKBUTTON
         query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
+        mycursor = db.cursor(buffered=True)
         mycursor.execute(query, (customerName,))
         orderData = mycursor.fetchall()
 
@@ -385,7 +387,7 @@ def orderInProgressCustomer():
         mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE username = 'john'")
         locations = mycursor.fetchall()
         mycursor.close()
-        return render_template('showLocation.html', locations=locations)
+        return render_template('showLocation.html', locations=locations, runnerNameHTML=runnerNameHTML)
 
     else:
         return "You have no permission to view now..."
@@ -692,8 +694,8 @@ def getLocation():
     if session.get('loggedAsRunner'):
         print("test 1 ")
         query = "SELECT customerName, runnerName FROM webDB.confirmedOrders where runnerName = %s "
+        mycursor = db.cursor(buffered=True)
         mycursor.execute(query, (session['username'],))
-        mycursor.close()
         customerName = mycursor.fetchall()
         customerNameHTML = customerName[0][0]
         runnerName = customerName[0][1]
