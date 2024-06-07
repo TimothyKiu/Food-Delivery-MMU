@@ -673,6 +673,36 @@ def settings():
     else:
         return redirect(url_for("settings"))
 
+@app.route('/getLocation', methods=['POST', 'GET'])
+def current_location():
+    if session.get('loggedAsRunner'):
+        if request.method == 'POST':
+            data = request.get_json()
+            latitude = data['latitude']
+            longitude = data['longitude']
+            # Process location data as needed
+
+            sql = "INSERT INTO location (latitude, longitude) VALUES (%s, %s)"
+            val = (latitude, longitude)
+            mycursor.execute(sql, val)
+            db.commit()
+        return render_template('getCurrentLocation.html')
+    else:
+        return "You have no permission to view right now..."
+
+@app.route('/showLocation', methods=['POST', 'GET'])
+def showLocation():
+    if session.get('loggedAsCustomer'):
+        mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE username = 1")
+        locations = mycursor.fetchall()
+        mycursor.close()
+        return render_template('showLocation.html', locations=locations)
+
+    else:
+        return "You have no permission to view now..."
+
+if __name__ == '__main__':
+    app.run(debug=True)
 @app.route('/testfile')
 def testfile():
     return render_template('testfile.html')
