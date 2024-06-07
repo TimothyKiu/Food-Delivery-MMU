@@ -2,7 +2,7 @@ from urllib import request
 from flask import Flask,render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
-
+import faulthandler
 
 from loginLogic import loginLogic
 from registerLogic import registerLogic
@@ -411,11 +411,14 @@ def orderInProgressCustomer():
 
             return redirect("orderCompletedCustomer")
 
-        # mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE username = customerName AND runnerName = runnerNameHTML")
-        # locations = mycursor.fetchall()
-        # mycursor.close()
+        mycursor = db.cursor(buffered=True)
+        query = "SELECT latitude, longitude FROM webDB.location WHERE username = %s AND runnerName = %s"
+        mycursor.execute(query, (customerName, runnerNameHTML))
 
-        return render_template('showLocation.html', locations=locations, runnerNameHTML=runnerNameHTML)
+        locations = mycursor.fetchall()
+        mycursor.close()
+
+        return render_template('showLocation.html', locations=locations, runnerNameHTML=runnerNameHTML,)
 
     else:
         return "You have no permission to view now..."
@@ -721,52 +724,51 @@ def settings():
 
 @app.route('/getLocation', methods=['POST', 'GET'])
 def getLocation():
-    if session.get('loggedAsRunner'):
-        query = "SELECT customerName, runnerName FROM webDB.confirmedOrders where runnerName = %s "
-        mycursor = db.cursor(buffered=True)
-        mycursor.execute(query, (session['username'],))
-        customerName = mycursor.fetchall()
-        customerNameHTML = customerName[0][0]
-        runnerName = customerName[0][1]
+    mycursor = db.cursor(buffered=True)
 
-        #NOTE: orderCompletedButtons must be the if statement, else it will confuse as javascript variables (pardon the poor explanation!)
+    runnerName = session.get('username')
+    if session.get('loggedAsRunner'):
+
+        query = "SELECT customerName, runnerName FROM webDB.confirmedOrders where runnerName = %s AND orderCompleted IS NULL "
+        mycursor.execute(query, (runnerName,))
+        dataSet = mycursor.fetchall()
+        customerNameHTML = dataSet[0][0]
+        runnerName = dataSet[0][1]
+
+        # NOTE: orderCompletedButtons must be the if statement, else it will confuse as javascript variables (pardon the poor explanation!)
         if request.method == 'POST':
             # Now, once runner press order finished. It's done!
             runnerArrived = request.form.get("runnerArrived")
             orderCompleted = request.form.get('orderCompleted')
             # QUERY NOT WORKING YET!
-
             if orderCompleted == "True":
                 update_query = """
-                        UPDATE webDB.confirmedOrders
-                        SET orderCompleted = %s
-                        WHERE runnerName = %s
-                    """
-
+                               UPDATE webDB.confirmedOrders
+                               SET orderCompleted = %s
+                               WHERE runnerName = %s
+                           """
                 mycursor.execute(update_query, (True, runnerName,))
                 db.commit()
+
+                #DELETE PREVIOUS LOGS OF LOCATIONS.
+                deleteLocation = "DELETE FROM webDB.location WHERE username = %s AND runnerName = %s"
+                mycursor.execute(deleteLocation, (customerNameHTML, runnerName,))
+                db.commit()
+
                 return redirect('profile')
 
-            # AUTO LOCATION UPDATER
-        if request.method == 'GET':
-            print("log1")
-            data = request.json()
-            print("log 2")
-            latitude = data.get('latitude')
-            longitude = data.get('longitude')
-            # latitude = data['latitude']
-            # longitude = data['longitude']
-            # Process location data as needed
+        if request.method == 'POST':
+                # AUTO LOCATION UPDATER
+                data = request.get_json()
+                latitude = data['latitude']
+                print(latitude)
+                longitude = data['longitude']
 
-            sql = "UPDATE webDB.location SET latitude = %s, longitude = %s WHERE username = %s AND runnerName = %s"
-            mycursor.execute(sql, (latitude, longitude, customerNameHTML, runnerName))
+                sql = "UPDATE webDB.location SET latitude = %s, longitude = %s WHERE username = %s AND runnerName = %s"
+                mycursor.execute(sql, (latitude, longitude, customerNameHTML, runnerName,))
+                db.commit()
 
-            print('logged')
-            mycursor.execute(sql, (latitude,longitude, customerNameHTML, runnerName,))
-            db.commit()
-
-
-
+        mycursor.close()
         return render_template('getCurrentLocation.html', runnerName=runnerName, customerName=customerNameHTML)
 
     else:
@@ -785,6 +787,7 @@ def getLocation():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    faulthandler.enable()
 @app.route('/testfile')
 def testfile():
     return render_template('testfile.html')
