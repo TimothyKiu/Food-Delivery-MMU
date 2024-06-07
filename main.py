@@ -1,6 +1,8 @@
 from urllib import request
 from flask import Flask,render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_cors import CORS
+
 
 from loginLogic import loginLogic
 from registerLogic import registerLogic
@@ -18,6 +20,7 @@ db = mysql.connector.connect(
 mycursor = db.cursor(buffered=True)
 
 app = Flask(__name__)
+CORS(app)
 app.secret_key = 'theSecretKeyToTheEvilPiratesTreasureHarHarHar'
 mycursor.execute("SHOW GRANTS FOR 'root'@'localhost'")
 
@@ -324,6 +327,8 @@ def acceptOrder():
             print(acceptedOrderCustomerName)
 
             insertIntoConfirmedOrders = "INSERT INTO webDB.confirmedOrders (runnerName, customerName) VALUES (%s, %s)"
+
+            #CREATE NEW ROW IN LOCATION
             insertIntoLocation = "INSERT INTO webDB.location (runnerName, username) VALUES (%s, %s)"
 
             mycursor.execute(insertIntoConfirmedOrders, (runnerName, acceptedOrderCustomerName))
@@ -717,7 +722,6 @@ def settings():
 @app.route('/getLocation', methods=['POST', 'GET'])
 def getLocation():
     if session.get('loggedAsRunner'):
-        print("test 1 ")
         query = "SELECT customerName, runnerName FROM webDB.confirmedOrders where runnerName = %s "
         mycursor = db.cursor(buffered=True)
         mycursor.execute(query, (session['username'],))
@@ -743,15 +747,18 @@ def getLocation():
                 db.commit()
                 return redirect('profile')
 
-        # AUTO LOCATION UPDATER
+            # AUTO LOCATION UPDATER
         if request.method == 'POST':
-            print("sent location")
+            print("log1")
             data = request.get_json()
+            print("log 2")
             latitude = data['latitude']
             longitude = data['longitude']
             # Process location data as needed
 
-            sql = "INSERT INTO webDB.location (latitude, longitude, username, runnerName) VALUES (%s, %s, %s, %s)"
+            sql = "UPDATE webDB.location SET latitude = %s, longitude = %s WHERE username = %s AND runnerName = %s"
+            mycursor.execute(sql, (latitude, longitude, customerNameHTML, runnerName))
+
             print('logged')
             mycursor.execute(sql, (latitude,longitude, customerNameHTML, runnerName,))
             db.commit()
