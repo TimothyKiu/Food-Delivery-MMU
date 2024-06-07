@@ -3,11 +3,15 @@ from flask import Flask,render_template, request, redirect, url_for, session, js
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
 import faulthandler
+import subprocess
+import time
 
 from loginLogic import loginLogic
 from registerLogic import registerLogic
 
 import mysql.connector
+
+
 
 #NOTE: STOP RUNNING PYTHON WHENEVER YOU WANNA ALTER SQL TABLES
 db = mysql.connector.connect(
@@ -724,40 +728,41 @@ def settings():
 
 @app.route('/getLocation', methods=['POST', 'GET'])
 def getLocation():
-    mycursor = db.cursor(buffered=True)
+    try:
+        mycursor = db.cursor(buffered=True)
 
-    runnerName = session.get('username')
-    if session.get('loggedAsRunner'):
+        runnerName = session.get('username')
+        if session.get('loggedAsRunner'):
 
-        query = "SELECT customerName, runnerName FROM webDB.confirmedOrders where runnerName = %s AND orderCompleted IS NULL "
-        mycursor.execute(query, (runnerName,))
-        dataSet = mycursor.fetchall()
-        customerNameHTML = dataSet[0][0]
-        runnerName = dataSet[0][1]
+            query = "SELECT customerName, runnerName FROM webDB.confirmedOrders where runnerName = %s AND orderCompleted IS NULL "
+            mycursor.execute(query, (runnerName,))
+            dataSet = mycursor.fetchall()
+            customerNameHTML = dataSet[0][0]
+            runnerName = dataSet[0][1]
 
-        # NOTE: orderCompletedButtons must be the if statement, else it will confuse as javascript variables (pardon the poor explanation!)
-        if request.method == 'POST':
-            # Now, once runner press order finished. It's done!
-            runnerArrived = request.form.get("runnerArrived")
-            orderCompleted = request.form.get('orderCompleted')
-            # QUERY NOT WORKING YET!
-            if orderCompleted == "True":
-                update_query = """
-                               UPDATE webDB.confirmedOrders
-                               SET orderCompleted = %s
-                               WHERE runnerName = %s
-                           """
-                mycursor.execute(update_query, (True, runnerName,))
-                db.commit()
+            # NOTE: orderCompletedButtons must be the if statement, else it will confuse as javascript variables (pardon the poor explanation!)
+            if request.method == 'POST':
+                # Now, once runner press order finished. It's done!
+                runnerArrived = request.form.get("runnerArrived")
+                orderCompleted = request.form.get('orderCompleted')
+                # QUERY NOT WORKING YET!
+                if orderCompleted == "True":
+                    update_query = """
+                                   UPDATE webDB.confirmedOrders
+                                   SET orderCompleted = %s
+                                   WHERE runnerName = %s
+                               """
+                    mycursor.execute(update_query, (True, runnerName,))
+                    db.commit()
 
-                #DELETE PREVIOUS LOGS OF LOCATIONS.
-                deleteLocation = "DELETE FROM webDB.location WHERE username = %s AND runnerName = %s"
-                mycursor.execute(deleteLocation, (customerNameHTML, runnerName,))
-                db.commit()
+                    # DELETE PREVIOUS LOGS OF LOCATIONS.
+                    deleteLocation = "DELETE FROM webDB.location WHERE username = %s AND runnerName = %s"
+                    mycursor.execute(deleteLocation, (customerNameHTML, runnerName,))
+                    db.commit()
 
-                return redirect('profile')
+                    return redirect('profile')
 
-        if request.method == 'POST':
+            if request.method == 'POST':
                 # AUTO LOCATION UPDATER
                 data = request.get_json()
                 latitude = data['latitude']
@@ -768,11 +773,15 @@ def getLocation():
                 mycursor.execute(sql, (latitude, longitude, customerNameHTML, runnerName,))
                 db.commit()
 
-        mycursor.close()
-        return render_template('getCurrentLocation.html', runnerName=runnerName, customerName=customerNameHTML)
+            return render_template('getCurrentLocation.html', runnerName=runnerName, customerName=customerNameHTML)
 
-    else:
-        return "You have no permission to view right now..."
+        else:
+            return "You have no permission to view right now..."
+
+    except Exception as e:
+
+        return "An error occurred while processing your request. Please try again later."
+
 
 # @app.route('/showLocation', methods=['POST', 'GET'])
 # def showLocation():
@@ -786,11 +795,12 @@ def getLocation():
 #         return "You have no permission to view now..."
 
 if __name__ == '__main__':
-    app.run(debug=True)
     faulthandler.enable()
+    app.run(debug=True)
+
+    
 @app.route('/testfile')
 def testfile():
     return render_template('testfile.html')
 
 
-app.run(debug=True)
