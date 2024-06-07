@@ -221,7 +221,7 @@
             <button class="statusButton" >Home</button>
              {% if loggedAsCustomer %}
                 <button class="statusButton" onclick="window.location.href='sendOrder'">Order</button>
-             {% else %}
+             {% elif loggedAsRunner %}
                 <button class="statusButton" onclick="window.location.href='acceptOrder'">Accept Orders</button>
              {% endif %}
 

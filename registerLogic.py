@@ -45,8 +45,11 @@ class registerLogic:
 
                 if accountTypereg == "Runner":
                     session["loggedAsRunner"] = True
+                    session['loggedAsCustomer'] = False
+
                 elif accountTypereg == "Customer":
                     session['loggedAsCustomer'] = True
+                    session['loggedAsRunner'] = False
 
                 return redirect(url_for("accountcreatedsuccess"))
 

@@ -224,6 +224,8 @@ def ratingsent():
 
 @app.route('/sendOrder', methods=['GET', 'POST'])
 def sendOrder():
+    print(session.get('loggedAsCustomer') )
+    print("niggas")
     #BUG DETECTED, session['orderSent'] is being turned into true by something...
     if session.get("loggedAsCustomer") == True:
         findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.Orders WHERE customerName = %s "
@@ -268,6 +270,8 @@ def sendOrder():
                     # session['orderSent'] = True
 
                 if session.get('orderSent') == True:
+
+                    #FIND IF ORDER ACCEPTED
                     findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
                     mycursor.execute(findIfOrderAccepted, (customerName,))
                     test1 = mycursor.fetchall()
@@ -293,7 +297,7 @@ def sendOrder():
 @app.route('/acceptOrder', methods=['GET', 'POST'])
 def acceptOrder():
 
-    if (session.get("loggedAsRunner") == True) and (session.get('loggedAsRunner') != None):
+    if session.get("loggedAsRunner"):
         runnerName = session.get('username')
         currentOrders = []
         acceptOrder = None
@@ -307,29 +311,26 @@ def acceptOrder():
             currentOrders.append(ordersArray[i][0])
 
         orderSize = len(currentOrders)
-
         acceptedOrderCustomerName = request.form.get('acceptOrder')
+
         if acceptedOrderCustomerName is not None:
             query = "DELETE FROM webDB.orders WHERE customerName = %s"
 
             mycursor.execute(query, (acceptedOrderCustomerName,))
             db.commit()  # Commit the transaction to save changes to the database
-
             print(acceptedOrderCustomerName)
 
-            # insert_query = "INSERT INTO webDB.orders (RunnerName) WHERE customerName = %s VALUES (%s, %s, %s)"
-            # SQL does not support insert + where commands
+            insertIntoConfirmedOrders = "INSERT INTO webDB.confirmedOrders (runnerName, customerName) VALUES (%s, %s)"
+            insertIntoLocation = "INSERT INTO webDB.location (runnerName, username) VALUES (%s, %s)"
 
-            insert_query = "INSERT INTO webDB.confirmedOrders (runnerName, customerName) VALUES (%s, %s)"
-            mycursor.execute(insert_query, (runnerName, acceptedOrderCustomerName))
+            mycursor.execute(insertIntoConfirmedOrders, (runnerName, acceptedOrderCustomerName))
+            mycursor.execute(insertIntoLocation, (runnerName, acceptedOrderCustomerName))
+
             db.commit()  # Commit the transaction to save changes to the database
 
+            return redirect("getLocation")
 
-
-            return redirect(url_for("orderInProgressRunner"))
-
-        return render_template('acceptOrder.html', currentOrders=currentOrders
-                               ,orderSize=orderSize)
+        return render_template('acceptOrder.html', currentOrders=currentOrders,orderSize=orderSize)
 
     #This is where the runner can see all the available orders that are ready to be accepted
     else:
@@ -364,25 +365,32 @@ def orderInProgressRunner():
     return render_template('orderInProgressRunner.html', runnerName=runnerName, customerName=customerNameHTML)
 
 
-@app.route('/orderInProgressCustomer', methods=['GET', 'POST'])
+@app.route('/showLocation', methods=['GET', 'POST'])
 def orderInProgressCustomer():
-    customerName = session.get('username')
-    runnerNameHTML = "placeholder"
-    #DISABLE CUSTOMER FROM FORCING BACKBUTTON
-    query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
-    mycursor.execute(query, (customerName,))
-    orderData = mycursor.fetchall()
+    if session.get('loggedAsCustomer'):
+        customerName = session.get('username')
+        runnerNameHTML = "placeholder"
+        #DISABLE CUSTOMER FROM FORCING BACKBUTTON
+        query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
+        mycursor.execute(query, (customerName,))
+        orderData = mycursor.fetchall()
 
-    if orderData:
+        if orderData:
+            runnerNameHTML = orderData[0][0]
 
-        runnerNameHTML = orderData[0][0]
+            if orderData[0][1] == True:
 
-        if orderData[0][1] == True:
+                return redirect(url_for("orderCompletedCustomer"))
 
-            return redirect(url_for("orderCompletedCustomer"))
+        mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE username = 'john'")
+        locations = mycursor.fetchall()
+        mycursor.close()
+        return render_template('showLocation.html', locations=locations)
+
+    else:
+        return "You have no permission to view now..."
 
 
-    return render_template('orderInProgressCustomer.html' ,runnerNameHTML=runnerNameHTML)
 
 @app.route('/orderCompleted', methods=['GET', 'POST'])
 def orderCompletedCustomer():
@@ -399,6 +407,7 @@ def orderCompletedCustomer():
         query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
         mycursor.execute(query, (customerName,))
         orderData = mycursor.fetchall()
+        mycursor.close()
 
         if orderData:
 
@@ -416,6 +425,7 @@ def orderCompletedCustomer():
         delete_query = "DELETE FROM webDB.orders WHERE customerName = %s"
         mycursor.execute(delete_query, (customerName,))
         db.commit()
+        mycursor.close()
 
         if yesButton == "True":
             return redirect(url_for("ratings"))
@@ -467,6 +477,7 @@ def profile():
 
         query2 = "SELECT review_text, rating_given, timestamp FROM webDB.reviews WHERE user_name = %s"
         mycursor.execute(query2, (usernameP,))
+        mycursor.close()
         reviewsArray = mycursor.fetchall()
         if reviewsArray:  # Check if ratingsArray is not empty
             reviewsGiven = reviewsArray[0][0]
@@ -521,6 +532,7 @@ def profile():
                 deleteQuery = "DELETE FROM webDB.registeredAccounts WHERE user_name = %s"
                 mycursor.execute(deleteQuery, (session['username'],))
                 db.commit()
+                mycursor.close()
 
                 session['username'] = None
                 session['loggedIn'] = False
@@ -573,6 +585,7 @@ def settings():
         query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
         mycursor.execute(query, (usernameP,))
         ratingsArray = mycursor.fetchall()
+        mycursor.close()
 
         if ratingsArray:  # Check if ratingsArray is not empty
             ratings = round(float(ratingsArray[0][0]), 2)
@@ -611,6 +624,7 @@ def settings():
                 deleteQuery = "DELETE FROM webDB.registeredAccounts WHERE user_name = %s"
                 mycursor.execute(deleteQuery, (session['username'],))
                 db.commit()
+
 
                 session['username'] = None
                 session['loggedIn'] = False
@@ -674,19 +688,51 @@ def settings():
         return redirect(url_for("settings"))
 
 @app.route('/getLocation', methods=['POST', 'GET'])
-def current_location():
+def getLocation():
     if session.get('loggedAsRunner'):
+        print("test 1 ")
+        query = "SELECT customerName, runnerName FROM webDB.confirmedOrders where runnerName = %s "
+        mycursor.execute(query, (session['username'],))
+        mycursor.close()
+        customerName = mycursor.fetchall()
+        customerNameHTML = customerName[0][0]
+        runnerName = customerName[0][1]
+
+        #NOTE: orderCompletedButtons must be the if statement, else it will confuse as javascript variables (pardon the poor explanation!)
+
+        # AUTO LOCATION UPDATER
         if request.method == 'POST':
+            print("sent location")
             data = request.get_json()
             latitude = data['latitude']
             longitude = data['longitude']
             # Process location data as needed
 
-            sql = "INSERT INTO location (latitude, longitude) VALUES (%s, %s)"
-            val = (latitude, longitude)
-            mycursor.execute(sql, val)
+            sql = "INSERT INTO webDB.location (latitude, longitude, username, runnerName) VALUES (%s, %s, %s, %s)"
+            print('logged')
+            mycursor.execute(sql, (latitude,longitude, customerNameHTML, runnerName,))
             db.commit()
-        return render_template('getCurrentLocation.html')
+
+        # GET USER INFO
+        #
+        # if request.method == 'POST':
+        #     # Now, once runner press order finished. It's done!
+        #     runnerArrived = request.form.get("runnerArrived")
+        #     orderCompleted = request.form.get('orderCompleted')
+        #     # QUERY NOT WORKING YET!
+        #
+        #     if orderCompleted == "True":
+        #         update_query = """
+        #                 UPDATE webDB.confirmedOrders
+        #                 SET orderCompleted = %s
+        #                 WHERE runnerName = %s
+        #             """
+        #         mycursor.execute(update_query, (True, runnerName,))
+        #         db.commit()
+        #         return redirect('profile')
+
+        return render_template('getCurrentLocation.html', runnerName=runnerName, customerName=customerNameHTML)
+
     else:
         return "You have no permission to view right now..."
 
