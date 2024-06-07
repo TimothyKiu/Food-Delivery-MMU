@@ -748,12 +748,14 @@ def getLocation():
                 return redirect('profile')
 
             # AUTO LOCATION UPDATER
-        if request.method == 'POST':
+        if request.method == 'GET':
             print("log1")
-            data = request.get_json()
+            data = request.json()
             print("log 2")
-            latitude = data['latitude']
-            longitude = data['longitude']
+            latitude = data.get('latitude')
+            longitude = data.get('longitude')
+            # latitude = data['latitude']
+            # longitude = data['longitude']
             # Process location data as needed
 
             sql = "UPDATE webDB.location SET latitude = %s, longitude = %s WHERE username = %s AND runnerName = %s"
