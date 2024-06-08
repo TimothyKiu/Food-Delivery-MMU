@@ -235,7 +235,6 @@ def sendOrder():
     #BUG DETECTED, session['orderSent'] is being turned into true by something...
     if session.get("loggedAsCustomer") == True:
         findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.Orders WHERE customerName = %s "
-        mycursor = db.cursor(buffered=True)
 
         mycursor.execute(findIfOrderAccepted, (session.get('username'),))
         test1 = mycursor.fetchall()
@@ -304,6 +303,8 @@ def sendOrder():
 
 @app.route('/acceptOrder', methods=['GET', 'POST'])
 def acceptOrder():
+    session.setdefault("currentAcceptedCustomer", None)
+
 
     if session.get("loggedAsRunner"):
         runnerName = session.get('username')
@@ -311,8 +312,6 @@ def acceptOrder():
         acceptOrder = None
 
         query = "SELECT customerName FROM webDB.orders "
-        mycursor = db.cursor(buffered=True)
-
         mycursor.execute(query)
         ordersArray = mycursor.fetchall()
         db.commit()  # Commit the transaction to save changes to the database
@@ -325,6 +324,7 @@ def acceptOrder():
 
         if acceptedOrderCustomerName is not None:
             query = "DELETE FROM webDB.orders WHERE customerName = %s"
+            session['currentAcceptedCustomer'] = acceptedOrderCustomerName
 
             mycursor.execute(query, (acceptedOrderCustomerName,))
             db.commit()  # Commit the transaction to save changes to the database
@@ -381,15 +381,15 @@ def acceptOrder():
 def orderInProgressCustomer():
     locations = None
     if session.get('loggedAsCustomer'):
+
         customerName = session.get('username')
         runnerNameHTML = "placeholder"
-        #DISABLE CUSTOMER FROM FORCING BACKBUTTON
+        # DISABLE CUSTOMER FROM FORCING BACKBUTTON
 
         print(customerName)
         print(runnerNameHTML)
         query = "SELECT runnerName FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted IS NULL"
 
-        mycursor = db.cursor(buffered=True)
         mycursor.execute(query, (customerName,))
         orderData = mycursor.fetchall()
 
@@ -415,12 +415,17 @@ def orderInProgressCustomer():
 
             return redirect("orderCompletedCustomer")
 
-        mycursor = db.cursor(buffered=True)
-        query = "SELECT latitude, longitude FROM webDB.location WHERE username = %s AND runnerName = %s"
-        mycursor.execute(query, (customerName, runnerNameHTML))
+        query = "SELECT latitude, longitude FROM webDB.location WHERE username = %s AND runnerName = %s AND last_updated = (SELECT MAX(last_updated) FROM webDB.location)"
+        # delQuery = """
+        #     DELETE FROM webDB.location
+        #     WHERE username = %s
+        #     AND runnerName = %s
+        #     AND last_updated < (SELECT MAX(last_updated) FROM webDB.location
+        # """
+        mycursor.execute(query, (customerName, runnerNameHTML,))
+        # mycursor.execute(delQuery, (customerName, runnerNameHTML,))
 
         locations = mycursor.fetchall()
-        mycursor.close()
 
         return render_template('showLocation.html', locations=locations, runnerNameHTML=runnerNameHTML,)
 
@@ -441,10 +446,8 @@ def orderCompletedCustomer():
         session["currentRateableRunner"] = False
 
         query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
-        mycursor = db.cursor(buffered=True)
         mycursor.execute(query, (customerName,))
         orderData = mycursor.fetchall()
-        mycursor.close()
 
         if orderData:
 
@@ -460,10 +463,8 @@ def orderCompletedCustomer():
 
         #Now delete the row containing your confirmed order in orders. NOT confirmedOrders
         delete_query = "DELETE FROM webDB.orders WHERE customerName = %s"
-        mycursor = db.cursor(buffered=True)
         mycursor.execute(delete_query, (customerName,))
         db.commit()
-        mycursor.close()
 
         if yesButton == "True":
             return redirect(url_for("ratings"))
@@ -501,7 +502,6 @@ def profile():
         errorText = "placeholder"
 
         query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
-        mycursor = db.cursor(buffered=True)
         mycursor.execute(query, (usernameP,))
         ratingsArray = mycursor.fetchall()
 
@@ -516,7 +516,6 @@ def profile():
 
         query2 = "SELECT review_text, rating_given, timestamp FROM webDB.reviews WHERE user_name = %s"
         mycursor.execute(query2, (usernameP,))
-        mycursor.close()
         reviewsArray = mycursor.fetchall()
         if reviewsArray:  # Check if ratingsArray is not empty
             reviewsGiven = reviewsArray[0][0]
@@ -571,7 +570,6 @@ def profile():
                 deleteQuery = "DELETE FROM webDB.registeredAccounts WHERE user_name = %s"
                 mycursor.execute(deleteQuery, (session['username'],))
                 db.commit()
-                mycursor.close()
 
                 session['username'] = None
                 session['loggedIn'] = False
@@ -612,7 +610,6 @@ def settings():
         phoneNumber = "placeholder"
 
         # Retrieve the username from the session or set it to None if the key is missing
-        mycursor = db.cursor(buffered=True)
         query = "SELECT phone_number, nickname FROM webDB.registeredAccounts WHERE user_name = %s "
         mycursor.execute(query, (usernameP,))
         test1 = mycursor.fetchone()
@@ -625,7 +622,6 @@ def settings():
         query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
         mycursor.execute(query, (usernameP,))
         ratingsArray = mycursor.fetchall()
-        mycursor.close()
 
         if ratingsArray:  # Check if ratingsArray is not empty
             ratings = round(float(ratingsArray[0][0]), 2)
@@ -730,16 +726,15 @@ def settings():
 @app.route('/getLocation', methods=['POST', 'GET'])
 def getLocation():
     try:
-        mycursor = db.cursor(buffered=True)
+
+        customerNameHTML = None
 
         runnerName = session.get('username')
         if session.get('loggedAsRunner'):
-            mycursor = db.cursor(buffered=True)
-            query = "SELECT customerName, runnerName FROM webDB.confirmedOrders where runnerName = %s AND orderCompleted IS NULL "
+            query = "SELECT customerName FROM webDB.confirmedOrders where runnerName = %s AND orderCompleted IS NULL "
             mycursor.execute(query, (runnerName,))
             dataSet = mycursor.fetchall()
-            customerNameHTML = dataSet[0][0]
-            runnerName = dataSet[0][1]
+            customerNameHTML = session.get('currentAcceptedCustomer')
 
             # NOTE: orderCompletedButtons must be the if statement, else it will confuse as javascript variables (pardon the poor explanation!)
             if request.method == 'POST':
@@ -754,7 +749,8 @@ def getLocation():
                                    WHERE runnerName = %s
                                """
                     mycursor.execute(update_query, (True, runnerName,))
-                    db.commit()
+
+
 
                     # DELETE PREVIOUS LOGS OF LOCATIONS.
                     deleteLocation = "DELETE FROM webDB.location WHERE username = %s AND runnerName = %s"
@@ -763,17 +759,35 @@ def getLocation():
 
                     return redirect('profile')
 
-            if request.method == 'POST':
-                mycursor = db.cursor(buffered=True)
                 # AUTO LOCATION UPDATER
                 data = request.get_json()
                 latitude = data['latitude']
                 print(latitude)
                 longitude = data['longitude']
 
-                sql = "UPDATE webDB.location SET latitude = %s, longitude = %s WHERE username = %s AND runnerName = %s"
+                # sql = "UPDATE webDB.location SET latitude = %s, longitude = %s WHERE username = %s AND runnerName = %s"
+                # print(customerNameHTML)
+                # print(runnerName)
+                # mycursor.execute(sql, (latitude, longitude, customerNameHTML, runnerName,))
+                # db.commit()
+
+                sql = "INSERT INTO webDB.location (latitude, longitude, username, runnerName) VALUES (%s, %s, %s, %s)"
                 mycursor.execute(sql, (latitude, longitude, customerNameHTML, runnerName,))
+                delQuery = """
+                                        DELETE FROM webDB.location
+                                        WHERE username = %s
+                                        AND runnerName = %s
+                                        AND last_updated < (SELECT MAX(last_updated) FROM webDB.location
+                                    """
+                mycursor.execute(delQuery, (customerNameHTML, runnerName,))
+                print(customerNameHTML)
+                print(runnerName)
                 db.commit()
+
+
+                print(latitude)
+                print(longitude)
+                print('uppdated')
 
             return render_template('getCurrentLocation.html', runnerName=runnerName, customerName=customerNameHTML)
 
@@ -790,7 +804,6 @@ def getLocation():
 #     if session.get('loggedAsCustomer'):
 #         mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE username = session.get('username') ")
 #         locations = mycursor.fetchall()
-#         mycursor.close()
 #         return render_template('showLocation.html', locations=locations)
 #
 #     else:
@@ -800,6 +813,7 @@ if __name__ == '__main__':
     faulthandler.enable()
     app.run(debug=True)
 
+    mycursor.close()
     
 @app.route('/testfile')
 def testfile():

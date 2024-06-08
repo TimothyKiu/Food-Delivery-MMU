@@ -21,8 +21,10 @@
             xhr.send(JSON.stringify({ "latitude": latitude, "longitude": longitude }));
         }
 
+        getLocation()
+        setInterval(getLocation, 500); // Call getLocation every 5 seconds
 
-        setInterval(getLocation, 5000); // Call getLocation every 5 seconds
+        // GET LOCATIONN CAUSES MEMORY LEAK!
     </script>
 </head>
 <body>

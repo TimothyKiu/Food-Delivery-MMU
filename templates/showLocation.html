@@ -15,6 +15,27 @@
         var userMarker;
         var locationMarkers = [];
 
+        function fetchAndUpdateLocations() {
+            fetch('/locations')
+                .then(response => response.json())
+                .then(locations => {
+                    // Remove old markers
+                    locationMarkers.forEach(marker => marker.setMap(null));
+                    locationMarkers = [];
+
+                    // Add new markers
+                    locations.forEach(function(location) {
+                        var marker = new google.maps.Marker({
+                            position: {lat: parseFloat(location.latitude), lng: parseFloat(location.longitude)},
+                            map: map,
+                            title: 'Fetched Location',
+                            icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+                        });
+                        locationMarkers.push(marker);
+                    });
+                });
+        }
+
         function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 17,
@@ -53,30 +74,10 @@
             }
 
             // Fetch and update locations every 5 seconds
-            fetchAndUpdateLocations();
-            setInterval(fetchAndUpdateLocations, 5000);
+            setInterval(fetchAndUpdateLocations, 10000);
         }
 
-        function fetchAndUpdateLocations() {
-            fetch('/locations')
-                .then(response => response.json())
-                .then(locations => {
-                    // Remove old markers
-                    locationMarkers.forEach(marker => marker.setMap(null));
-                    locationMarkers = [];
 
-                    // Add new markers
-                    locations.forEach(function(location) {
-                        var marker = new google.maps.Marker({
-                            position: {lat: parseFloat(location.latitude), lng: parseFloat(location.longitude)},
-                            map: map,
-                            title: 'Fetched Location',
-                            icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
-                        });
-                        locationMarkers.push(marker);
-                    });
-                });
-        }
     </script>
 </head>
 <body>
