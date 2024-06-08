@@ -734,7 +734,7 @@ def getLocation():
             query = "SELECT customerName FROM webDB.confirmedOrders where runnerName = %s AND orderCompleted IS NULL "
             mycursor.execute(query, (runnerName,))
             dataSet = mycursor.fetchall()
-            customerNameHTML = session.get('currentAcceptedCustomer')
+            customerNameHTML = session.get('currentCustomerName')
 
             # NOTE: orderCompletedButtons must be the if statement, else it will confuse as javascript variables (pardon the poor explanation!)
             if request.method == 'POST':
