@@ -1,13 +1,12 @@
 from urllib import request
-from flask import Flask,render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from loginLogic import loginLogic
 from registerLogic import registerLogic
 import mysql.connector
-from MySQLdb import  _exceptions
 
-#NOTE: STOP RUNNING PYTHON WHENEVER YOU WANNA ALTER SQL TABLES
+# NOTE: STOP RUNNING PYTHON WHENEVER YOU WANNA ALTER SQL TABLES
 
 db = mysql.connector.connect(
     host="localhost",
@@ -16,13 +15,10 @@ db = mysql.connector.connect(
     database='webDB'
 )
 
-
 mycursor = db.cursor(buffered=True)
 
 app = Flask(__name__)
 app.secret_key = 'theSecretKeyToTheEvilPiratesTreasureHarHarHar'
-
-
 
 try:
     mycursor = db.cursor(buffered=True)
@@ -31,10 +27,6 @@ except mysql.connector.Error as err:
     print(f"Error: {err}")
     db.close()
     exit()
-
-
-
-
 
 # Dummy data for testing purposes
 users = {'john': 'password',
@@ -45,11 +37,14 @@ users = {'john': 'password',
 
 @app.route('/successlogin')
 def successlogin():
-    return render_template('successlogin.html')
+    return render_template('home.html')
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     loginlogic1 = loginLogic()
     return loginlogic1.login(session, users, db, mycursor)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -96,9 +91,6 @@ def otherratings():
                 else:
                     phone_number = infoArray[0][1]
                 user_name = infoArray[0][2]
-
-
-
 
             # Retrieve the value of the 'logOut' form field
             query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
@@ -154,23 +146,24 @@ def otherratings():
             noLoginYet = "You haven't logged in!"
             accountDeleted = "Account successfully deleted..."
 
-
-                # DO NOT DO THIS, THIS DIRECTLY TAMPERS THE CODE, USE HTML/JS
-                # if loggedOut == "True":
-                #     session['username'] = "You can't delete now! Youve already logged out..."
+            # DO NOT DO THIS, THIS DIRECTLY TAMPERS THE CODE, USE HTML/JS
+            # if loggedOut == "True":
+            #     session['username'] = "You can't delete now! Youve already logged out..."
 
         return render_template('otherratings.html', usernameP=usernameP,
-                                ratings=ratings, reviewText=reviewText, reviewStars=reviewStars,
+                               ratings=ratings, reviewText=reviewText, reviewStars=reviewStars,
                                timeStamps=timeStamps, totalReviews=totalReviews, reviewSize=reviewSize,
                                nickname=nickname, phone_number=phone_number, user_name=user_name,
-                               loggedAsCustomer=loggedAsCustomer,loggedAsRunner=loggedAsRunner)
+                               loggedAsCustomer=loggedAsCustomer, loggedAsRunner=loggedAsRunner)
 
     else:
         return redirect(url_for("login"))
 
     return render_template("otherratings.html")
-#DO NOT STORE SESSION VARIABLES AS SELF VARIABLES
-#This is where the template will be stored in the url
+
+
+# DO NOT STORE SESSION VARIABLES AS SELF VARIABLES
+# This is where the template will be stored in the url
 @app.route('/ratings', methods=['GET', 'POST'])
 def ratings():
     currentRateableRunner = "placeholder"
@@ -182,8 +175,6 @@ def ratings():
         if request.method == 'POST':
             ratings = request.form.get('rating')
             review = request.form.get('writeReview')
-
-
 
             insert_query = "INSERT INTO webDB.reviews (user_name, review_text, rating_given) VALUES (%s, %s, %s)"
             mycursor.execute(insert_query, (currentRateableRunner, review, ratings,))
@@ -200,8 +191,8 @@ def ratings():
 
             # Create temporary table
             mycursor.execute('''
-    
-                                    
+
+
                 INSERT INTO average_reviews (username, total_ratings, rating_count, average_rating)
                 SELECT 
                     user_name AS username,
@@ -216,7 +207,7 @@ def ratings():
                     total_ratings = VALUES(total_ratings),
                     rating_count = VALUES(rating_count),
                     average_rating = VALUES(average_rating);
-    
+
                     ''')
 
             # Commit changes and close connection
@@ -228,84 +219,133 @@ def ratings():
     else:
         return "You don't have access to rate anyone..."
 
-    #Draw the website template from the folder!
+    # Draw the website template from the folder!
     return render_template('ratings.html', currentRateableRunner=currentRateableRunner, customerName=customerName)
+
 
 @app.route('/ratingsent', methods=['GET', 'POST'])
 def ratingsent():
     return render_template('ratingsent.html')
 
+
 @app.route('/sendOrder', methods=['GET', 'POST'])
 def sendOrder():
-    #BUG DETECTED, session['orderSent'] is being turned into true by something...
-    if session.get("loggedAsCustomer") == True:
-        findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.Orders WHERE customerName = %s "
-        mycursor.execute(findIfOrderAccepted, (session.get('username'),))
-        test1 = mycursor.fetchall()
-        if test1:
-            print("Order detected")
-            #Check if any order for this person exists, if none then set back the session['sentOrder'] back to False
-            session['orderSent'] = True
-        else:
-            session['orderSent'] = False
-
+    if session.get("loggedAsCustomer"):
         customerName = session.get('username')
+        mycursor = db.cursor()
+
+        # Check if an order already exists
+        findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.Orders WHERE customerName = %s"
+        mycursor.execute(findIfOrderAccepted, (customerName,))
+        test1 = mycursor.fetchall()
+
+        session['orderSent'] = bool(test1)
+
         orderSentTextDisplayForHTML = False
         orderSentBool = session.get('orderSent')
-        print(orderSentBool)
-        print("test1")
 
-        temp = None
-
-        waitingForAcceptance = "Waiting for someone  to accept your order..."
         if request.method == 'POST':
-            orderSent = request.form['sendOrder']
-            #OrderSent == False disables user from hitting back and looping orders
-            print("test2")
+            orderText = request.form['order']
 
-            #THE IF ISNT RUNNING
-            if request.form['sendOrder'] == "True":
-                print("test2.5")
-                if session.get('orderSent') == False:
-                    print("test3")
+            if not session.get('orderSent'):
+                orderSentTextDisplayForHTML = True
+                insert_query = "INSERT INTO webDB.orders (customerName, foodOrdered) VALUES (%s, %s)"
+                mycursor.execute(insert_query, (customerName, orderText))
+                db.commit()  # Commit the transaction to save changes to the database
+                session['orderSent'] = True
 
-                    orderSentTextDisplayForHTML = True
-                    insert_query = "INSERT INTO webDB.orders (customerName) VALUES (%s)"
-                    mycursor.execute(insert_query, (customerName,))
-                    db.commit()  # Commit the transaction to save changes to the database
-                    session['orderSent'] = True
+                return redirect(url_for("orderInProgressCustomer"))
 
-                    # findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
-                    # mycursor.execute(findIfOrderAccepted, (customerName,))
-                    # test1 = mycursor.fetchall()
-                    # session['orderSent'] = True
+            if session.get('orderSent'):
+                findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s"
+                mycursor.execute(findIfOrderAccepted, (customerName,))
+                test1 = mycursor.fetchall()
 
-                if session.get('orderSent') == True:
-                    findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
-                    mycursor.execute(findIfOrderAccepted, (customerName,))
-                    test1 = mycursor.fetchall()
-                    sentValue = mycursor.fetchall()
+                if test1:
+                    delete_query = "DELETE FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted = TRUE"
+                    mycursor.execute(delete_query, (customerName,))
+                    db.commit()
 
-                    if test1:
-                        #THIS LINE OF CODE ISNT RUNNING
-                        delete_query = "DELETE FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted = TRUE"
-                        mycursor.execute(delete_query, (customerName,))
-                        db.commit()
-                        #Delete pending order, then transfer to new page
+                if test1:
+                    return redirect(url_for("orderInProgressCustomer"))
 
-                    if test1:
-                        return redirect(url_for("orderInProgressCustomer"))
-
+        return render_template('sendOrder.html', customerName=customerName,
+                               orderSentTextDisplayForHTML=orderSentTextDisplayForHTML,
+                               orderSentBool=orderSentBool)
     else:
         return "You have no permission to send orders."
 
+# @app.route('/sendOrder', methods=['GET', 'POST'])
+# def sendOrder():
+#     # BUG DETECTED, session['orderSent'] is being turned into true by something...
+#     if session.get("loggedAsCustomer") == True:
+#         findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.Orders WHERE customerName = %s "
+#         mycursor.execute(findIfOrderAccepted, (session.get('username'),))
+#         test1 = mycursor.fetchall()
+#         if test1:
+#             print("Order detected")
+#             # Check if any order for this person exists, if none then set back the session['sentOrder'] back to False
+#             session['orderSent'] = True
+#         else:
+#             session['orderSent'] = False
 
-    return render_template('sendOrder.html', customerName=customerName, orderSentTextDisplayForHTML=orderSentTextDisplayForHTML
-                           , orderSentBool=orderSentBool)
+#         customerName = session.get('username')
+#         orderSentTextDisplayForHTML = False
+#         orderSentBool = session.get('orderSent')
+#         print(orderSentBool)
+#         print("test1")
+
+#         temp = None
+
+#         waitingForAcceptance = "Waiting for someone  to accept your order..."
+#         if request.method == 'POST':
+#             orderSent = request.form['sendOrder']
+#             # OrderSent == False disables user from hitting back and looping orders
+#             print("test2")
+
+#             # THE IF ISNT RUNNING
+#             if request.form['sendOrder'] == "True":
+#                 print("test2.5")
+#                 if session.get('orderSent') == False:
+#                     print("test3")
+
+#                     orderSentTextDisplayForHTML = True
+#                     insert_query = "INSERT INTO webDB.orders (customerName) VALUES (%s)"
+#                     mycursor.execute(insert_query, (customerName,))
+#                     db.commit()  # Commit the transaction to save changes to the database
+#                     session['orderSent'] = True
+
+#                     # findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
+#                     # mycursor.execute(findIfOrderAccepted, (customerName,))
+#                     # test1 = mycursor.fetchall()
+#                     # session['orderSent'] = True
+
+#                 if session.get('orderSent') == True:
+#                     findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
+#                     mycursor.execute(findIfOrderAccepted, (customerName,))
+#                     test1 = mycursor.fetchall()
+#                     sentValue = mycursor.fetchall()
+
+#                     if test1:
+#                         # THIS LINE OF CODE ISNT RUNNING
+#                         delete_query = "DELETE FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted = TRUE"
+#                         mycursor.execute(delete_query, (customerName,))
+#                         db.commit()
+#                         # Delete pending order, then transfer to new page
+
+#                     if test1:
+#                         return redirect(url_for("orderInProgressCustomer"))
+
+#     else:
+#         return "You have no permission to send orders."
+
+#     return render_template('sendOrder.html', customerName=customerName,
+#                            orderSentTextDisplayForHTML=orderSentTextDisplayForHTML
+#                            , orderSentBool=orderSentBool)
+
 
 @app.route('/acceptOrder', methods=['GET', 'POST'])
 def acceptOrder():
-
     if (session.get("loggedAsRunner") == True) and (session.get('loggedAsRunner') != None):
         runnerName = session.get('username')
         currentOrders = []
@@ -337,16 +377,15 @@ def acceptOrder():
             mycursor.execute(insert_query, (runnerName, acceptedOrderCustomerName))
             db.commit()  # Commit the transaction to save changes to the database
 
-
-
             return redirect(url_for("orderInProgressRunner"))
 
         return render_template('acceptOrder.html', currentOrders=currentOrders
-                               ,orderSize=orderSize)
+                               , orderSize=orderSize)
 
-    #This is where the runner can see all the available orders that are ready to be accepted
+    # This is where the runner can see all the available orders that are ready to be accepted
     else:
         return "You dont have access to this page"
+
 
 @app.route('/orderInProgressRunner', methods=['GET', 'POST'])
 def orderInProgressRunner():
@@ -361,8 +400,7 @@ def orderInProgressRunner():
         runnerArrived = request.form.get("runnerArrived")
         orderCompleted = request.form.get("orderCompleted")
 
-        #QUERY NOT WORKING YET!
-
+        # QUERY NOT WORKING YET!
 
         if orderCompleted == "True":
             update_query = """
@@ -381,7 +419,7 @@ def orderInProgressRunner():
 def orderInProgressCustomer():
     customerName = session.get('username')
     runnerNameHTML = "placeholder"
-    #DISABLE CUSTOMER FROM FORCING BACKBUTTON
+    # DISABLE CUSTOMER FROM FORCING BACKBUTTON
     query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
     mycursor.execute(query, (customerName,))
     orderData = mycursor.fetchall()
@@ -391,15 +429,13 @@ def orderInProgressCustomer():
         runnerNameHTML = orderData[0][0]
 
         if orderData[0][1] == True:
-
             return redirect(url_for("orderCompletedCustomer"))
 
+    return render_template('orderInProgressCustomer.html', runnerNameHTML=runnerNameHTML)
 
-    return render_template('orderInProgressCustomer.html' ,runnerNameHTML=runnerNameHTML)
 
 @app.route('/orderCompleted', methods=['GET', 'POST'])
 def orderCompletedCustomer():
-
     customerName = "placeholder"
     runnerNameHTML = "placeholder"
 
@@ -414,18 +450,16 @@ def orderCompletedCustomer():
         orderData = mycursor.fetchall()
 
         if orderData:
-
             runnerNameHTML = orderData[0][0]
         session['orderSent'] = False
         session["currentRateableRunner"] = runnerNameHTML
 
-
-    #Now, do the yes or no, if yes, send customer to review him
+    # Now, do the yes or no, if yes, send customer to review him
     if request.method == 'POST' and session["currentRateableRunner"] is not None:
         yesButton = request.form.get("yesButton")
         noButton = request.form.get("noButton")
 
-        #Now delete the row containing your confirmed order in orders. NOT confirmedOrders
+        # Now delete the row containing your confirmed order in orders. NOT confirmedOrders
         delete_query = "DELETE FROM webDB.orders WHERE customerName = %s"
         mycursor.execute(delete_query, (customerName,))
         db.commit()
@@ -437,23 +471,21 @@ def orderCompletedCustomer():
             session['currentRateableRunner'] = None
             return redirect(url_for("profile"))
 
-
     return render_template('orderCompletedCustomer.html', runnerNameHTML=runnerNameHTML)
 
-
-
+# @app.route('/')
 def index():
-    #Draw the website template from the folder!
+    # Draw the website template from the folder!
     return render_template('frontpage.html')
+
 
 @app.route('/accountcreatedsuccess')
 def accountcreatedsuccess():
-
     return render_template('accountcreatedsuccess.html')
+
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-
     loggedAsCustomer = session.get('loggedAsCustomer')
     loggedAsRunner = session.get('loggedAsRunner')
 
@@ -490,7 +522,7 @@ def profile():
             ratingsGiven = "N/A"
             timestamp = "N/A"
 
-        #Store each review tab in an array
+        # Store each review tab in an array
         reviewText = []
         for i in range(len(reviewsArray)):
             reviewText.append(reviewsArray[i][0])
@@ -529,8 +561,7 @@ def profile():
 
                 return redirect(url_for("login"))
 
-
-            if deleteAccount == "True": #works
+            if deleteAccount == "True":  # works
                 deleteQuery = "DELETE FROM webDB.registeredAccounts WHERE user_name = %s"
                 mycursor.execute(deleteQuery, (session['username'],))
                 db.commit()
@@ -548,10 +579,11 @@ def profile():
         return render_template('profile.html', usernameP=usernameP, loggedIn=loggedIn,
                                errorText=errorText, ratings=ratings, reviewText=reviewText, reviewStars=reviewStars,
                                timeStamps=timeStamps, totalReviews=totalReviews, reviewSize=reviewSize,
-                               loggedAsCustomer=loggedAsCustomer,loggedAsRunner=loggedAsRunner)
+                               loggedAsCustomer=loggedAsCustomer, loggedAsRunner=loggedAsRunner)
 
     else:
         return redirect(url_for("login"))
+
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
@@ -581,8 +613,6 @@ def settings():
             phoneNumber = test1[0]
             nickname = test1[1]
 
-
-
         query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
         mycursor.execute(query, (usernameP,))
         ratingsArray = mycursor.fetchall()
@@ -605,7 +635,6 @@ def settings():
             changedPassword = request.form.get('changedPassword')
             changedNickname = request.form.get('changedNickname')
             changedPhoneNumber = request.form.get('changedPhoneNumber')
-
 
             passwordtext = request.form.get('confirmnewpassword')
 
@@ -647,8 +676,7 @@ def settings():
 
                 userdata = mycursor.fetchone()
 
-
-                if(newpassword == confirmnewpassword) and check_password_hash(userdata[0], oldpassword) :
+                if (newpassword == confirmnewpassword) and check_password_hash(userdata[0], oldpassword):
                     alter_query = "UPDATE webDB.registeredAccounts SET user_password = %s WHERE user_name = %s"
 
                     hashedNewPassword = generate_password_hash(newpassword)
@@ -681,459 +709,246 @@ def settings():
         return render_template('settings.html', usernameP=usernameP, loggedIn=loggedIn, errorText=errorText,
                                ratings=ratings, changepasssworderror=changepasssworderror, nickname=nickname,
                                phoneNumber=phoneNumber, passwordNotSame=passwordNotSame,
-                               attemptedPasswordChange=attemptedPasswordChange, loggedAsRunner=loggedAsRunner,loggedAsCustomer=loggedAsCustomer)
+                               attemptedPasswordChange=attemptedPasswordChange, loggedAsRunner=loggedAsRunner,
+                               loggedAsCustomer=loggedAsCustomer)
 
     else:
         return redirect(url_for("settings"))
 
-# @app.route('/testfile')
-# def testfile():
-#     return render_template('testfile.html')
 
-deen_food = [
-    {'name': 'CHICKEN CHOP COMBO (Rice)', 'price': 7.00, 'category': 'Western'},
-    {'name': 'CHICKEN CHOP COMBO (Fried Rice)', 'price': 8.50, 'category': 'Western'},
-    {'name': 'ROTI BAKAR', 'price': 1.50, 'category': 'Western'},
-    {'name': 'SANDWICH AYAM', 'price': 2.50, 'category': 'Western'},
-    {'name': 'SANDWICH SARDIN', 'price': 2.50, 'category': 'Western'},
-    {'name': 'ROT JOHN', 'price': 5.00, 'category': 'Western'},
-    {'name': 'FRIES', 'price': 5.00, 'category': 'Western'},
-    {'name': 'WET FRIES', 'price': 5.00, 'category': 'Western'},
-    {'name': 'FISH & CHIPS', 'price': 11.00, 'category': 'Western'},
-    {'name': 'CHICKEN CHOP (REGULAR)', 'price': 12.00, 'category': 'Western'},
-    {'name': 'CHICKEN GRILL', 'price': 15.00, 'category': 'Western'},
-    {'name': 'LAMB CHOP', 'price': 18.00, 'category': 'Western'},
-    {'name': 'FRIED NOODLES', 'price': 5.00, 'category': 'Chinese'},
-    {'name': 'KUEY TIAU GOREN', 'price': 5.00, 'category': 'Chinese'},
-    {'name': 'BIHUN GOREN', 'price': 5.00, 'category': 'Chinese'},
-    {'name': 'BIHUN SINGAPORE', 'price': 5.00, 'category': 'Chinese'},
-    {'name': 'MEE GOREN', 'price': 5.00, 'category': 'Chinese'},
-    {'name': 'MEE GORENG MAMAK', 'price': 5.00, 'category': 'Chinese'},
-    {'name': 'MAGGIE GOREN', 'price': 5.00, 'category': 'Chinese'},
-    {'name': 'YEE MEE GOREN', 'price': 6.00, 'category': 'Chinese'},
-    {'name': 'HOKKIEN MEE', 'price': 6.00, 'category': 'Chinese'},
-    {'name': 'MAGGIE GORENG XLR', 'price': 7.00, 'category': 'Chinese'},
-    {'name': 'CHINESE STYLE', 'price': 0.00, 'category': 'Chinese'},  # Header for Chinese-style dishes
-    {'name': 'NASI BUTTER CHICKEN', 'price': 8.00, 'category': 'Chinese'},
-    {'name': 'NASI BUTTER FISH', 'price': 8.00, 'category': 'Chinese'},
-    {'name': 'NASI BUTTER PRAWN', 'price': 9.00, 'category': 'Chinese'},
-    {'name': 'NASI BUTTER SQUID', 'price': 9.00, 'category': 'Chinese'},
-    {'name': 'NASI BUTTER CAMPUR', 'price': 10.00, 'category': 'Chinese'},
-    {'name': 'NASI BUTTER MILK (CN)', 'price': 10.00, 'category': 'Chinese'},
-    {'name': 'TOM YAM SOUP + RICE', 'price': 7.00, 'category': 'Soups'},
-    {'name': 'TOM YAM SOUP (CENDAWAN)', 'price': 7.00, 'category': 'Soups'},
-    {'name': 'TOM YAM SOUP (AYAM)', 'price': 7.00, 'category': 'Soups'},
-    {'name': 'TOM YAM SOUP (DAGING)', 'price': 8.00, 'category': 'Soups'},
-    {'name': 'TOM YAM SOUP (SEA FOOD)', 'price': 8.00, 'category': 'Soups'},
-    {'name': 'TOM YAM SOUP (CAMPUR)', 'price': 8.50, 'category': 'Soups'},
-    {'name': 'MAGGIE SOUP', 'price': 5.00, 'category': 'Soups'},
-    {'name': 'KUEY TIAU SOUP', 'price': 5.00, 'category': 'Soups'},
-    {'name': 'BIHUN SOUP', 'price': 5.00, 'category': 'Soups'},
-    {'name': 'VEGETARIAN + NASI', 'price': 6.00, 'category': 'Soups'},
-    {'name': 'CENDAWAN + NASI', 'price': 6.00, 'category': 'Soups'},
-    {'name': 'AYAM + NASI', 'price': 6.00, 'category': 'Soups'},  # Likely a mistake on the menu, assuming this should not be Vegetarian
-    {'name': 'DAGING + NASI', 'price': 7.00, 'category': 'Soups'},  # Likely a mistake on the menu, assuming this should not be Vegetarian
-    {'name': 'KAMBING + NASI', 'price': 10.00, 'category': 'Soups'},
-    {'name': 'NASI GORENG / FRIED RICE', 'price': 0.00, 'category': 'Nasi Goreng'},  # Header for Nasi Goreng dishes
-    {'name': 'NASI GORENG BIASA (RM5)', 'price': 5.00, 'category': 'Nasi Goreng'},  # Assuming "BIASA" means "Normal"
-    {'name': 'NASI GORENG KAMPUNG', 'price': 6.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG CIN', 'price': 5.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG MAMAK', 'price': 5.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG TELUR (EGG)', 'price': 5.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG CILI API', 'price': 5.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG SAUSAGE', 'price': 5.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG TOMYAM', 'price': 6.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG SARDIN', 'price': 6.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG PATTAYA', 'price': 6.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG IKAN MASIN', 'price': 6.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG TOMATO', 'price': 6.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG CENDAWAN', 'price': 6.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG DAGING', 'price': 7.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG SEA FOOD', 'price': 7.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG AYAM (CHICKEN)', 'price': 8.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG PAPRIK AYAM', 'price': 8.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG MSA (EGG)', 'price': 9.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG THAI', 'price': 9.00, 'category': 'Nasi Goreng'},
-    {'name': 'NASI GORENG KAMBING', 'price': 12.00, 'category': 'Nasi Goreng'},
-    {'name': 'PASTA SPECIAL', 'price': 0.00, 'category': 'Pasta'},  # Header for Pasta dishes
-    {'name': 'CARBONARA', 'price': 10.00, 'category': 'Pasta'},
-    {'name': 'CHICKEN ALFRED', 'price': 10.00, 'category': 'Pasta'},
-    {'name': 'BOLONESE', 'price': 10.00, 'category': 'Pasta'},
-    {'name': 'PASTA VEGETARIAN', 'price': 10.00, 'category': 'Pasta'},
-    {'name': 'MARINARA', 'price': 12.00, 'category': 'Pasta'},
-    {'name': 'CHICKEN SPICY', 'price': 12.00, 'category': 'Pasta'},
-    {'name': 'HOT PLATE', 'price': 0.00, 'category': 'Other'},  # Header for Hot Plate dishes
-    {'name': 'CHAR KUEY TIAU', 'price': 6.00, 'category': 'Other'},
-    {'name': 'SIZZLING RICE', 'price': 6.00, 'category': 'Other'},
-    {'name': 'MEE BANDUNG', 'price': 6.00, 'category': 'Other'},
-    {'name': 'SIZZLING YEE MEE', 'price': 6.50, 'category': 'Other'},
-    {'name': 'CANTONESE YEE MEE', 'price': 7.00, 'category': 'Other'},
-    {'name': 'CANTONESE JUEY TIAU', 'price': 7.00, 'category': 'Other'},
-    {'name': 'YING YONG', 'price': 8.00, 'category': 'Other'},
-    {'name': 'TEH TARIK', 'price': 2.00, 'category': 'Drinks'},  # Assuming Teh refers to Tea
-    {'name': 'TEH O', 'price': 1.50, 'category': 'Drinks'},
-    {'name': 'TEH O LIMAU', 'price': 2.00, 'category': 'Drinks'},
-    {'name': 'TEH O LAICI', 'price': 3.50, 'category': 'Drinks'},
-    {'name': 'NESCAFE', 'price': 2.50, 'category': 'Drinks'},
-    {'name': 'NESCAFE O', 'price': 2.00, 'category': 'Drinks'},
-    {'name': 'NESLO', 'price': 3.00, 'category': 'Drinks'},
-    {'name': 'WHITE COFFEE', 'price': 3.00, 'category': 'Drinks'},
-    {'name': 'KOPI', 'price': 2.00, 'category': 'Drinks'},
-    {'name': 'KOPI O', 'price': 1.50, 'category': 'Drinks'},
-    {'name': 'MILO', 'price': 2.50, 'category': 'Drinks'},
-    {'name': 'MILO O', 'price': 2.50, 'category': 'Drinks'},
-    {'name': 'BARLEY', 'price': 2.00, 'category': 'Drinks'},
-    {'name': 'HORLICKS', 'price': 3.00, 'category': 'Drinks'},
-    {'name': 'LIMAU PANAS', 'price': 2.00, 'category': 'Drinks'},
-    {'name': 'LAICI', 'price': 3.00, 'category': 'Drinks'},  # Assuming referring to juice
-    {'name': 'SIRAP BANDUNG', 'price': 2.00, 'category': 'Drinks'},
-    {'name': 'FRUIT JUICE', 'price': 0.00, 'category': 'Drinks'},  # Header for Fruit Juices
-    {'name': 'ORANGE JUICE', 'price': 4.00, 'category': 'Drinks'},
-    {'name': 'APPLE JUICE', 'price': 4.00, 'category': 'Drinks'},
-    {'name': 'WATERMELON JUICE', 'price': 4.00, 'category': 'Drinks'},
-    {'name': 'EXTRA JASS', 'price': 3.50, 'category': 'Drinks'},
-    {'name': 'CARROT JUICE', 'price': 4.00, 'category': 'Drinks'},
-]
+@app.route('/')
+def home():
+    username = None
+    loggedIn = False
 
-htc_food = [
-    {'name': 'GORENG-GORENG', 'price': 0.00, 'category': 'Goreng'},  # Header for goreng dishes
-    {'name': 'NASI GORENG', 'price': 4.50, 'category': 'Goreng'},
-    {'name': 'NASI GORENG DOUBLE', 'price': 6.00, 'category': 'Goreng'},
-    {'name': 'NASI GORENG CILI PADIR', 'price': 6.00, 'category': 'Goreng'},
-    {'name': 'NASI GORENG CINAR', 'price': 5.00, 'category': 'Goreng'},
-    {'name': 'NASI GORENG KAMPUNG', 'price': 6.00, 'category': 'Goreng'},
-    {'name': 'NASI GORENG AYAM', 'price': 8.00, 'category': 'Goreng'},
-    {'name': 'NASI GORENG KAMPUNG [AYAM]', 'price': 9.00, 'category': 'Goreng'},
-    {'name': 'NASI GORENG PATTAYA', 'price': 6.00, 'category': 'Goreng'},
-    {'name': 'MAGGI', 'price': 4.50, 'category': 'Goreng'},
-    {'name': 'MAGGI DOUBLE', 'price': 7.00, 'category': 'Goreng'},
-    {'name': 'MAGGI DOUBLE AYAM', 'price': 10.00, 'category': 'Goreng'},
-    {'name': 'MEE', 'price': 4.50, 'category': 'Goreng'},
-    {'name': 'BIHUN', 'price': 4.50, 'category': 'Goreng'},
-    {'name': 'KUEY TEOW', 'price': 4.50, 'category': 'Goreng'},
-    {'name': 'ROJAK', 'price': 4.50, 'category': 'Goreng'},
-    {'name': 'TELUR MATA', 'price': 1.00, 'category': 'Goreng'},
-    {'name': 'TELUR DADAR', 'price': 1.50, 'category': 'Goreng'},
-    {'name': 'MEE/KUE TEOW/BIHUN', 'price': 4.50, 'category': 'Goreng'},  # Assuming this refers to a combo
-    {'name': 'MEE/NASI GORENG', 'price': 4.50, 'category': 'Goreng'},  # Assuming this refers to a combo
-    {'name': 'KUE TEOW/BIHUN GORENG', 'price': 4.50, 'category': 'Goreng'},  # Assuming this refers to a combo
-    {'name': 'ROJAK BIASA', 'price': 5.50, 'category': 'Goreng'},
-    {'name': 'ROJAK TELUR', 'price': 5.50, 'category': 'Goreng'},
-    {'name': 'ROJAK MEE/MEE', 'price': 5.50, 'category': 'Goreng'},  # Assuming this is a typo and should be "ROJAK MEE/BIHUN"
-    {'name': 'ROTI CANAI', 'price': 0.00, 'category': 'Roti'},  # Header for Roti dishes
-    {'name': 'BIAS', 'price': 1.20, 'category': 'Roti'},
-    {'name': 'TELUR', 'price': 2.50, 'category': 'Roti'},
-    {'name': 'TELUR BAWANG', 'price': 3.00, 'category': 'Roti'},
-    {'name': 'BAWANG', 'price': 2.00, 'category': 'Roti'},
-    {'name': 'PLANTAR', 'price': 2.50, 'category': 'Roti'},
-    {'name': 'BOOM', 'price': 2.50, 'category': 'Roti'},
-    {'name': 'CHEESE', 'price': 3.00, 'category': 'Roti'},
-    {'name': 'TELUR CHEESE', 'price': 4.00, 'category': 'Roti'},
-    {'name': 'SARDINE', 'price': 4.00, 'category': 'Roti'},
-    {'name': 'KAYA', 'price': 2.50, 'category': 'Roti'},
-    {'name': 'MADU', 'price': 2.50, 'category': 'Roti'},
-    {'name': 'PISANG', 'price': 3.00, 'category': 'Roti'},
-    {'name': 'TOSAI', 'price': 0.00, 'category': 'Tosai'},  # Header for Tosai dishes
-    {'name': 'BIAS', 'price': 2.00, 'category': 'Tosai'},
-    {'name': 'TELUR', 'price': 3.00, 'category': 'Tosai'},
-    {'name': 'BAWANG', 'price': 3.00, 'category': 'Tosai'},
-    {'name': 'MASALA', 'price': 3.50, 'category': 'Tosai'},
-    {'name': 'GHEE', 'price': 3.00, 'category': 'Tosai'},
-    {'name': 'MURTABAK', 'price': 4.50, 'category': 'Murtabak'},
-    {'name': 'CAPATI', 'price': 2.00, 'category': 'Others'},
-    {'name': 'SPECIAL', 'price': 0.00, 'category': 'Others'},  # Header for Special dishes
-    {'name': 'ROTI BAKAR', 'price': 1.50, 'category': 'Others'},
-    {'name': 'ROTI BAKAR TELUR', 'price': 3.00, 'category': 'Others'},
-    {'name': 'ROTI BAKAR SARDIN', 'price': 4.00, 'category': 'Others'},
-    {'name': 'MINUMAN', 'price': 0.00, 'category': 'Drinks'},  # Header for Drinks
-    {'name': 'AIS TEH', 'price': 2.30, 'category': 'Drinks'},
-    {'name': 'TEH O', 'price': 2.00, 'category': 'Drinks'},
-    {'name': 'KOPI', 'price': 2.30, 'category': 'Drinks'},
-    {'name': 'KOPI O', 'price': 2.00, 'category': 'Drinks'},
-    {'name': 'MILO', 'price': 2.80, 'category': 'Drinks'},
-    {'name': 'MILO O', 'price': 2.50, 'category': 'Drinks'},
-    {'name': 'NESCAFE O', 'price': 2.50, 'category': 'Drinks'},
-    {'name': 'NESCAFE', 'price': 2.80, 'category': 'Drinks'},
-    {'name': 'BRU', 'price': 3.00, 'category': 'Drinks'},
-    {'name': 'HORLICKS', 'price': 3.00, 'category': 'Drinks'},
-    {'name': 'TEH LIMAU', 'price': 2.30, 'category': 'Drinks'},
-    {'name': 'AIR SIRAP', 'price': 2.30, 'category': 'Drinks'},
-    {'name': 'SIRAP LIMAU', 'price': 2.30, 'category': 'Drinks'},
-    {'name': 'JUS BUAH-BUAHAN', 'price': 0.00, 'category': 'Drinks'},  # Header for Fruit Juices
-    {'name': 'OREN/EPAL', 'price': 3.50, 'category': 'Drinks'},
-    {'name': 'BELIMBING', 'price': 3.50, 'category': 'Drinks'},
-    {'name': 'MANGGA/KAROT', 'price': 3.50, 'category': 'Drinks'},
-    {'name': 'ASAM JAWA', 'price': 2.80, 'category': 'Drinks'},
-    {'name': 'BARLI', 'price': 2.80, 'category': 'Drinks'}
-]
-
-bakery_food = [
-    {'name': 'VANILLA CHOCO TIWIST', 'price': 4.50, 'category': 'bakery'},
-    {'name': 'CHICKEN CURRY PUFF', 'price': 4.50, 'category': 'bakery'},
-    {'name': 'TUNA PUFF', 'price': 4.50, 'category': 'bakery'},
-    {'name': 'BANANA BAR', 'price': 3.80, 'category': 'bakery'},
-    {'name': 'CHICKEN SAUSAGE DONUT', 'price': 4.50, 'category': 'bakery'},
-    {'name': 'GARLIC SAUSAGE ROLL', 'price': 5.50, 'category': 'bakery'},
-    {'name': 'BBQ SAUSAGE ROLL', 'price': 5.50, 'category': 'bakery'},
-    {'name': 'MINI CROISSANT', 'price': 2.00, 'category': 'bakery'},
-    {'name': 'MINI CHICKEN MUSHROOM PIE', 'price': 5.50, 'category': 'bakery'},
-    {'name': 'FIRE CRACKER SAUSAGE', 'price': 7.50, 'category': 'bakery'},
-    {'name': 'CHOCOLATE ROLL', 'price': 3.00, 'category': 'bakery'},
-    {'name': 'CHOCOLATE MUFFIN', 'price': 6.50, 'category': 'bakery'},
-    {'name': 'BLUEBERRY MUFFIN', 'price': 6.50, 'category': 'bakery'},
-    {'name': 'MINI MUFFIN RED VELVET', 'price': 2.50, 'category': 'bakery'},
-    {'name': 'MINI MUFFIN BUTTERSCOTCH', 'price': 2.50, 'category': 'bakery'},
-    {'name': 'CHOCOLATE CHIP COOKIES', 'price': 4.50, 'category': 'bakery'},
-    {'name': 'DOUBLE CHOCO CHIP COOKIES', 'price': 4.50, 'category': 'bakery'},
-    {'name': 'SPICY TUNA EGG SANDWICH', 'price': 4.00, 'category': 'bakery'},
-    {'name': 'EGG MAYO SANDWICH', 'price': 3.50, 'category': 'bakery'},
-    {'name': 'BIHUN GORENG', 'price': 5.00, 'category': 'bakery'},
-    {'name': 'NASI GORENG', 'price': 5.00, 'category': 'bakery'},
-    {'name': 'NASI LEMAK', 'price': 4.00, 'category': 'bakery'},
-    {'name': 'COFFEE', 'price': 0.00, 'category': 'bakery'},  # Header for Coffee category
-    {'name': 'S BLACK COFFEE', 'price': 4.00, 'category': 'bakery'},
-    {'name': 'WHITE COFFEE', 'price': 4.00, 'category': 'bakery'},
-    {'name': 'PREMIUM COFFEE', 'price': 0.00, 'category': 'bakery'},  # Sub-header for Premium Coffee
-    {'name': 'ESPRESSO', 'price': 5.50, 'category': 'bakery'},
-    {'name': 'AMERICAN', 'price': 6.50, 'category': 'bakery'},
-    {'name': 'LATTE', 'price': 7.50, 'category': 'bakery'},
-    {'name': 'CAPPUCCINO', 'price': 7.50, 'category': 'bakery'},
-    {'name': 'MOCHA', 'price': 8.50, 'category': 'bakery'},
-    {'name': 'COCONUT LATTE', 'price': 8.50, 'category': 'bakery'},
-    {'name': 'HAZELNUT LATTE', 'price': 8.50, 'category': 'bakery'},
-    {'name': 'FRENCH VANILLA LATTE', 'price': 8.50, 'category': 'bakery'},
-    {'name': 'SALTED CARAMEL LATTE', 'price': 8.50, 'category': 'bakery'},
-    {'name': 'NON COFFEE', 'price': 0.00, 'category': 'bakery'},  # Sub-header for Non-Coffee drinks
-    {'name': 'CHOCOLATE', 'price': 7.00, 'category': 'bakery'},
-    {'name': 'MATCHA LATTE', 'price': 7.80, 'category': 'bakery'},
-    {'name': 'MILO', 'price': 5.00, 'category': 'bakery'},  # Likely a mistake, categorized under Coffee
-    {'name': 'TEH TARIK', 'price': 5.00, 'category': 'bakery'},
-]
+    loggedAsCustomer = session.get('loggedAsCustomer')
+    if session.get('loggedIn') == True:
+        username = session.get('username')
+        loggedIn = session.get('loggedIn')
 
 
-ITEMS = []
-ITEMS.extend(bakery_food)
-ITEMS.extend(deen_food)
-ITEMS.extend(htc_food)
+    return render_template('home.html', loggedAsCustomer=loggedAsCustomer, username=username, loggedIn=loggedIn)
 
 
-mycursor.execute("SELECT * FROM Cart")
-results = mycursor.fetchall()
-
-for row in results:
-    print(row)
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'GET':  # Only consider store selection on GET requests
-        store = request.args.get('store')
-        if store == 'htc':
-            items = htc_food
-        elif store == 'deen':
-            items = deen_food
-        else:  # Default to bakery items for the `index` route
-            items = bakery_food  # Explicitly assign bakery food for clarity
-    else:
-        items = []  # Clear items on POST requests to avoid stale data (optional)
-
-    selected_item = None
-    if request.method == 'POST':
-        item_name = request.form.get('item_name')
-        selected_item = next((item for item in ITEMS if item['name'] == item_name), None)
-
-    return render_template('dlight_bakery.html', items=items, cart= {}, selected_item=selected_item)
-
-@app.route('/', methods=['GET', 'POST'])
-def bakery():
-        
-    username = "Guest"
-    cart = {}
-    selected_item = None
-
-    if request.method == 'POST':
-        item_name = request.form.get('item_name')  # corrected form field name
-        quantity = int(request.form.get('quantity', 1))
-
-        db.reconnect()
-        mycursor = db.cursor()
-        try:
-            existing_item_query = "SELECT * FROM cart WHERE username = %s AND food_name = %s"
-            mycursor.execute(existing_item_query, (username, item_name))
-            existing_item = mycursor.fetchone()
-
-            if existing_item:
-                update_quantity_query = "UPDATE Cart SET quantity = quantity + %s, total_price = price * (quantity + %s) WHERE order_id = %s"
-                mycursor.execute(update_quantity_query, (quantity, quantity, existing_item[0]))
-            else:
-                insert_item_query = "INSERT INTO Cart (order_id, food_name, price, quantity, total_price, remark, username) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                mycursor.execute(insert_item_query, (0, item_name, 0.0, quantity, 0.0 * quantity, "", username))
-
-            db.commit()
-            cart[item_name] = {'quantity': existing_item[3] + quantity, 'total_price': existing_item[2] * (existing_item[3] + quantity)} if existing_item else {'quantity': quantity, 'total_price': 0.0 * quantity}
-            selected_item = {'name': item_name, 'quantity': quantity}
-            #     update_quantity_query = "UPDATE Cart SET quantity = quantity + %s WHERE order_id = %s"
-            #     mycursor.execute(update_quantity_query, (quantity, existing_item[0]))
-            # else:
-            #     insert_item_query = "INSERT INTO Cart (order_id, food_name, price, quantity, remark, username) VALUES (%s, %s, %s, %s, %s, %s)"
-            #     mycursor.execute(insert_item_query, (0, item_name, 0.0, quantity, "", username))
-
-            # db.commit()
-            # cart[item_name] = {'quantity': existing_item[3] + quantity} if existing_item else {'quantity': quantity}
-            # selected_item = {'name': item_name, 'quantity': quantity}
-
-        except mysql.connector.Error as err:
-            print(f"Error: {err}")
-            db.rollback()
-        finally:
-            mycursor.close()
-
-    
-    try:
-        mycursor = db.cursor(buffered=True)
-        fetch_all_items_query = "SELECT * FROM Cart WHERE username = %s"
-        mycursor.execute(fetch_all_items_query, (username,))
-        all_items = mycursor.fetchall()
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        all_items = []
-    finally:
-        mycursor.close()
-
-    return render_template('dlight_bakery.html', items=ITEMS, cart=cart, selected_item=selected_item, all_items=all_items)
-
-
-@app.route('/add_to_cart', methods=['POST'])
-def add_to_cart():
-    username = "Guest"
-    food_name = request.form.get('item_name')  # corrected form field name
-    price = float(request.form.get('item_price', 0.0))  # corrected form field name
-    remark = request.form.get('remark', '')
-
-    db.reconnect()
-    mycursor = db.cursor()
-    try:
-        mycursor.execute("SELECT * FROM Cart WHERE username = %s AND food_name = %s", (username, food_name))
-        existing_item = mycursor.fetchone()
-
-        if existing_item:
-            new_quantity = existing_item[4] + 1
-            new_total_price = price * new_quantity
-            mycursor.execute("UPDATE Cart SET quantity = %s, total_price = %s WHERE order_id = %s", (new_quantity, new_total_price, existing_item[0]))
-        else:
-            total_price = price * 1
-            mycursor.execute("INSERT INTO Cart (order_id, food_name, price, quantity, total_price, remark, username) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                             (0, food_name, price, 1, total_price, remark, username))
-        #     mycursor.execute("UPDATE Cart SET quantity = quantity + 1 WHERE order_id = %s", (existing_item[0],))
-        # else:
-        #     mycursor.execute("INSERT INTO Cart (order_id, food_name, price, quantity, remark, username) VALUES (%s, %s, %s, %s, %s, %s)",
-        #                      (0, food_name, price, 1, remark, username))
-        db.commit()
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        db.rollback()
-    finally:
-        mycursor.close()
-    return redirect(url_for('bakery'))
-
-@app.route('/remove_from_cart', methods=['POST'])
-def remove_from_cart():
-
-    username = "Guest"
-    food_name = request.form.get('item_name')
-
-    db.reconnect()
-    try:
-        mycursor = db.cursor(buffered=True)
-        mycursor.execute("SELECT * FROM Cart WHERE username = %s AND food_name = %s", (username, food_name))
-        existing_item = mycursor.fetchone()
-
-        if existing_item:
-            if existing_item[4] > 1:
-                new_quantity = existing_item[4] - 1
-                new_total_price = existing_item[2] * new_quantity
-                mycursor.execute("UPDATE Cart SET quantity = %s, total_price = %s WHERE order_id = %s", (new_quantity, new_total_price, existing_item[0]))
-            else:
-                mycursor.execute("DELETE FROM Cart WHERE order_id = %s", (existing_item[0]))
-            # if existing_item[4] > 1:
-            #     mycursor.execute("UPDATE Cart SET quantity = quantity - 1 WHERE id = %s", (existing_item[0],))
-            # else:
-            #     mycursor.execute("DELETE FROM Cart WHERE id = %s", (existing_item[0],))
-
-            # Commit changes to the database
-            db.commit()
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        db.rollback()
-    finally:
-        mycursor.close()
-    return redirect(url_for('bakery'))
-
-
-@app.route('/update_remarks', methods=['POST'])
-def update_remarks():
-    username = "Guest"
-    food_name = request.form.get('item_name')
-    remark = request.form.get('remarks')
-
-    db.reconnect()
-    try:
-        mycursor = db.cursor(buffered=True)
-        mycursor.execute("UPDATE Cart SET remark = %s WHERE username = %s AND food_name = %s", (remark, username, food_name))
-        db.commit()
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        db.rollback()
-    finally:
-        mycursor.close()
-
-    return redirect(url_for('bakery'))
-
-@app.route('/checkout')
+@app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
-    if db is None:
-        return "Error connecting to the database", 500
+    if request.method == 'POST':
+        loggedAsCustomer = session.get('loggedAsCustomer')
+        if session.get('loggedIn') == True:
+            username = session.get('username')
+            loggedIn = session.get('loggedIn')
+            # FoodOrdered = request.form.get('order')
 
-    if 'username' not in session:
-        return redirect(url_for('sendOrder'))
+            # mycursor = db.cursor(buffered=True)
+            # mycursor.execute("UPDATE orders SET FoodOrdered = %s WHERE customerName = %s AND ", (FoodOrdered, username))
+            # db.commit()
+            # Implement this function to get cart data
 
-    username = "Guest"
+        return render_template('sendOrder.html', loggedAsCustomer=loggedAsCustomer, customerName=username, loggedIn=loggedIn)
 
 
-    try:
-        mycursor = db.cursor(buffered=True)
-        # Fetch all items in the cart for the user
-        mycursor.execute("SELECT * FROM Cart WHERE username = %s", (username,))
-        orders = mycursor.fetchall()
+    # try:
+    #     mycursor = db.cursor(buffered=True)
+    #     # Fetch all items in the cart for the user
+    #     mycursor.execute("SELECT * FROM Cart WHERE username = %s", (username,))
+    #     orders = mycursor.fetchall()
 
-        # Calculate total price
-        total_price = sum(order[3] * order[4] for order in orders)  # Assuming unit_price is at index 3, quantity at index 4
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        orders = []
-        total_price = 0
-        mycursor.close()
+    #     # Calculate total price
+    #     total_price = sum(
+    #         order[3] * order[4] for order in orders)  # Assuming unit_price is at index 3, quantity at index 4
+    # except mysql.connector.Error as err:
+    #     print(f"Error: {err}")
+    #     orders = []
+    #     total_price = 0
+    #     mycursor.close()
 
-    db.close()
-    return redirect(url_for('bakery'), orders=orders, total_price=total_price)
+    # db.close()
+    # return redirect(url_for('bakery'), orders=orders, total_price=total_price)
 
 @app.route('/search')
 def search():
     query = request.args.get('query')
-    # Implement search logic here
-    return render_template('search_results.html', query=query)
+    return redirect(url_for('bakery'), query=query)
 
-@app.route('/home')
-def home():
-    
-    username = "Guest"  
-    return render_template('home.html', username=username)
 
-@app.route('/profile')
-def user_profile():
+# @app.route('/home')
+# def home():
+#     username = "Guest"
+#     return render_template('home.html', username=username)
 
-    username = "Guest"
-    return render_template('profile.html', username=username)
-# @app.route('/home', methods=['GET']) 
+
+# @app.route('/profile')
+# def user_profile():
+#     username = "Guest"
+#     return render_template('profile.html', username=username)
+
+# ITEMS = []
+# ITEMS.extend(bakery_food)
+# ITEMS.extend(deen_food)
+# ITEMS.extend(htc_food)
+
+# mycursor.execute("SELECT * FROM Cart")
+# results = mycursor.fetchall()
+
+# for row in results:
+#     print(row)
+
+
+# @app.route('/', methods=['GET', 'POST'])
+# def index():
+#     if request.method == 'GET':  # Only consider store selection on GET requests
+#         store = request.args.get('store')
+#         if store == 'htc':
+#             items = htc_food
+#         elif store == 'deen':
+#             items = deen_food
+#         else:  # Default to bakery items for the `index` route
+#             items = bakery_food  # Explicitly assign bakery food for clarity
+#     else:
+#         items = []  # Clear items on POST requests to avoid stale data (optional)
+
+#     selected_item = None
+#     if request.method == 'POST':
+#         item_name = request.form.get('item_name')
+#         selected_item = next((item for item in ITEMS if item['name'] == item_name), None)
+
+#     return render_template('dlight_bakery.html', items=items, cart={}, selected_item=selected_item)
+
+
+# @app.route('/', methods=['GET', 'POST'])
+# def bakery():
+#     username = "Guest"
+#     cart = {}
+#     selected_item = None
+
+#     if request.method == 'POST':
+#         item_name = request.form.get('item_name')
+#         quantity = int(request.form.get('quantity', 1))
+
+#         db.reconnect()
+#         mycursor = db.cursor()
+#         try:
+#             existing_item_query = "SELECT * FROM cart WHERE username = %s AND food_name = %s"
+#             mycursor.execute(existing_item_query, (username, item_name))
+#             existing_item = mycursor.fetchone()
+
+#             if existing_item:
+#                 update_quantity_query = "UPDATE Cart SET quantity = quantity + %s, total_price = price * (quantity + %s) WHERE order_id = %s"
+#                 mycursor.execute(update_quantity_query, (quantity, quantity, existing_item[0]))
+#             else:
+#                 insert_item_query = "INSERT INTO Cart (order_id, food_name, price, quantity, total_price, remark, username) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+#                 mycursor.execute(insert_item_query, (0, item_name, 0.0, quantity, 0.0 * quantity, "", username))
+
+#             db.commit()
+#         except mysql.connector.Error as err:
+#             print(f"Error: {err}")
+#             db.rollback()
+#         finally:
+#             mycursor.close()
+
+#     try:
+#         mycursor = db.cursor(buffered=True)
+#         fetch_all_items_query = "SELECT * FROM Cart WHERE username = %s"
+#         mycursor.execute(fetch_all_items_query, (username,))
+#         all_items = mycursor.fetchall()
+
+#         for item in all_items:
+#             cart[item[1]] = {'quantity': item[4], 'price': item[2]}
+#     except mysql.connector.Error as err:
+#         print(f"Error: {err}")
+#         all_items = []
+#     finally:
+#         mycursor.close()
+
+#     total_price = sum(item[5] for item in all_items)
+#     return render_template('dlight_bakery.html', items=ITEMS, cart=cart, selected_item=selected_item, all_items=all_items, total_price=total_price)
+
+
+
+# @app.route('/add_to_cart', methods=['POST', 'GET'])
+# def add_to_cart():
+#     username = "Guest"
+#     food_name = request.form.get('item_name')  # corrected form field name
+#     price = float(request.form.get('item_price', 0.0))  # corrected form field name
+#     remark = request.form.get('remark', '')
+
+#     db.reconnect()
+#     mycursor = db.cursor()
+#     try:
+#         mycursor.execute("SELECT * FROM Cart WHERE username = %s AND food_name = %s", (username, food_name))
+#         existing_item = mycursor.fetchone()
+
+#         if existing_item:
+#             new_quantity = existing_item[4] + 1
+#             new_total_price = price * new_quantity
+#             mycursor.execute("UPDATE Cart SET quantity = %s, total_price = %s WHERE order_id = %s",
+#                              (new_quantity, new_total_price, existing_item[0]))
+#         else:
+#             total_price = price * 1
+#             mycursor.execute(
+#                 "INSERT INTO Cart (order_id, food_name, price, quantity, total_price, remark, username) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+#                 (0, food_name, price, 1, total_price, remark, username))
+#         #     mycursor.execute("UPDATE Cart SET quantity = quantity + 1 WHERE order_id = %s", (existing_item[0],))
+#         # else:
+#         #     mycursor.execute("INSERT INTO Cart (order_id, food_name, price, quantity, remark, username) VALUES (%s, %s, %s, %s, %s, %s)",
+#         #                      (0, food_name, price, 1, remark, username))
+#         db.commit()
+#     except mysql.connector.Error as err:
+#         print(f"Error: {err}")
+#         db.rollback()
+#     finally:
+#         mycursor.close()
+#     return redirect(url_for('bakery'))
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+# @app.route('/update_remarks', methods=['POST'])
+# def update_remarks():
+#     username = "Guest"
+#     food_name = request.form.get('item_name')
+#     remark = request.form.get('remarks')
+
+#     db.reconnect()
+#     try:
+#         mycursor = db.cursor(buffered=True)
+#         mycursor.execute("UPDATE Cart SET remark = %s WHERE username = %s AND food_name = %s", (remark, username, food_name))
+#         db.commit()
+#     except mysql.connector.Error as err:
+#         print(f"Error: {err}")
+#         db.rollback()
+#     finally:
+#         mycursor.close()
+
+#     return redirect(url_for('bakery'))
+
+
+# @app.route('/checkout')
+# def checkout():
+#     if 'username' not in session:
+#         return redirect(url_for('sendOrder'))
+
+#     username = "Guest"
+
+#     try:
+#         mycursor = db.cursor(buffered=True)
+#         # Fetch all items in the cart for the user
+#         mycursor.execute("SELECT * FROM Cart WHERE username = %s", (username,))
+#         orders = mycursor.fetchall()
+
+#         # Calculate total price
+#         total_price = sum(
+#             order[3] * order[4] for order in orders)  # Assuming unit_price is at index 3, quantity at index 4
+#     except mysql.connector.Error as err:
+#         print(f"Error: {err}")
+#         orders = []
+#         total_price = 0
+#         mycursor.close()
+
+#     db.close()
+#     return redirect(url_for('bakery'), orders=orders, total_price=total_price)
+
+
+
+# @app.route('/home', methods=['GET'])
 # def home():
 #     usernameP = session.get('username', 'Guest')  # Default to 'Guest' if not set
 #     return render_template('/templates/home.html', usernameP=usernameP)
@@ -1144,27 +959,29 @@ def user_profile():
 #     usernameP = session.get('username', 'Guest')  # Default to 'Guest' if not set
 #     return render_template('profile.html', usernameP=usernameP)
 
-@app.route('/deen', methods=['GET']) 
+@app.route('/deen', methods=['GET'])
 def deen():
     return render_template('deen.html')
 
-@app.route('/htc', methods=['GET']) 
+
+@app.route('/htc', methods=['GET'])
 def htc():
     return render_template('htc.html')
 
-# @app.route('/add_to_cart', methods=['POST', 'GET']) 
+
+# @app.route('/add_to_cart', methods=['POST', 'GET'])
 # def add_to_cart():
 #     if request.method == 'POST':
-        
+
 
 #         # remarks = request.form['remarks']
 #         # testvalue = "x"
 #         # print(remarks)
 #         # sql = "INSERT INTO customer.user_remarks (remarks, username) VALUES (%s, %s)"
-    
+
 #         # cursor.execute(sql, (remarks, testvalue))
 #         # db.commit()
-        
+
 #         with open("remarks.txt", "a") as file:
 #             file.write(remarks + "\n")
 #         print(remarks)
@@ -1180,8 +997,5 @@ def htc():
 #   cursor.close()  # Close the cursor
 #   return render_template('menu.html', remarks=remarks_data)
 
-
-mycursor.close()
-db.close()
 
 app.run(debug=True)

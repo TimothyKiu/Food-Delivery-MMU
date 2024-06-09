@@ -6,7 +6,7 @@
 
 .header {
   padding: 6px;
-  background: #9f77a7; 
+  background: hsl(0, 0%, 44%); 
   color: rgb(212, 215, 186);
   font-size: 20px;
   min-height: 0px; 
@@ -24,7 +24,7 @@
 .footer {
   padding: 10px;
   text-align: right;
-  background:#9f77a7;
+  background:hsl(0, 0%, 44%);
   color: rgb(212, 215, 186);
   font-size: 20px;
   min-height:20px; 
