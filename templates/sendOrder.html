@@ -4,15 +4,13 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script>
-        // Set the interval to refresh the page every 5000 milliseconds (5 seconds)
-        setInterval(function() {
-            location.reload();
-        }, 5000);
+
     </script>
 
 </head>
 <body>
     <p>session: {{ customerName }}</p>
+
     {% if orderSentTextDisplayForHTML %}
         <p>Order sent, waiting for a runner to accept...</p>
     {% endif %}
@@ -21,6 +19,10 @@
 
         <form method="post">
             <button name="sendOrder" value="True">Confirm order</button>
+            <label for="textbox">Restaurant name:</label>
+            <input type="text" id="textbox" name="restaurant" required>
+            <label for="textbox">Write down your order:</label>
+            <input type="text" id="textbox" name="orderList" required>
         </form>
      {% endif %}
 
