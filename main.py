@@ -225,7 +225,6 @@ def ratingsent():
 @app.route('/sendOrder', methods=['GET', 'POST'])
 def sendOrder():
     print(session.get('loggedAsCustomer'))
-    print("niggas")
     #BUG DETECTED, session['orderSent'] is being turned into true by something...
     if session.get("loggedAsCustomer") == True:
         findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.Orders WHERE customerName = %s "
@@ -398,8 +397,9 @@ def orderInProgressCustomer():
 
                 return redirect(url_for("orderCompletedCustomer"))
 
-        mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE username = %s", (customerName,))
+        mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE runnerName = %s", (runnerNameHTML,))
         locations = mycursor.fetchall()
+        print(locations)
         return render_template('showLocation.html', locations=locations, runnerNameHTML=runnerNameHTML)
 
     else:
@@ -700,20 +700,21 @@ def settings():
 
 @app.route('/getLocation', methods=['POST', 'GET'])
 def getLocation():
-
     if session.get('loggedAsRunner'):
+        customerNameHTML = None
+        orderList = None
+        restaurant = None
         runnerName = session.get('username')
+
 
         query = "SELECT customerName, runnerName, orderList,restaurant FROM webDB.confirmedOrders where runnerName = %s "
 
         mycursor.execute(query, (session['username'],))
         customerName = mycursor.fetchall()
         customerNameHTML = customerName[0][0]
-        # runnerName = customerName[0][1]
-        # orderList = customerName[0][2]
-        # restaurant = customerName[0][3]
         orderList = session.get('orderList')
         restaurant = session.get('restaurant')
+
 
         #NOTE: orderCompletedButtons must be the if statement, else it will confuse as javascript variables (pardon the poor explanation!)
 
@@ -724,6 +725,7 @@ def getLocation():
             # QUERY NOT WORKING YET!
 
             if orderCompleted == "True":
+
                 update_query = """
                         UPDATE webDB.confirmedOrders
                         SET orderCompleted = %s
@@ -735,22 +737,27 @@ def getLocation():
                 db.commit()
                 session['orderList'] = None
                 session['restaurant'] = None
-
-
+                mycursor.close()
 
                 return redirect('profile')
 
         # AUTO LOCATION UPDATER
         if request.method == 'POST':
+
             data = request.get_json()
             latitude = data['latitude']
             longitude = data['longitude']
             # Process location data as needed
 
-            sql = "UPDATE webDB.location SET latitude = %s, longitude = %s, runnerName = %s WHERE username = %s"
-            print('logged')
-            mycursor.execute(sql, (latitude,longitude, customerNameHTML, runnerName,))
+            sql = "UPDATE webDB.location SET latitude = %s, longitude = %s WHERE runnerName = %s"
+            print('Updated')
+            print(latitude)
+            print(longitude)
+            mycursor.execute(sql, (latitude,longitude,runnerName,))
             db.commit()
+            mycursor.close()
+
+
 
         # GET USER INFO
         #
