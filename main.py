@@ -711,7 +711,7 @@ def getLocation():
                 mycursor.execute(update_query, (True, runnerName,))
                 db.commit()
                 return redirect('profile')
-            
+
         # AUTO LOCATION UPDATER
         if request.method == 'POST':
             print("sent location")
