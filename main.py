@@ -322,10 +322,10 @@ def acceptOrder():
                 session['orderList'] = orderInfo[0][1]
 
             insertIntoConfirmedOrders = "INSERT INTO webDB.confirmedOrders (runnerName, customerName, orderList, restaurant) VALUES (%s, %s, %s,%s)"
-            # insertIntoLocation = "INSERT INTO webDB.location (runnerName, username,) VALUES (%s, %s)"
+            insertIntoLocation = "INSERT INTO webDB.location (latitude, longitude, runnerName, username) VALUES (%s, %s, %s, %s)"
 
             mycursor.execute(insertIntoConfirmedOrders, (runnerName, acceptedOrderCustomerName, session.get('orderList'), session.get('restaurant')))
-            # mycursor.execute(insertIntoLocation, (runnerName, acceptedOrderCustomerName,))
+            mycursor.execute(insertIntoLocation, (0,0,runnerName, acceptedOrderCustomerName,))
 
             db.commit()  # Commit the transaction to save changes to the database
 
@@ -398,7 +398,7 @@ def orderInProgressCustomer():
 
                 return redirect(url_for("orderCompletedCustomer"))
 
-        mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE username = 'john'")
+        mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE username = %s", (customerName,))
         locations = mycursor.fetchall()
         return render_template('showLocation.html', locations=locations, runnerNameHTML=runnerNameHTML)
 
@@ -700,13 +700,16 @@ def settings():
 
 @app.route('/getLocation', methods=['POST', 'GET'])
 def getLocation():
+
     if session.get('loggedAsRunner'):
+        runnerName = session.get('username')
+
         query = "SELECT customerName, runnerName, orderList,restaurant FROM webDB.confirmedOrders where runnerName = %s "
 
         mycursor.execute(query, (session['username'],))
         customerName = mycursor.fetchall()
         customerNameHTML = customerName[0][0]
-        runnerName = customerName[0][1]
+        # runnerName = customerName[0][1]
         # orderList = customerName[0][2]
         # restaurant = customerName[0][3]
         orderList = session.get('orderList')
@@ -726,21 +729,25 @@ def getLocation():
                         SET orderCompleted = %s
                         WHERE runnerName = %s
                     """
+                delete = "DELETE FROM webDB.location WHERE runnerName = %s"
+                mycursor.execute(delete, (runnerName,))
                 mycursor.execute(update_query, (True, runnerName,))
                 db.commit()
                 session['orderList'] = None
-                session['restaurant']  = None
+                session['restaurant'] = None
+
+
+
                 return redirect('profile')
 
         # AUTO LOCATION UPDATER
         if request.method == 'POST':
-            print("sent location")
             data = request.get_json()
             latitude = data['latitude']
             longitude = data['longitude']
             # Process location data as needed
 
-            sql = "INSERT INTO webDB.location (latitude, longitude, username, runnerName) VALUES (%s, %s, %s, %s)"
+            sql = "UPDATE webDB.location SET latitude = %s, longitude = %s, runnerName = %s WHERE username = %s"
             print('logged')
             mycursor.execute(sql, (latitude,longitude, customerNameHTML, runnerName,))
             db.commit()
