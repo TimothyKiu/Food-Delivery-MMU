@@ -1,7 +1,7 @@
 from urllib import request
 from flask import Flask,render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from datetime import datetime
 from loginLogic import loginLogic
 from registerLogic import registerLogic
 
@@ -15,12 +15,22 @@ db = mysql.connector.connect(
     database='webDB'
 )
 
-mycursor = db.cursor(buffered=True)
+def get_db_connection():
+    try:
+        connection = mysql.connector.connect(
+            host='localhost',
+            database='webDB',
+            user='root',
+            password='0000'
+        )
+        return connection
+    except Exception as e:
+        print(f"Error connecting to MySQL Platform: {e}")
+        return None
+
 
 app = Flask(__name__)
 app.secret_key = 'theSecretKeyToTheEvilPiratesTreasureHarHarHar'
-mycursor.execute("SHOW GRANTS FOR 'root'@'localhost'")
-
 
 
 # Dummy data for testing purposes
@@ -69,9 +79,11 @@ def otherratings():
             username = request.form['username']
             usernameP = username
 
+            mycursor = db.cursor(buffered=True)
             getInfo = "SELECT nickname, phone_number, user_name FROM webDB.registeredAccounts WHERE user_name = %s"
             mycursor.execute(getInfo, (usernameP,))
             infoArray = mycursor.fetchall()
+            mycursor.close()
 
             if len(infoArray) > 0:
                 if infoArray[0][0] == None:
@@ -88,9 +100,12 @@ def otherratings():
 
 
             # Retrieve the value of the 'logOut' form field
+            mycursor = db.cursor(buffered=True)
             query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
             mycursor.execute(query, (username,))
             ratingsArray = mycursor.fetchall()
+            mycursor.close()
+
 
             if ratingsArray:  # Check if ratingsArray is not empty
                 ratings = round(float(ratingsArray[0][0]), 2)
@@ -101,6 +116,7 @@ def otherratings():
             # This is where user enters his credentials in the HTML page, the parameter values then are run into the
             # query, if it finds a match it returns something back, if not then it returns null
 
+            mycursor = db.cursor(buffered=True)
             query2 = "SELECT review_text, rating_given, timestamp FROM webDB.reviews WHERE user_name = %s"
             mycursor.execute(query2, (username,))
             reviewsArray = mycursor.fetchall()
@@ -112,6 +128,8 @@ def otherratings():
                 reviewText = "N/A"
                 ratingsGiven = "N/A"
                 timestamp = "N/A"
+
+            mycursor.close()
 
             # Store each review tab in an array
 
@@ -172,9 +190,11 @@ def ratings():
 
 
 
+            mycursor = db.cursor(buffered=True)
             insert_query = "INSERT INTO webDB.reviews (user_name, review_text, rating_given) VALUES (%s, %s, %s)"
             mycursor.execute(insert_query, (currentRateableRunner, review, ratings,))
             db.commit()  # Commit the transaction to save changes to the database
+
             # mycursor.execute('''CREATE TABLE IF NOT EXISTS average_reviews (
             #         ID INT AUTO_INCREMENT PRIMARY KEY,
             #         Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -186,6 +206,7 @@ def ratings():
             #     ''')
 
             # Create temporary table
+
             mycursor.execute('''
     
                                     
@@ -208,6 +229,7 @@ def ratings():
 
             # Commit changes and close connection
             db.commit()
+            mycursor.close()
 
             session['currentRateableRunner'] = None
             return redirect(url_for("ratingsent"))
@@ -227,9 +249,11 @@ def sendOrder():
     print(session.get('loggedAsCustomer'))
     #BUG DETECTED, session['orderSent'] is being turned into true by something...
     if session.get("loggedAsCustomer") == True:
+        mycursor = db.cursor(buffered=True)
         findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.Orders WHERE customerName = %s "
         mycursor.execute(findIfOrderAccepted, (session.get('username'),))
         test1 = mycursor.fetchall()
+        mycursor.close()
         if test1:
             print("Order detected")
             #Check if any order for this person exists, if none then set back the session['sentOrder'] back to False
@@ -257,25 +281,33 @@ def sendOrder():
                     restaurant = request.form['restaurant']
 
                     orderSentTextDisplayForHTML = True
+                    mycursor = db.cursor(buffered=True)
+
                     insert_query = "INSERT INTO webDB.orders (customerName, FoodOrdered, restaurant) VALUES (%s, %s, %s)"
                     mycursor.execute(insert_query, (customerName, orderList,restaurant,))
                     db.commit()  # Commit the transaction to save changes to the database
+                    mycursor.close()
                     session['orderSent'] = True
 
                 if session.get('orderSent') == True:
 
 
                     #FIND IF ORDER ACCEPTED
+                    mycursor = db.cursor(buffered=True)
+
                     findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
                     mycursor.execute(findIfOrderAccepted, (customerName,))
                     test1 = mycursor.fetchall()
                     sentValue = mycursor.fetchall()
+                    mycursor.close()
 
                     if test1:
                         #THIS LINE OF CODE ISNT RUNNING
+                        mycursor = db.cursor(buffered=True)
                         delete_query = "DELETE FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted = TRUE"
                         mycursor.execute(delete_query, (customerName,))
                         db.commit()
+                        mycursor.close()
                         #Delete pending order, then transfer to new page
 
                     if test1:
@@ -298,10 +330,12 @@ def acceptOrder():
         session['orderList'] = None
         session['restaurant'] = None
 
+        mycursor = db.cursor(buffered=True)
         query = "SELECT customerName FROM webDB.orders "
         mycursor.execute(query)
         ordersArray = mycursor.fetchall()
         db.commit()  # Commit the transaction to save changes to the database
+        mycursor.close()
 
         for i in range(len(ordersArray)):
             currentOrders.append(ordersArray[i][0])
@@ -312,14 +346,18 @@ def acceptOrder():
         if acceptedOrderCustomerName is not None:
 
             #look for order infprmation
-
+            mycursor = db.cursor(buffered=True)
             query2 = "SELECT restaurant,FoodOrdered FROM webDB.orders WHERE customerName = %s"
             mycursor.execute(query2, (acceptedOrderCustomerName,))
             orderInfo = mycursor.fetchall()
+            mycursor.close()
             if orderInfo:
                 session['restaurant'] = orderInfo[0][0]
                 session['orderList'] = orderInfo[0][1]
 
+
+
+            mycursor = db.cursor(buffered=True)
             insertIntoConfirmedOrders = "INSERT INTO webDB.confirmedOrders (runnerName, customerName, orderList, restaurant) VALUES (%s, %s, %s,%s)"
             insertIntoLocation = "INSERT INTO webDB.location (latitude, longitude, runnerName, username) VALUES (%s, %s, %s, %s)"
 
@@ -327,11 +365,16 @@ def acceptOrder():
             mycursor.execute(insertIntoLocation, (0,0,runnerName, acceptedOrderCustomerName,))
 
             db.commit()  # Commit the transaction to save changes to the database
+            mycursor.close()
+
+            mycursor = db.cursor(buffered=True)
+
 
             query = "DELETE FROM webDB.orders WHERE customerName = %s"
 
             mycursor.execute(query, (acceptedOrderCustomerName,))
             db.commit()  # Commit the transaction to save changes to the database
+            mycursor.close()
             print(acceptedOrderCustomerName)
 
             return redirect("getLocation")
@@ -385,10 +428,13 @@ def orderInProgressCustomer():
         customerName = session.get('username')
         runnerNameHTML = "placeholder"
         #DISABLE CUSTOMER FROM FORCING BACKBUTTON
+
+        mycursor = db.cursor(buffered=True)
         query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
         mycursor = db.cursor(buffered=True)
         mycursor.execute(query, (customerName,))
         orderData = mycursor.fetchall()
+        mycursor.close()
 
         if orderData:
             runnerNameHTML = orderData[0][0]
@@ -397,8 +443,10 @@ def orderInProgressCustomer():
 
                 return redirect(url_for("orderCompletedCustomer"))
 
+        mycursor = db.cursor(buffered=True)
         mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE runnerName = %s", (runnerNameHTML,))
         locations = mycursor.fetchall()
+        mycursor.close()
         print(locations)
         return render_template('showLocation.html', locations=locations, runnerNameHTML=runnerNameHTML)
 
@@ -419,9 +467,11 @@ def orderCompletedCustomer():
         session.setdefault('currentRateableRunner', None)
         session["currentRateableRunner"] = False
 
+        mycursor = db.cursor(buffered=True)
         query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
         mycursor.execute(query, (customerName,))
         orderData = mycursor.fetchall()
+        mycursor.close()
 
         if orderData:
 
@@ -436,10 +486,13 @@ def orderCompletedCustomer():
         yesButton = request.form.get("yesButton")
         noButton = request.form.get("noButton")
 
-        #Now delete the row containing your confirmed order in orders. NOT confirmedOrders
+        #Now delete the row containing your confirmed order in orders. NOT confirmedOrder
+        # s
+        mycursor = db.cursor(buffered=True)
         delete_query = "DELETE FROM webDB.orders WHERE customerName = %s"
         mycursor.execute(delete_query, (customerName,))
         db.commit()
+        mycursor.close()
 
         if yesButton == "True":
             return redirect(url_for("ratings"))
@@ -476,9 +529,11 @@ def profile():
 
         errorText = "placeholder"
 
+        mycursor = db.cursor(buffered=True)
         query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
         mycursor.execute(query, (usernameP,))
         ratingsArray = mycursor.fetchall()
+        mycursor.close()
 
         if ratingsArray:  # Check if ratingsArray is not empty
             ratings = round(float(ratingsArray[0][0]), 2)
@@ -489,9 +544,12 @@ def profile():
         # This is where user enters his credentials in the HTML page, the parameter values then are run into the
         # query, if it finds a match it returns something back, if not then it returns null
 
+        mycursor = db.cursor(buffered=True)
         query2 = "SELECT review_text, rating_given, timestamp FROM webDB.reviews WHERE user_name = %s"
         mycursor.execute(query2, (usernameP,))
         reviewsArray = mycursor.fetchall()
+        mycursor.close()
+
         if reviewsArray:  # Check if ratingsArray is not empty
             reviewsGiven = reviewsArray[0][0]
             ratingsGiven = reviewsArray[0][1]
@@ -542,9 +600,11 @@ def profile():
 
 
             if deleteAccount == "True": #works
+                mycursor = db.cursor(buffered=True)
                 deleteQuery = "DELETE FROM webDB.registeredAccounts WHERE user_name = %s"
                 mycursor.execute(deleteQuery, (session['username'],))
                 db.commit()
+                mycursor.close()
 
                 session['username'] = None
                 session['loggedIn'] = False
@@ -585,18 +645,20 @@ def settings():
         phoneNumber = "placeholder"
 
         # Retrieve the username from the session or set it to None if the key is missing
+        mycursor = db.cursor(buffered=True)
         query = "SELECT phone_number, nickname FROM webDB.registeredAccounts WHERE user_name = %s "
         mycursor.execute(query, (usernameP,))
         test1 = mycursor.fetchone()
+        mycursor.close()
         if test1 is not None:
             phoneNumber = test1[0]
             nickname = test1[1]
 
-
-
+        mycursor = db.cursor(buffered=True)
         query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
         mycursor.execute(query, (usernameP,))
         ratingsArray = mycursor.fetchall()
+        mycursor.close()
 
         if ratingsArray:  # Check if ratingsArray is not empty
             ratings = round(float(ratingsArray[0][0]), 2)
@@ -632,9 +694,11 @@ def settings():
                 return redirect(url_for("login"))
 
             if deleteAccount == "True":  # works
+                mycursor = db.cursor(buffered=True)
                 deleteQuery = "DELETE FROM webDB.registeredAccounts WHERE user_name = %s"
                 mycursor.execute(deleteQuery, (session['username'],))
                 db.commit()
+                mycursor.close()
 
 
                 session['username'] = None
@@ -653,19 +717,23 @@ def settings():
                 newpassword = request.form['newpassword']
                 confirmnewpassword = request.form['confirmnewpassword']
 
+
+                mycursor = db.cursor(buffered=True)
                 getpassword = "SELECT user_password from webDb.registeredAccounts WHERE user_name = %s "
                 mycursor.execute(getpassword, (session['username'],))
                 db.commit()
-
                 userdata = mycursor.fetchone()
+                mycursor.close()
 
 
                 if(newpassword == confirmnewpassword) and check_password_hash(userdata[0], oldpassword) :
+                    mycursor = db.cursor(buffered=True)
                     alter_query = "UPDATE webDB.registeredAccounts SET user_password = %s WHERE user_name = %s"
 
                     hashedNewPassword = generate_password_hash(newpassword)
                     mycursor.execute(alter_query, (hashedNewPassword, usernameP))
                     db.commit()
+                    mycursor.close()
                     passwordNotSame = False
                     attemptedPasswordChange = True
 
@@ -676,20 +744,20 @@ def settings():
 
             if changedNickname == "True":
                 newNickname = request.form['newNickname']
-
+                mycursor = db.cursor(buffered=True)
                 setNickname = "UPDATE webDb.registeredAccounts SET nickname = %s WHERE user_name = %s"
 
                 mycursor.execute(setNickname, (newNickname, session['username']))
                 db.commit()
+                mycursor.close()
 
             if changedPhoneNumber == "True":
                 newPhoneNumber = request.form['newPhoneNumber']
-
+                mycursor = db.cursor(buffered=True)
                 setNickname = "UPDATE webDb.registeredAccounts SET phone_number = %s WHERE user_name = %s"
-
                 mycursor.execute(setNickname, (newPhoneNumber, session['username']))
                 db.commit()
-
+                mycursor.close()
         return render_template('settings.html', usernameP=usernameP, loggedIn=loggedIn, errorText=errorText,
                                ratings=ratings, changepasssworderror=changepasssworderror, nickname=nickname,
                                phoneNumber=phoneNumber, passwordNotSame=passwordNotSame,
@@ -706,73 +774,101 @@ def getLocation():
         restaurant = None
         runnerName = session.get('username')
 
+        connection = get_db_connection()
+        if connection is None:
+            return "Database connection failed", 500
 
-        query = "SELECT customerName, runnerName, orderList,restaurant FROM webDB.confirmedOrders where runnerName = %s "
+        try:
+            mycursor = connection.cursor(buffered=True)
+            query = "SELECT customerName, runnerName, orderList, restaurant FROM webDB.confirmedOrders WHERE runnerName = %s"
+            mycursor.execute(query, (runnerName,))
+            customerName = mycursor.fetchall()
+            mycursor.close()
+            connection.close()
 
-        mycursor.execute(query, (session['username'],))
-        customerName = mycursor.fetchall()
-        customerNameHTML = customerName[0][0]
-        orderList = session.get('orderList')
-        restaurant = session.get('restaurant')
+            if customerName:
+                customerNameHTML = customerName[0][0]
+                orderList = session.get('orderList')
+                restaurant = session.get('restaurant')
+            else:
+                return "No orders found for runner", 404
 
-
-        #NOTE: orderCompletedButtons must be the if statement, else it will confuse as javascript variables (pardon the poor explanation!)
+        except Exception as e:
+            print(f"Error reading data from MySQL table: {e}")
+            if connection.is_connected():
+                mycursor.close()
+                connection.close()
+            return "Database query failed", 500
 
         if request.method == 'POST':
-            # Now, once runner press order finished. It's done!
             runnerArrived = request.form.get("runnerArrived")
             orderCompleted = request.form.get('orderCompleted')
-            # QUERY NOT WORKING YET!
 
             if orderCompleted == "True":
+                connection = get_db_connection()
+                if connection is None:
+                    return "Database connection failed", 500
 
-                update_query = """
-                        UPDATE webDB.confirmedOrders
-                        SET orderCompleted = %s
-                        WHERE runnerName = %s
-                    """
-                delete = "DELETE FROM webDB.location WHERE runnerName = %s"
-                mycursor.execute(delete, (runnerName,))
-                mycursor.execute(update_query, (True, runnerName,))
-                db.commit()
-                session['orderList'] = None
-                session['restaurant'] = None
-                mycursor.close()
+                try:
+                    mycursor = connection.cursor(buffered=True)
+                    update_query = "UPDATE webDB.confirmedOrders SET orderCompleted = %s WHERE runnerName = %s"
+                    delete_query = "DELETE FROM webDB.location WHERE runnerName = %s"
+                    mycursor.execute(update_query, (True, runnerName,))
+                    mycursor.execute(delete_query, (runnerName,))
+                    connection.commit()
+                    mycursor.close()
+                    connection.close()
 
-                return redirect('profile')
+                    session['orderList'] = None
+                    session['restaurant'] = None
 
-        # AUTO LOCATION UPDATER
+                    return redirect('profile')
+
+                except Exception as e:
+                    print(f"Error updating data in MySQL table: {e}")
+                    if connection.is_connected():
+                        mycursor.close()
+                        connection.close()
+                    return "Database update failed", 500
+
         if request.method == 'POST':
-
             data = request.get_json()
             latitude = data['latitude']
             longitude = data['longitude']
-            # Process location data as needed
 
-            sql = "UPDATE webDB.location SET latitude = %s, longitude = %s WHERE runnerName = %s"
-            print('Updated')
-            print(latitude)
-            print(longitude)
-            mycursor.execute(sql, (latitude,longitude,runnerName,))
-            db.commit()
-            mycursor.close()
+            connection = get_db_connection()
+            if connection is None:
+                return "Database connection failed", 500
 
+            try:
+                mycursor = connection.cursor(buffered=True)
+                sql = "UPDATE webDB.location SET latitude = %s, longitude = %s, last_updated_at = %s WHERE runnerName = %s"
+                last_updated_at = datetime.now()
+                print('updated!')
+                # Execute the query
+                mycursor.execute(sql, (latitude, longitude, last_updated_at, runnerName))
+                connection.commit()
+                mycursor.close()
+                connection.close()
 
-
-        # GET USER INFO
-        #
-
+            except Exception as e:
+                print(f"Error updating data in MySQL table: {e}")
+                if connection.is_connected():
+                    mycursor.close()
+                    connection.close()
+                return "Database update failed", 500
 
         return render_template('getCurrentLocation.html', runnerName=runnerName, customerName=customerNameHTML, orderList=orderList, restaurant=restaurant)
 
     else:
         return "You have no permission to view right now..."
-
 @app.route('/showLocation', methods=['POST', 'GET'])
 def showLocation():
     if session.get('loggedAsCustomer'):
+        mycursor = db.cursor(buffered=True)
         mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE username = 1")
         locations = mycursor.fetchall()
+        mycursor.close()
         return render_template('showLocation.html', locations=locations)
 
     else:
@@ -780,7 +876,7 @@ def showLocation():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    mycursor.close()
+
 
 @app.route('/testfile')
 def testfile():
