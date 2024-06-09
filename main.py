@@ -386,7 +386,6 @@ def orderInProgressCustomer():
 
         mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE username = 'john'")
         locations = mycursor.fetchall()
-        mycursor.close()
         return render_template('showLocation.html', locations=locations, runnerNameHTML=runnerNameHTML)
 
     else:
@@ -409,7 +408,6 @@ def orderCompletedCustomer():
         query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
         mycursor.execute(query, (customerName,))
         orderData = mycursor.fetchall()
-        mycursor.close()
 
         if orderData:
 
@@ -427,7 +425,6 @@ def orderCompletedCustomer():
         delete_query = "DELETE FROM webDB.orders WHERE customerName = %s"
         mycursor.execute(delete_query, (customerName,))
         db.commit()
-        mycursor.close()
 
         if yesButton == "True":
             return redirect(url_for("ratings"))
@@ -479,7 +476,6 @@ def profile():
 
         query2 = "SELECT review_text, rating_given, timestamp FROM webDB.reviews WHERE user_name = %s"
         mycursor.execute(query2, (usernameP,))
-        mycursor.close()
         reviewsArray = mycursor.fetchall()
         if reviewsArray:  # Check if ratingsArray is not empty
             reviewsGiven = reviewsArray[0][0]
@@ -534,7 +530,6 @@ def profile():
                 deleteQuery = "DELETE FROM webDB.registeredAccounts WHERE user_name = %s"
                 mycursor.execute(deleteQuery, (session['username'],))
                 db.commit()
-                mycursor.close()
 
                 session['username'] = None
                 session['loggedIn'] = False
@@ -587,7 +582,6 @@ def settings():
         query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
         mycursor.execute(query, (usernameP,))
         ratingsArray = mycursor.fetchall()
-        mycursor.close()
 
         if ratingsArray:  # Check if ratingsArray is not empty
             ratings = round(float(ratingsArray[0][0]), 2)
@@ -702,6 +696,22 @@ def getLocation():
 
         #NOTE: orderCompletedButtons must be the if statement, else it will confuse as javascript variables (pardon the poor explanation!)
 
+        if request.method == 'POST':
+            # Now, once runner press order finished. It's done!
+            runnerArrived = request.form.get("runnerArrived")
+            orderCompleted = request.form.get('orderCompleted')
+            # QUERY NOT WORKING YET!
+
+            if orderCompleted == "True":
+                update_query = """
+                        UPDATE webDB.confirmedOrders
+                        SET orderCompleted = %s
+                        WHERE runnerName = %s
+                    """
+                mycursor.execute(update_query, (True, runnerName,))
+                db.commit()
+                return redirect('profile')
+            
         # AUTO LOCATION UPDATER
         if request.method == 'POST':
             print("sent location")
@@ -717,21 +727,7 @@ def getLocation():
 
         # GET USER INFO
         #
-        # if request.method == 'POST':
-        #     # Now, once runner press order finished. It's done!
-        #     runnerArrived = request.form.get("runnerArrived")
-        #     orderCompleted = request.form.get('orderCompleted')
-        #     # QUERY NOT WORKING YET!
-        #
-        #     if orderCompleted == "True":
-        #         update_query = """
-        #                 UPDATE webDB.confirmedOrders
-        #                 SET orderCompleted = %s
-        #                 WHERE runnerName = %s
-        #             """
-        #         mycursor.execute(update_query, (True, runnerName,))
-        #         db.commit()
-        #         return redirect('profile')
+
 
         return render_template('getCurrentLocation.html', runnerName=runnerName, customerName=customerNameHTML)
 
@@ -743,7 +739,6 @@ def showLocation():
     if session.get('loggedAsCustomer'):
         mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE username = 1")
         locations = mycursor.fetchall()
-        mycursor.close()
         return render_template('showLocation.html', locations=locations)
 
     else:
@@ -751,9 +746,11 @@ def showLocation():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    mycursor.close()
+
 @app.route('/testfile')
 def testfile():
     return render_template('testfile.html')
 
 
-app.run(debug=True)
+
