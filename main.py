@@ -444,11 +444,8 @@ def orderInProgressCustomer():
             restaurant = orderData[0][2]
             orderList = orderData[0][3]
 
-
-
             if orderData[0][1] == 1:
                 session['orderReceived'] = True
-
                 print("redirected")
 
                 return redirect(url_for("orderCompletedCustomer"))
