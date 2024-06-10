@@ -3,34 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-    </script>
+        p {
+            font-size: 18px;
+        }
 
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .message {
+            background-color: #e7f3fe;
+            border-left: 6px solid #2196F3;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .message p {
+            margin: 0;
+        }
+
+        .radio-container {
+            display: flex;
+            flex-direction: row;
+        }
+        .radio-container label {
+            margin-right: 20px;
+        }
+    </style>
 </head>
 <body>
-    <p>session: {{ customerName }}</p>
+{#    <p>session: {{ customerName }}</p>#}
 
     {% if orderSentTextDisplayForHTML %}
-        <p>Order sent, waiting for a runner to accept...</p>
+        <div class="message">
+            <p>Order sent, waiting for a runner to accept...</p>
+        </div>
     {% endif %}
 
     {% if not orderSentTextDisplayForHTML %}
 
         <form method="post">
+            <label for="orderList">Write down your order:</label>
+            <input type="text" id="orderList" name="orderList" required>
+
+            <div class="radio-container">
+                <input type="radio" id="deens" name="restaurant" value="Deen's" required>
+
+                <label for="deens">Deen's</label>
+                <input type="radio" id="hajitapah" name="restaurant" value="Haji Tapah" required>
+
+                <label for="hajitapah">Haji Tapah</label>
+                <input type="radio" id="dlightbakery" name="restaurant" value="D'light Bakery" required>
+
+                <label for="dlightbakery">D'light Bakery</label>
+            </div>
+
+
             <button name="sendOrder" value="True">Confirm order</button>
-            <label for="textbox">Restaurant name:</label>
-            <input type="text" id="textbox" name="restaurant" required>
-            <label for="textbox">Write down your order:</label>
-            <input type="text" id="textbox" name="orderList" required>
         </form>
      {% endif %}
 
     {% if orderSentBool %}
-        <p>You already have an pending order!</p>
+        <div class="message">
+            <p>You already have a pending order!</p>
+        </div>
      {% endif %}
-
-
-
 </body>
 </html>

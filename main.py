@@ -476,6 +476,7 @@ def orderCompletedCustomer():
         if orderData:
 
             runnerNameHTML = orderData[0][0]
+            session['orderSent'] = False
 
         session['orderSent'] = False
         session["currentRateableRunner"] = runnerNameHTML
@@ -495,9 +496,13 @@ def orderCompletedCustomer():
         mycursor.close()
 
         if yesButton == "True":
+            session['orderSent'] = False
+
             return redirect(url_for("ratings"))
 
         if noButton == "True":
+            session['orderSent'] = False
+
             session['currentRateableRunner'] = None
             return redirect(url_for("profile"))
 
@@ -878,9 +883,71 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
-@app.route('/testfile')
+
+@app.route('/testfile',  methods=['GET', 'POST'])
 def testfile():
-    return render_template('testfile.html')
+
+    if session.get("loggedAsRunner"):
+        runnerName = session.get('username')
+        currentOrders = []
+        acceptOrder = None
+        session['orderList'] = None
+        session['restaurant'] = None
+
+        mycursor = db.cursor(buffered=True)
+        query = "SELECT customerName FROM webDB.orders "
+        mycursor.execute(query)
+        ordersArray = mycursor.fetchall()
+        db.commit()  # Commit the transaction to save changes to the database
+        mycursor.close()
+
+        for i in range(len(ordersArray)):
+            currentOrders.append(ordersArray[i][0])
+
+        orderSize = len(currentOrders)
+        acceptedOrderCustomerName = request.form.get('acceptOrder')
+
+        if acceptedOrderCustomerName is not None:
+
+            #look for order infprmation
+            mycursor = db.cursor(buffered=True)
+            query2 = "SELECT restaurant,FoodOrdered FROM webDB.orders WHERE customerName = %s"
+            mycursor.execute(query2, (acceptedOrderCustomerName,))
+            orderInfo = mycursor.fetchall()
+            mycursor.close()
+            if orderInfo:
+                session['restaurant'] = orderInfo[0][0]
+                session['orderList'] = orderInfo[0][1]
+
+
+
+            mycursor = db.cursor(buffered=True)
+            insertIntoConfirmedOrders = "INSERT INTO webDB.confirmedOrders (runnerName, customerName, orderList, restaurant) VALUES (%s, %s, %s,%s)"
+            insertIntoLocation = "INSERT INTO webDB.location (latitude, longitude, runnerName, username) VALUES (%s, %s, %s, %s)"
+
+            mycursor.execute(insertIntoConfirmedOrders, (runnerName, acceptedOrderCustomerName, session.get('orderList'), session.get('restaurant')))
+            mycursor.execute(insertIntoLocation, (0,0,runnerName, acceptedOrderCustomerName,))
+
+            db.commit()  # Commit the transaction to save changes to the database
+            mycursor.close()
+
+            mycursor = db.cursor(buffered=True)
+
+
+            query = "DELETE FROM webDB.orders WHERE customerName = %s"
+
+            mycursor.execute(query, (acceptedOrderCustomerName,))
+            db.commit()  # Commit the transaction to save changes to the database
+            mycursor.close()
+            print(acceptedOrderCustomerName)
+
+            return redirect("getLocation")
+
+        return render_template('testfile.html', currentOrders=currentOrders,orderSize=orderSize)
+
+    #This is where the runner can see all the available orders that are ready to be accepted
+    else:
+        return "You dont have access to this page"
 
 
 

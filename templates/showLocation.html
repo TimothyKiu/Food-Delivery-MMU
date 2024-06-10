@@ -80,8 +80,19 @@
     </script>
 </head>
 <body>
-    <p>Your order has been accepted by {{ runnerNameHTML }}</p>
-    <h1>My Map</h1>
-    <div id="map"></div>
+    {% if runnerNameHTML == "placeholder" %}
+        <p style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: lightblue; padding: 20px; border-radius: 10px;">Waiting for someone to accept your order... </p>
+        <script>
+            // Refresh the page every 5 seconds when waiting for the order to be accepted
+            setInterval(function() {
+                window.location.reload();
+            }, 5000);
+         </script>
+    {% else %}
+        <p>Your order has been accepted by {{ runnerNameHTML }}</p>
+        <h1>My Map</h1>
+        <div id="map"></div>
+    {% endif %}
+
 </body>
 </html>
