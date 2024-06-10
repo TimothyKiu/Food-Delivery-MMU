@@ -5,16 +5,40 @@ input[type="radio"] {
 
 /* Designs the star icons */
 .rating-css label.star {
-    font-size: 30px;
+    font-size: 35px;
     color: #aaa;
     cursor: pointer;
 }
 
+#submitReview {
+    font-family : "Comic Sans MS";
+    position: relative;
+    width: 350px;
+    height:30px;
+}
+#writeReview {
+    height: 90px;
+    width: 350px;
+    font-size: 17px;
+    overflow: hidden; /* Prevents scrollbar */
+    resize: none; /* Disables manual resizing */
+    display:flex;
+
+
+}
+#ratings {
+
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 /* Styles star icons when checked */
 .rating-css input[type="radio"]:checked + label.star:before {
     content: '\2605'; /* Star code */
     color: gold;
     position: fixed;
+
 
 }
 

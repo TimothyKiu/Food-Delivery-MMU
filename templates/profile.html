@@ -155,10 +155,10 @@
 
     }
       #profileicon {
-        height: 30px;
-        width: 30px;
+        height: 45px;
+        width: 45px;
         align-self: center;  /* used for the slight misalignment for edit buttons */
-        background-image: url("https://www.mcdelivery.com.sg/sg/static/1646641918821/assets/00/img/icon_profile_gray.png"); /* Set image as background */
+        background-image: url("https://romanroadtrust.co.uk/wp-content/uploads/2018/01/profile-icon-png-898.png"); /* Set image as background */
         background-size: cover; /* Ensure the image covers the button */
         background-repeat: no-repeat; /* Prevent image from repeating */
         background-color: transparent;
@@ -195,18 +195,37 @@
         color: gold;
         cursor: pointer;
     }
+
+  .statusButton {
+        background-color: #A9A9A9;
+        border: none;
+        color: black;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .statusButton:hover {
+        background-color: #ddd;
+    }
 </style>
 </head>
 <body>
      <div id="statusBar" style="display:flex; flex-direction:row; justify-content: space-between;">
          <div>
-             <p>Home</p>
-         </div>
+            <button class="statusButton" >Home</button>
+             {% if loggedAsCustomer %}
+                <button class="statusButton" onclick="window.location.href='sendOrder'">Order</button>
+             {% elif loggedAsRunner %}
+                <button class="statusButton" onclick="window.location.href='acceptOrder'">Accept Orders</button>
+             {% endif %}
 
-         <div>
-             <p>Order</p>
-         </div>
-
+        </div>
 
          <div style="display:flex; flex-direction:row;">
              <button id="searchicon" onclick="redirectToSearchReviews()" style="margin: 21px;"></button>
@@ -214,28 +233,17 @@
              <button id="settingsicon" style="margin: 21px;" onclick="redirectToSettings()"></button>
              <form method="post" id="logoutForm">
                 <button id="logouticon" type="submit" name="logOut" value="True" style="margin-left: 21px;"></button>
-    {#                <button class="tabButton" type="submit" name="logOut" id="logOut" value="True" >Log Out</button>#}
              </form>
-
          </div>
-
     </div>
 
-
-
     <div id="superDiv">
-
         <h3>{{ usernameP }}</h3>
         <h1>{{ ratings }} / 5.0</h1>
         <h3>Total reviews given: {{ totalReviews }}</h3>
 
-
      <button class="tabButton" onclick="openTab('ShowReviews')" style="display:flex; ">Show Ratings</button>
-
     </div>
-
-
-
 
 {#     onLoad="openTab('ViewReviews')"#}
      <div id="ShowReviews" class="tabcontent" >
@@ -275,39 +283,13 @@
      </div>
 
 
-
-
-{#         {% for K in reviewStars %} WRONG METHOD#}
-{#            <p>Rating: {{ K }} </p>#}
-{#             (BREAK LOOP#}
-{#         {% endfor %}#}
-{##}
-{#         after loop finish iterating, continue and ignore to next loop#}
-{#         {% for K in reviewText %}#}
-{#            <p>Rating: {{ K }} </p>#}
-{#         {% endfor %}#}
-{##}
-{#         {% for K in timeStamps %}#}
-{#            <p>Rating: {{ K }} </p>#}
-{#         {% endfor %}#}
-{##}
-{##}
-{#for(int m = 0; m < array.size(); m++){#}
-{#    for(int i = 0; i < stars.size();i++){#}
-{#        for(int j = 0; j < reviewText.size();j++){#}
-{#            for(int k = 0; k < timestamp.size();k++){#}
-{#                print(stars[i])#}
-{#                print(reviewText[j])#}
-{#                print(timestamp[k])#}
-{##}
-{#     }#}
-{#     }#}
-{#     }#}
-{##}
-{# }#}
-
-
 <script>
+    function redirectToAcceptOrders(){
+        window.location.href = "acceptOrder"
+    }
+    function redirectToSendOrder(){
+        window.location.href = "sendOrder"
+    }
     function redirectToSettings(){
         window.location.href = "settings"
     }

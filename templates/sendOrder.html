@@ -3,26 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: #fff;
+            padding: 20px 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        p {
+            font-size: 1.2em;
+            color: #666;
+            margin: 10px 0;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            font-size: 1em;
+            margin: 10px 0 5px;
+            color: #333;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            font-size: 1em;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <p>session: {{ customerName }}</p>
-    {% if orderSentTextDisplayForHTML %}
-        <p>Order sent, waiting for a runner to accept...</p>
-    {% endif %}
+    <div class="container">
+        <p>session: {{ customerName }}</p>
 
-    {% if not orderSentTextDisplayForHTML %}
+        {% if orderSentTextDisplayForHTML %}
+            <p>Order sent, waiting for a runner to accept...</p>
+        {% endif %}
 
-        <form method="post">
-            <button name="sendOrder" value="True">Confirm order</button>
-        </form>
-     {% endif %}
+        {% if not orderSentTextDisplayForHTML %}
+            <form method="post">
+                <button name="sendOrder" value="True">Confirm order</button>
+                <label for="restaurant">Restaurant name:</label>
+                <input type="text" id="restaurant" name="restaurant" required>
+                <label for="orderList">Write down your order:</label>
+                <input type="text" id="orderList" name="orderList" required>
+            </form>
+        {% endif %}
 
-    {% if orderSentBool %}
-        <p>You already have an pending order!</p>
-     {% endif %}
-
-
-
+        {% if orderSentBool %}
+            <p>You already have a pending order!</p>
+        {% endif %}
+    </div>
 </body>
 </html>

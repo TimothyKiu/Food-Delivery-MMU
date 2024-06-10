@@ -14,6 +14,7 @@ class registerLogic:
             confirmpasswordreg = request.form['confirmpasswordreg']
 
             accountTypereg = request.form['usertype']
+
             print(accountTypereg)
 
             query = "SELECT user_name FROM webDB.registeredAccounts WHERE user_name = %s "
@@ -37,8 +38,18 @@ class registerLogic:
                 cursor.close()
 
                 #Idk where to put this, because the user cannot use the back button to reset the ordersent default value
+                session.setdefault('orderSent', False)
+
                 session['orderSent'] = False
                 print(session.get('orderSent'))
+
+                if accountTypereg == "Runner":
+                    session["loggedAsRunner"] = True
+                    session['loggedAsCustomer'] = False
+
+                elif accountTypereg == "Customer":
+                    session['loggedAsCustomer'] = True
+                    session['loggedAsRunner'] = False
 
                 return redirect(url_for("accountcreatedsuccess"))
 
