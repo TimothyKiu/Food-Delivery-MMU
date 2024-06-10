@@ -430,27 +430,33 @@ def orderInProgressCustomer():
         restaurant = "placeholder"
         orderList = "placeholder"
         orderReceived = session.get('orderReceived')
+
+        connection = get_db_connection()
+        mycursor = connection.cursor(buffered=True)
         #DISABLE CUSTOMER FROM FORCING BACKBUTTON
 
-        mycursor = db.cursor(buffered=True)
         query = "SELECT runnerName, orderCompleted, restaurant,orderList FROM webDB.confirmedOrders where customerName = %s "
-        mycursor = db.cursor(buffered=True)
         mycursor.execute(query, (customerName,))
         orderData = mycursor.fetchall()
-        mycursor.close()
 
         if orderData:
             runnerNameHTML = orderData[0][0]
             restaurant = orderData[0][2]
             orderList = orderData[0][3]
 
+        if orderData:
+            print('orderData is not null')
+            print(orderData[0][1])
+
             if orderData[0][1] == 1:
                 session['orderReceived'] = True
                 print("redirected")
 
                 return redirect(url_for("orderCompletedCustomer"))
+        mycursor.close()
 
-        mycursor = db.cursor(buffered=True)
+        connection = get_db_connection()
+        mycursor = connection.cursor(buffered=True)
         mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE runnerName = %s", (runnerNameHTML,))
         locations = mycursor.fetchall()
         mycursor.close()
@@ -826,7 +832,7 @@ def getLocation():
                     mycursor = connection.cursor(buffered=True)
                     update_query = "UPDATE webDB.confirmedOrders SET orderCompleted = %s WHERE runnerName = %s"
                     delete_query = "DELETE FROM webDB.location WHERE runnerName = %s"
-                    mycursor.execute(update_query, (True, runnerName,))
+                    mycursor.execute(update_query, (1, runnerName,))
                     mycursor.execute(delete_query, (runnerName,))
                     connection.commit()
                     mycursor.close()
@@ -887,9 +893,6 @@ def getLocation():
 #
 #     else:
 #         return "You have no permission to view now..."
-
-if __name__ == '__main__':
-    app.run(debug=True)
 
 
 
@@ -960,3 +963,6 @@ def testfile():
 
 
 
+
+if __name__ == '__main__':
+    app.run(debug=True)

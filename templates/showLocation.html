@@ -122,6 +122,7 @@
     </script>
 </head>
 <body>
+
     {% if runnerNameHTML == "placeholder" %}
         <p style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: lightblue; padding: 20px; border-radius: 10px;">Waiting for someone to accept your order... </p>
         <script>
@@ -151,12 +152,7 @@
         </div>
 
     {% endif %}
-     {% if orderReceived %}
-        <script>
-            window.location.href='orderCompletedCustomer.html'
-        </script>
 
-    {% endif %}
 
 
 </body>
