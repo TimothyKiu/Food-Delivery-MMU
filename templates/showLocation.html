@@ -5,9 +5,47 @@
     <style>
         /* Adjust the size of the map container */
         #map {
-            height: 500px; /* You can change the height to any value you want */
-            width: 50%;   /* The width can also be adjusted as needed */
+            height: 700px; /* You can change the height to any value you want */
+            width: 1000px;   /* The width can also be adjusted as needed */
+            position: fixed;
+            left: 0;
         }
+
+        .flex-container {
+            display: flex;
+            flex-direction: row;
+        }
+         .review-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+         .review-box {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .order-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .order-text {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .order-divider {
+            width: 100%;
+            margin: 0;
+            border-top: 1px solid #ccc;
+        }
+
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBMr9hac9m2PJhb9oQHzbMsTdxlLNzB0A&callback=initMap" async defer></script>
     <script>
@@ -89,9 +127,24 @@
             }, 5000);
          </script>
     {% else %}
-        <p>Your order has been accepted by {{ runnerNameHTML }}</p>
-        <h1>My Map</h1>
-        <div id="map"></div>
+        <div class="flex-container">
+            <div id="map"></div>
+            <div class="review-box">
+                <div style="display: flex; flex-direction: column; align-items: center; padding: 20px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;">
+                    <p class="order-title">Order information:</p>
+                    <p class="order-text">Runner: <span style="font-weight: bold;">{{ runnerNameHTML }}</span></p>
+                    <hr class="order-divider">
+                    <p class="order-text">Customer: <span style="font-weight: bold;">{{ customerName }}</span></p>
+                    <hr class="order-divider">
+                    <p class="order-text">Ordered: <span style="font-weight: bold;">{{ orderList }}</span></p>
+                    <hr class="order-divider">
+                    <p class="order-text">Restaurant: <span style="font-weight: bold;">{{ restaurant }}</span></p>
+                </div>
+            </div>
+
+
+        </div>
+
     {% endif %}
 
 </body>

@@ -430,7 +430,7 @@ def orderInProgressCustomer():
         #DISABLE CUSTOMER FROM FORCING BACKBUTTON
 
         mycursor = db.cursor(buffered=True)
-        query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
+        query = "SELECT runnerName, orderCompleted, restaurant,orderList FROM webDB.confirmedOrders where customerName = %s "
         mycursor = db.cursor(buffered=True)
         mycursor.execute(query, (customerName,))
         orderData = mycursor.fetchall()
@@ -438,6 +438,8 @@ def orderInProgressCustomer():
 
         if orderData:
             runnerNameHTML = orderData[0][0]
+            restaurant = orderData[0][2]
+            orderList = orderData[0][3]
 
             if orderData[0][1] == True:
 
@@ -448,7 +450,7 @@ def orderInProgressCustomer():
         locations = mycursor.fetchall()
         mycursor.close()
         print(locations)
-        return render_template('showLocation.html', locations=locations, runnerNameHTML=runnerNameHTML)
+        return render_template('showLocation.html', locations=locations, runnerNameHTML=runnerNameHTML, customerName=customerName, restaurant=restaurant, orderList=orderList)
 
     else:
         return "You have no permission to view now..."
@@ -874,6 +876,7 @@ def showLocation():
         mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE username = 1")
         locations = mycursor.fetchall()
         mycursor.close()
+
         return render_template('showLocation.html', locations=locations)
 
     else:
