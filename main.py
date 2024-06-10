@@ -45,11 +45,15 @@ def successlogin():
     return render_template('successlogin.html')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    connection = get_db_connection()
+    mycursor = connection.cursor(buffered=True)
     loginlogic1 = loginLogic()
     return loginlogic1.login(session, users, db, mycursor)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    connection = get_db_connection()
+    mycursor = connection.cursor(buffered=True)
     registerlogic = registerLogic()
     return registerlogic.register(session, users, db, mycursor)
 
