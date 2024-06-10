@@ -115,6 +115,8 @@
                     });
                 });
         }
+
+
     </script>
 </head>
 <body>
@@ -127,6 +129,12 @@
             }, 5000);
          </script>
     {% else %}
+        <script>
+            setInterval(function() {
+                    window.location.reload();
+            }, 5000);
+        </script>
+
         <div class="flex-container">
             <div id="map"></div>
             <div class="review-box">

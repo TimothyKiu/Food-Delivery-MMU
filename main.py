@@ -232,7 +232,7 @@ def ratings():
             mycursor.close()
 
             session['currentRateableRunner'] = None
-            return redirect(url_for("ratingsent"))
+            return redirect(url_for("profile"))
 
     else:
         return "You don't have access to rate anyone..."
@@ -427,6 +427,8 @@ def orderInProgressCustomer():
     if session.get('loggedAsCustomer'):
         customerName = session.get('username')
         runnerNameHTML = "placeholder"
+        restaurant = "placeholder"
+        orderList = "placeholder"
         #DISABLE CUSTOMER FROM FORCING BACKBUTTON
 
         mycursor = db.cursor(buffered=True)
