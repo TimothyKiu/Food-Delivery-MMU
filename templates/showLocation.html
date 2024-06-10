@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>MMU_FoodDeliveryWebsite</title>
+    <meta http-equiv="refresh" content="5">
     <style>
         /* Adjust the size of the map container */
         #map {
@@ -129,11 +131,6 @@
             }, 5000);
          </script>
     {% else %}
-        <script>
-            setInterval(function() {
-                    window.location.reload();
-            }, 5000);
-        </script>
 
         <div class="flex-container">
             <div id="map"></div>
@@ -154,6 +151,13 @@
         </div>
 
     {% endif %}
+     {% if orderReceived %}
+        <script>
+            window.location.href='orderCompletedCustomer.html'
+        </script>
+
+    {% endif %}
+
 
 </body>
 </html>

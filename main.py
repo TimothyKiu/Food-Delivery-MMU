@@ -429,6 +429,7 @@ def orderInProgressCustomer():
         runnerNameHTML = "placeholder"
         restaurant = "placeholder"
         orderList = "placeholder"
+        orderReceived = session.get('orderReceived')
         #DISABLE CUSTOMER FROM FORCING BACKBUTTON
 
         mycursor = db.cursor(buffered=True)
@@ -443,7 +444,11 @@ def orderInProgressCustomer():
             restaurant = orderData[0][2]
             orderList = orderData[0][3]
 
+
+
             if orderData[0][1] == 1:
+                session['orderReceived'] = True
+
                 print("redirected")
 
                 return redirect(url_for("orderCompletedCustomer"))
@@ -453,7 +458,7 @@ def orderInProgressCustomer():
         locations = mycursor.fetchall()
         mycursor.close()
         print(locations)
-        return render_template('showLocation.html', locations=locations, runnerNameHTML=runnerNameHTML, customerName=customerName, restaurant=restaurant, orderList=orderList)
+        return render_template('showLocation.html', locations=locations,orderReceived=orderReceived,runnerNameHTML=runnerNameHTML, customerName=customerName, restaurant=restaurant, orderList=orderList)
 
     else:
         return "You have no permission to view now..."
@@ -462,6 +467,7 @@ def orderInProgressCustomer():
 
 @app.route('/orderCompleted', methods=['GET', 'POST'])
 def orderCompletedCustomer():
+    session['orderReceived'] = False
 
     customerName = "placeholder"
     runnerNameHTML = "placeholder"
@@ -872,18 +878,18 @@ def getLocation():
 
     else:
         return "You have no permission to view right now..."
-@app.route('/showLocation', methods=['POST', 'GET'])
-def showLocation():
-    if session.get('loggedAsCustomer'):
-        mycursor = db.cursor(buffered=True)
-        mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE username = 1")
-        locations = mycursor.fetchall()
-        mycursor.close()
-
-        return render_template('showLocation.html', locations=locations)
-
-    else:
-        return "You have no permission to view now..."
+# @app.route('/showLocation', methods=['POST', 'GET'])
+# def showLocation():
+#     if session.get('loggedAsCustomer'):
+#         mycursor = db.cursor(buffered=True)
+#         mycursor.execute("SELECT latitude, longitude FROM webDB.location WHERE username = 1")
+#         locations = mycursor.fetchall()
+#         mycursor.close()
+#
+#         return render_template('showLocation.html', locations=locations)
+#
+#     else:
+#         return "You have no permission to view now..."
 
 if __name__ == '__main__':
     app.run(debug=True)
