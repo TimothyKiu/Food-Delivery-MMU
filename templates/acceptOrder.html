@@ -3,23 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        /* CSS styles for the review box */
+        .review-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        /* CSS styles for the accept order button */
+        .acceptOrder {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        /* CSS styles for the accept order button on hover */
+        .acceptOrder:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
     <p>Pending orders:</p>
-    NOTE: currentOrders[i] contains only the customerName
+   
     {% for i in range(orderSize) %}
                 <div class="review-box">
                     <div style="display:flex; flex-direction:row; ">
                         <p>Active order from: {{ currentOrders[i] }} </p>
-
                     </div>
                     <form method="post">
                         <button class="acceptOrder" name="acceptOrder" value="{{ currentOrders[i] }}">Accept</button>
                     </form>
-
-
                 </div>
-
     {% endfor %}
 </body>
 </html>

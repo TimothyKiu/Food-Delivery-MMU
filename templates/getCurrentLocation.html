@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Get Current Location</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: #fff;
+            padding: 20px 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        p {
+            font-size: 1.2em;
+            color: #666;
+            margin: 10px 0;
+        }
+    </style>
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function showPosition(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/getLocation");
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.send(JSON.stringify({latitude: latitude, longitude: longitude}));
+        }
+
+        setInterval(getLocation, 5000); // Call getLocation every 5 seconds
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Order Info:</h1>
+
+        <p> Items: {{ orderList }}</p>
+        <p> Restaurant: {{ restaurant }}</p>
+
+        <p>Customer name : {{ customerName }}</p>
+        <p>Runner name: {{ runnerName }}</p>
+
+        <form method="post">
+
+{#            <button name="runnerArrived" value="True">Arrived</button>#}
+            <button name="orderCompleted" value="True">Order Finished</button>
+        </form>
+        <p style="font-size: 10px; color:blue">Please turn on location</p>
+
+
+
+
+    </div>
+</body>
+</html>

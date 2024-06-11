@@ -164,6 +164,22 @@
         cursor: pointer; /* Change cursor to pointer */
 
     }
+    #searchicon {
+        bottom : -50%;
+        height: 30px;
+        width: 30px;
+        align-self: center;  /* used for the slight misalignment for edit buttons */
+        background-image: url("https://cdn.pixabay.com/photo/2017/01/13/01/22/magnifying-glass-1976105_960_720.png"); /* Set image as background */
+        background-size: cover; /* Ensure the image covers the button */
+        background-repeat: no-repeat; /* Prevent image from repeating */
+        background-color: transparent;
+
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        color: transparent; /*Hides font */
+        cursor: pointer; /* Change cursor to pointer */
+
+    }
 
      #logouticon {
         height: 40px;
@@ -218,8 +234,10 @@
 
 
          <div style="display:flex; flex-direction:row;">
+             <button id="searchicon" onclick="redirectToSearchReviews()" style="margin: 21px;"></button>
              <button id="profileicon" onclick="redirectToProfile()" style="margin: 21px;"></button>
              <button id="settingsicon"   style="margin: 21px;"></button>
+
              <form method="post" id="logoutForm">
                 <button id="logouticon" type="submit" name="logOut" value="True" style="margin-left: 21px;"></button>
     {#                <button class="tabButton" type="submit" name="logOut" id="logOut" value="True" >Log Out</button>#}
@@ -381,6 +399,9 @@
     }
     function redirectToProfile() {
             window.location.href = 'profile';
+    }
+    function redirectToSearchReviews(){
+        window.location.href = "otherratings"
     }
 
     {#function toggleDelete() {#}
