@@ -39,13 +39,17 @@ html {
 
 .main{
   background-color: bisque;
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* Optional: Center content horizontally */
+  justify-content: center; /* Optional: Center content vertically */
+  flex-wrap: wrap;
 }
 
 .allrestaurants {
   display: inline-flex; 
   flex-wrap: wrap;
 }
-
 
 .allrestaurants h2 {
   font-size: 50px;
@@ -57,7 +61,6 @@ html {
   border-bottom: 10px solid #ddd; 
   cursor: pointer;
   white-space: pre;
-  
 }
 
 .restaurant{
