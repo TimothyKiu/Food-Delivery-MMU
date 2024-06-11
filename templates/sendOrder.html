@@ -14,7 +14,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            /* height: 100vh; */
         }
 
         p {
@@ -44,7 +44,6 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-
 
         button {
             background-color: #4CAF50;
@@ -77,48 +76,53 @@
         .radio-container label {
             margin-right: 20px;
         }
+
     </style>
 </head>
 <body>
-{#    <p>session: {{ customerName }}</p>#}
-
-    {% if orderSentTextDisplayForHTML %}
-        <div class="message">
-            <p>Order sent, waiting for a runner to accept...</p>
-        </div>
-    {% endif %}
-
-    {% if not orderSentTextDisplayForHTML %}
-        <form method="post">
-            <label for="orderList">Write down your order:</label>
-            <input type="text" id="orderList" name="orderList" required>
-
-            <div class="radio-container">
-                <input type="radio" id="deens" name="restaurant" value="Deen's" required>
-
-                <label for="deens">Deen's</label>
-                <input type="radio" id="hajitapah" name="restaurant" value="Haji Tapah" required>
-
-                <label for="hajitapah">Haji Tapah</label>
-                <input type="radio" id="dlightbakery" name="restaurant" value="D'light Bakery" required>
-
-                <label for="dlightbakery">D'light Bakery</label>
-            </div>
-
-
-            <button name="sendOrder" value="True">Confirm order</button>
-        </form> 
-     {% endif %}
-
-    {% if orderSentBool %}
-        <div class="message">
-            <p>You already have a pending order!</p>
-        </div>
-     {% endif %}
-
     <main>
+        <header class="header">
+            <h1 id="title">Food Delivery MMU</h1>
+        </header>
+
+        {#    <p>session: {{ customerName }}</p>#}
+
+        {% if orderSentTextDisplayForHTML %}
+            <div class="message">
+                <p>Order sent, waiting for a runner to accept...</p>
+            </div>
+        {% endif %}
+
+        {% if not orderSentTextDisplayForHTML %}
+            <form method="post">
+                <label for="orderList">Write down your order:</label>
+                <input type="text" id="orderList" name="orderList" required>
+
+                <div class="radio-container">
+                    <input type="radio" id="deens" name="restaurant" value="Deen's" required>
+
+                    <label for="deens">Deen's</label>
+                    <input type="radio" id="hajitapah" name="restaurant" value="Haji Tapah" required>
+
+                    <label for="hajitapah">Haji Tapah</label>
+                    <input type="radio" id="dlightbakery" name="restaurant" value="D'light Bakery" required>
+
+                    <label for="dlightbakery">D'light Bakery</label>
+                </div>
+
+
+                <button name="sendOrder" value="True">Confirm order</button>
+            </form> 
+        {% endif %}
+
+        {% if orderSentBool %}
+            <div class="message">
+                <p>You already have a pending order!</p>
+            </div>
+        {% endif %}<br>
+
         <div id="deen" class="allrestaurants"> 
-            <h2>            DEEN            </h2>
+            <h2>           DEEN           </h2>
             <div class="restaurant">
                 <div class="menu">
                     <h3>Western Food</h3>
@@ -263,7 +267,7 @@
             </div>
         </div>
         <div id="htc" class="allrestaurants"> 
-            <h2>             HTC             </h2>
+            <h2>            HTC            </h2>
             <div class="restaurant">
                 <div class="menu">
                     <h3>Goreng-Goreng</h3>
