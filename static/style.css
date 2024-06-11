@@ -1,3 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
 #title {
   text-align: left;
   top: 0;
@@ -5,27 +9,26 @@
 }
 
 .header {
-  padding: 6px;
-  background: #9f77a7; 
-  color: rgb(212, 215, 186);
+  padding: 10px;
+  background: hsl(0, 0%, 44%); 
+  color: rgb(255, 255, 255);
   font-size: 20px;
   min-height: 0px; 
+  width: 100%;
+  top: 0%;
 }
 
 .header, .footer {
-  /* background-image: url('/images/background.jpg'); */
   background-size: cover; 
   background-position: center; 
-  color: white; 
-  padding: 20px; 
   text-align: center; 
 } 
 
 .footer {
   padding: 10px;
   text-align: right;
-  background:#9f77a7;
-  color: rgb(212, 215, 186);
+  background:hsl(0, 0%, 44%);
+  color: rgb(255, 255, 255);
   font-size: 20px;
   min-height:20px; 
   position: sticky;
@@ -36,12 +39,60 @@
   text-decoration: none;
 }
 
-.searchbar {
-  text-align: right;
+.main{
+  background-color: bisque;
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* Optional: Center content horizontally */
+  justify-content: center; /* Optional: Center content vertically */
+  flex-wrap: wrap;
 }
 
-.main {
-  background: #ffffff;
+.allrestaurants {
+  display: inline-flex; 
+  flex-direction: column;
+  /* flex-wrap: wrap; */
+}
+
+.allrestaurants h2 {
+  font-size: 50px;
+  min-width: 100%;
+  text-align: center;
+  background-color: #cccccc;
+  padding: 10px 0;
+  margin: 5px;
+  border-bottom: 10px solid #ddd; 
+  cursor: pointer;
+  white-space: pre;
+}
+
+.restaurant{
+  column-count: 4;
+  column-gap: 20px; 
+  display: none;
+  top: 100%; 
+  left: 0; 
+  width: 100%;
+  background-color: #fff; 
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.restaurant.show {
+  display: block;
+}
+
+.menu {
+  break-inside: avoid; 
+}
+
+.menu ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.menu li {
+  padding: 10px 0; 
+  border-bottom: 1px solid #ddd;
 }
 
 .cart-button {
@@ -84,18 +135,6 @@
   color: black;
 }
 
-
-.menu ul {
-  list-style-type: none;  /* Remove list bullets */
-  padding: 0;  /* No padding */
-}
-
-.menu li {
-  padding: 10px 0;  /* Padding between menu items */
-  display: flex;  /* Horizontal layout for menu item and button */
-  justify-content: space-between;  /* Space between text and button */
-  border-bottom: 1px solid #ddd;  /* Divider between items */
-}
 
 .button {
   background: #007bff;  /* Button background color */
