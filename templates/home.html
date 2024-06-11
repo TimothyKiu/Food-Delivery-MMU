@@ -4,305 +4,356 @@
 <head>
     <title>Food_Delivery_MMU</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <header class="header">
         <h1 id="title">Food Delivery MMU</h1> 
-
-    <form action="/" method="get" class="searchbar">
-            <input type="search" name="query" placeholder="Type the restaurant name." />
-            <button type="submit">🔍</button>
-        </form>
         
-        
-        <h2>Hello, <br><i>{{ username }}</i></h2>
+        <h3>Hello, <br><i>{{ username }}</i></h3>
         
     </header>
 
-    <main class="menu">
-        
-        <!-- <nav>
-            <a href="/deen">DEEN</a><br>
-            <a href="/htc">HTC</span></a><br>
-            <a href="/">D'LIGHT_BAKERY</a><br>
-        </nav> -->
-
-        <h2>DEEN</h2>
-        <h3>Western Food</h3>
-            <ul>
-                <li>CHICKEN CHOP COMBO RICE RM 7.00</li>
-                <li>CHICKEN CHOP COMBO FRIED RICE RM 8.50</li>
-                <li>ROTI BAKAR RM 1.50</li>
-                <li>SANDWICH AYAM RM 2.50</li>
-                <li>SANDWICH SARDIN RM 2.50</li>
-                <li>ROT JOHN RM 5.00</li>
-                <li>FRIES RM 5.00</li>
-                <li>WET FRIES RM 5.00</li>
-                <li>FISH & CHIPS RM 11.00</li>
-                <li>CHICKEN CHOP (REGULAR) RM 12.00</li>
-                <li>CHICKEN GRILL RM 15.00</li>
-                <li>LAMB CHOP RM 18.00</li>
-            </ul>
-        <h3>Fried Noodles</h3>
-            <ul>
-                <li>KUEY TIAU GORENG RM 5.00</li>
-                <li>BIHUN GOREN RM 5.00</li>
-                <li>BIHUN SINGAPORE RM 5.00</li>
-                <li>MEE GOREN RM 5.00</li>
-                <li>MEE GORENG MAMAK RM 5.00</li>
-                <li>MAGGIE GOREN RM 5.00</li>
-                <li>YEE MEE GOREN RM 6.00</li>
-                <li>HOKKIEN MEE RM 6.00</li>
-                <li>MAGGIE GORENG XLR RM 7.00</li>
-            </ul>
-        <h3>Chinese Style</h3>
-            <ul>
-                <li>NASI BUTTER CHICKEN RM 8.00</li>
-                <li>NASI BUTTER FISH RM 8.00</li>
-                <li>NASI BUTTER PRAWN RM 9.00</li>
-                <li>NASI BUTTER SQUID RM 9.00</li>
-                <li>NASI BUTTER CAMPUR RM 10.00</li>
-                <li>NASI BUTTER MILK (CN) RM 10.00</li>
-            </ul>
-        <h3>Tom Yam Soup + Rice</h3>
-            <ul>
-                <li>TOM YAM SOUP (CENDAWAN) RM 7.00</li>
-                <li>TOM YAM SOUP (AYAM) RM 7.00</li>
-                <li>TOM YAM SOUP (DAGING) RM 8.00</li>
-                <li>TOM YAM SOUP (SEA FOOD) RM 8.00</li>
-                <li>TOM YAM SOUP (CAMPUR) RM 8.50</li>
-            </ul>
-        <h3>Soup</h3>
-            <ul>
-                <li>MAGGIE SOUP RM 5.00</li>
-                <li>KUEY TIAU SOUP RM 5.00</li>
-                <li>BIHUN SOUP RM 5.00</li>
-                <li>VEGETARIAN + NASI RM 6.00</li>
-                <li>CENDAWAN + NASI RM 6.00</li>
-                <li>AYAM + NASI RM 6.00</li>
-                <li>DAGING + NASI RM 7.00</li>
-                <li>KAMBING + NASI RM 10.00</li>
-            </ul>
-        <h3>Nasi Goreng/ Fried Rice</h3>
-            <ul>
-                <li>NASI GORENG BIASA (RM5) RM 5.00</li>
-                <li>NASI GORENG KAMPUNG RM 6.00</li>
-                <li>NASI GORENG CIN RM 5.00</li>
-                <li>NASI GORENG MAMAK RM 5.00</li>
-                <li>NASI GORENG TELUR (EGG) RM 5.00</li>
-                <li>NASI GORENG CILI API RM 5.00</li>
-                <li>NASI GORENG SAUSAGE RM 5.00</li>
-                <li>NASI GORENG TOMYAM RM 6.00</li>
-                <li>NASI GORENG SARDIN RM 6.00</li>
-                <li>NASI GORENG PATTAYA RM 6.00</li>
-                <li>NASI GORENG IKAN MASIN RM 6.00</li>
-                <li>NASI GORENG TOMATO RM 6.00</li>
-                <li>NASI GORENG CENDAWAN RM 6.00</li>
-                <li>NASI GORENG DAGING RM 7.00</li>
-                <li>NASI GORENG SEA FOOD RM 7.00</li>
-                <li>NASI GORENG AYAM (CHICKEN) RM 8.00</li>
-                <li>NASI GORENG PAPRIK AYAM RM 8.00</li>
-                <li>NASI GORENG MSA (EGG) RM 9.00</li>
-                <li>NASI GORENG THAI RM 9.00</li>
-                <li>NASI GORENG KAMBING RM 12.00</li>
-            </ul>
-        <h3>Pasta Special</h3>
-            <ul>
-                <li>CARBONARA RM 10.00</li>
-                <li>CHICKEN ALFRED RM 10.00</li>
-                <li>BOLONESE RM 10.00</li>
-                <li>PASTA VEGETARIAN RM 10.00</li>
-                <li>MARINARA RM 12.00</li>
-                <li>CHICKEN SPICY RM 12.00</li>
-            </ul>
-        <h3>Hot Plate</h3>
-            <ul>
-                <li>CHAR KUEY TIAU RM 6.00</li>
-                <li>SIZZLING RICE RM 6.00</li>
-                <li>MEE BANDUNG RM 6.00</li>
-                <li>SIZZLING YEE MEE RM 6.50</li>
-                <li>CANTONESE YEE MEE RM 7.00</li>
-                <li>CANTONESE JUEY TIAU RM 7.00</li>
-                <li>YING YONG RM 8.00</li>
-            </ul>
-        <h3>Drinks</h3>
-            <ul>
-                <li>TEH TARIK RM 2.00</li>
-                <li>TEH O RM 1.50</li>
-                <li>TEH O LIMAU RM 2.00</li>
-                <li>TEH O LAICI RM 3.50</li>
-                <li>NESCAFE RM 2.50</li>
-                <li>NESCAFE O RM 2.00</li>
-                <li>NESLO RM 3.00</li>
-                <li>WHITE COFFEE RM 3.00</li>
-                <li>KOPI RM 2.00</li>
-                <li>KOPI O RM 1.50</li>
-                <li>MILO RM 2.50</li>
-                <li>MILO O RM 2.50</li>
-                <li>BARLEY RM 2.00</li>
-                <li>HORLICKS RM 3.00</li>
-                <li>LIMAU PANAS RM 2.00</li>
-                <li>LAICI RM 3.00</li>
-                <li>SIRAP BANDUNG RM 2.00</li>
-                <li>ORANGE JUICE RM 4.00</li>
-                <li>APPLE JUICE RM 4.00</li>
-                <li>WATERMELON JUICE RM 4.00</li>
-                <li>EXTRA JASS RM 3.50</li>
-                <li>CARROT JUICE RM 4.00</li>
-            </ul>
-        
-        <h2>HTC</h2>
-        <h3>Goreng-Goreng</h3>
-            <ul>
-                <li>NASI GORENG RM4.50</li>
-                <li>NASI GORENG DOUBLE RM6.00</li>
-                <li>NASI GORENG CILI PADI RM6.00</li>
-                <li>NASI GORENG CINA RM5.00</li>
-                <li>NASI GORENG KAMPUNG RM6.00</li>
-                <li>NASI GORENG AYAM RM8.00</li>
-                <li>NASI GORENG KAMPUNG [AYAM] RM9.00</li>
-                <li>NASI GORENG PATTAYA RM6.00</li>
-                <li>MAGGI RM4.50</li>
-                <li>MAGGI DOUBLE RM7.00</li>
-                <li>MAGGI DOUBLE AYAM RM10.00</li>
-                <li>MEE RM4.50</li>
-                <li>BIHUN RM4.50</li>
-                <li>KUEY TEOW RM4.50</li>
-                <li>ROJAK RM4.50</li>
-                <li>TELUR MATA RM1.00</li>
-                <li>TELUR DADAR RM1.50</li>
-            </ul>
-        <h3>Mee/ Kue Teow/ Bihun</h3>
-            <ul>
-                <li>MEE/NASI GORENG RM4.50</li>
-                <li>KUE TEOW/BIHUN GORENG RM4.50</li>
-                <li>ROJAK BIASA RM5.50</li>
-                <li>ROJAK TELUR RM5.50</li>
-                <li>ROJAK MEE/MEE RM5.50</li>
-            </ul>
-        <h3>Roti Canai</h3>
-            <ul>
-                <li>BIASA RM1.20</li>
-                <li>TELUR RM2.50</li>
-                <li>TELUR BAWANG RM3.00</li>
-                <li>BAWANG RM2.00</li>
-                <li>PLANTA RM2.50</li>
-                <li>BOOM RM2.50</li>
-                <li>CHEESE RM3.00</li>
-                <li>TELUR CHEESE RM4.00</li>
-                <li>SARDINE RM4.00</li>
-                <li>KAYA RM2.50</li>
-                <li>MADU RM2.50</li>
-                <li>PISANG RM3.00</li>
-            </ul>
-        <h3>Tosai</h3>
-            <ul><li>BIASA RM2.00</li>
-                <li>TELUR RM3.00</li>
-                <li>BAWANG RM3.00</li>
-                <li>MASALA RM3.50</li>
-                <li>GHEE RM3.00</li>
-                <li>MURTABAK RM4.50</li>
-                <li>CAPATI RM2.00</li>
-            </ul>
-        <h3>Special</h3>
-            <ul>
-                <li>ROTI BAKAR RM1.50</li>
-                <li>ROTI BAKAR TELUR RM3.00</li>
-                <li>ROTI BAKAR SARDIN RM4.00</li>
-            </ul>
-        <h3>Minuman</h3>
-            <ul>
-                <li>TEH RM2.30</li>
-                <li>TEH O RM2.00</li>
-                <li>KOPI RM2.30</li>
-                <li>KOPI O RM2.00</li>
-                <li>MILO RM2.80</li>
-                <li>MILO O RM2.50</li>
-                <li>NESCAFE O RM2.50</li>
-                <li>NESCAFE RM2.80</li>
-                <li>BRU RM3.00</li>
-                <li>HORLICKS RM3.00</li>
-                <li>TEH LIMAU RM2.30</li>
-                <li>AIR SIRAP RM2.30</li>
-                <li>SIRAP LIMAU RM2.30</li>
-            </ul>
-        <h3>Jus Buah-buahan</h3>
-            <ul>
-                <li>OREN/EPAL RM3.50</li>
-                <li>BELIMBING RM3.50</li>
-                <li>MANGGA/KAROT RM3.50</li>
-                <li>ASAM JAWA RM2.80</li>
-                <li>BARLI RM2.80</li>
-            </ul>
-
-        <h2>D'LIGHT BAKERY</h2>
-        <h3>Pastry</h3>
-            <ul>
-                <li>VANILLA CHOCO TWIST RM4.50</li>
-                <li>CHICKEN CURRY PUFF RM4.50</li>
-                <li>TUNA PUFF RM4.50</li>
-                <li>BANANA BAR RM3.80</li>
-                <li>CHICKEN SAUSAGE DONUT RM4.50</li>
-                <li>GARLIC SAUSAGE ROLL RM5.50</li>
-                <li>BBQ SAUSAGE ROLL RM5.50</li>
-                <li>MINI CROISSANT RM2.00</li>
-                <li>MINI CHICKEN MUSHROOM PIE RM5.50</li>
-                <li>FIRE CRACKER SAUSAGE RM7.50</li>
-                <li>CHOCOLATE ROLL RM3.00</li>
-                <li>CHOCOLATE MUFFIN RM6.50</li>
-                <li>BLUEBERRY MUFFIN RM6.50</li>
-                <li>MINI MUFFIN RED VELVET RM2.50</li>
-                <li>MINI MUFFIN BUTTERSCOTCH RM2.50</li>
-                <li>CHOCOLATE CHIP COOKIES RM4.50</li>
-                <li>DOUBLE CHOCO CHIP COOKIES RM4.50</li>
-                <li>SPICY TUNA EGG SANDWICH RM4.00</li>
-                <li>EGG MAYO SANDWICH RM3.50</li>
-                <li>BIHUN GORENG RM5.00</li>
-                <li>NASI GORENG RM5.00</li>
-                <li>NASI LEMAK RM4.00</li>
-            </ul>
-        <h3>Coffee</h3>
-            <ul>
-                <li>BLACK COFFEE RM4.00</li>
-                <li>WHITE COFFEE RM4.00</li>
-            </ul>
-        <h3>Premium Coffee</h3>
-            <ul>
-                <li>ESPRESSO RM5.50</li>
-                <li>AMERICANO RM6.50</li>
-                <li>LATTE RM7.50</li>
-                <li>CAPPUCCINO RM7.50</li>
-                <li>MOCHA RM8.50</li>
-                <li>COCONUT LATTE RM8.50</li>
-                <li>HAZELNUT LATTE RM8.50</li>
-                <li>FRENCH VANILLA LATTE RM8.50</li>
-                <li>SALTED CARAMEL LATTE RM8.50</li>
-            </ul>
-        <h3>Non Coffee</h3>
-            <ul>
-                <li>CHOCOLATE RM7.00</li>
-                <li>MATCHA LATTE RM7.80</li>
-                <li>MILO RM5.00</li>
-                <li>TEH TARIK RM5.00</li>
-                <li>MILK RM5.00</li>
-            </ul>
-        <h3>Tea</h3>
-            <ul>
-                <li>ENGLISH BREAKFAST RM5.00</li>
-                <li>EARL GREY RM5.00</li>
-                <li>CHAMOMILE RM5.00</li>
-                <li>GREEN TEA RM5.00</li>
-                <li>GREEN TEA & LEMON RM5.00</li>
-                <li>PEPPERMINT RM5.00</li>
-            </ul>
-        <h3>Refreshment</h3>
-            <ul>
-                <li>SPARKLING LEMONADE RM5.00</li>
-                <li>WATERMELON LEMONADE RM5.00</li>
-                <li>MANGO PEACH RM5.00</li>
-            </ul>
-
+    <main>
+        <div id="deen" class="allrestaurants"> 
+            <h2>             DEEN             </h2>
+            <div class="restaurant">
+                <div class="menu">
+                    <h3>Western Food</h3>
+                        <ul>
+                            <li>CHICKEN CHOP COMBO RICE RM 7.00</li>
+                            <li>CHICKEN CHOP COMBO FRIED RICE RM 8.50</li>
+                            <li>ROTI BAKAR RM 1.50</li>
+                            <li>SANDWICH AYAM RM 2.50</li>
+                            <li>SANDWICH SARDIN RM 2.50</li>
+                            <li>ROT JOHN RM 5.00</li>
+                            <li>FRIES RM 5.00</li>
+                            <li>WET FRIES RM 5.00</li>
+                            <li>FISH & CHIPS RM 11.00</li>
+                            <li>CHICKEN CHOP (REGULAR) RM 12.00</li>
+                            <li>CHICKEN GRILL RM 15.00</li>
+                            <li>LAMB CHOP RM 18.00</li>
+                        </ul>
+                </div>
+                <div class="menu">
+                    <h3>Fried Noodles</h3>
+                        <ul>
+                            <li>KUEY TIAU GORENG RM 5.00</li>
+                            <li>BIHUN GOREN RM 5.00</li>
+                            <li>BIHUN SINGAPORE RM 5.00</li>
+                            <li>MEE GOREN RM 5.00</li>
+                            <li>MEE GORENG MAMAK RM 5.00</li>
+                            <li>MAGGIE GOREN RM 5.00</li>
+                            <li>YEE MEE GOREN RM 6.00</li>
+                            <li>HOKKIEN MEE RM 6.00</li>
+                            <li>MAGGIE GORENG XLR RM 7.00</li>
+                        </ul>
+                </div>
+                <div class="menu">
+                    <h3>Chinese Style</h3>
+                        <ul>
+                            <li>NASI BUTTER CHICKEN RM 8.00</li>
+                            <li>NASI BUTTER FISH RM 8.00</li>
+                            <li>NASI BUTTER PRAWN RM 9.00</li>
+                            <li>NASI BUTTER SQUID RM 9.00</li>
+                            <li>NASI BUTTER CAMPUR RM 10.00</li>
+                            <li>NASI BUTTER MILK (CN) RM 10.00</li>
+                        </ul>
+                </div>
+                <div class="menu"> 
+                    <h3>Tom Yam Soup + Rice</h3>
+                        <ul>
+                            <li>TOM YAM SOUP (CENDAWAN) RM 7.00</li>
+                            <li>TOM YAM SOUP (AYAM) RM 7.00</li>
+                            <li>TOM YAM SOUP (DAGING) RM 8.00</li>
+                            <li>TOM YAM SOUP (SEA FOOD) RM 8.00</li>
+                            <li>TOM YAM SOUP (CAMPUR) RM 8.50</li>
+                        </ul>
+                </div>
+                <div class="menu">
+                    <h3>Soup</h3>
+                        <ul>
+                            <li>MAGGIE SOUP RM 5.00</li>
+                            <li>KUEY TIAU SOUP RM 5.00</li>
+                            <li>BIHUN SOUP RM 5.00</li>
+                            <li>VEGETARIAN + NASI RM 6.00</li>
+                            <li>CENDAWAN + NASI RM 6.00</li>
+                            <li>AYAM + NASI RM 6.00</li>
+                            <li>DAGING + NASI RM 7.00</li>
+                            <li>KAMBING + NASI RM 10.00</li>
+                        </ul>
+                </div>
+                <div class="menu"> 
+                    <h3>Nasi Goreng/ Fried Rice</h3>
+                        <ul>
+                            <li>NASI GORENG BIASA (RM5) RM 5.00</li>
+                            <li>NASI GORENG KAMPUNG RM 6.00</li>
+                            <li>NASI GORENG CIN RM 5.00</li>
+                            <li>NASI GORENG MAMAK RM 5.00</li>
+                            <li>NASI GORENG TELUR (EGG) RM 5.00</li>
+                            <li>NASI GORENG CILI API RM 5.00</li>
+                            <li>NASI GORENG SAUSAGE RM 5.00</li>
+                            <li>NASI GORENG TOMYAM RM 6.00</li>
+                            <li>NASI GORENG SARDIN RM 6.00</li>
+                            <li>NASI GORENG PATTAYA RM 6.00</li>
+                            <li>NASI GORENG IKAN MASIN RM 6.00</li>
+                            <li>NASI GORENG TOMATO RM 6.00</li>
+                            <li>NASI GORENG CENDAWAN RM 6.00</li>
+                            <li>NASI GORENG DAGING RM 7.00</li>
+                            <li>NASI GORENG SEA FOOD RM 7.00</li>
+                            <li>NASI GORENG AYAM (CHICKEN) RM 8.00</li>
+                            <li>NASI GORENG PAPRIK AYAM RM 8.00</li>
+                            <li>NASI GORENG MSA (EGG) RM 9.00</li>
+                            <li>NASI GORENG THAI RM 9.00</li>
+                            <li>NASI GORENG KAMBING RM 12.00</li>
+                        </ul>
+                </div>
+                <div class="menu">     
+                    <h3>Pasta Special</h3>
+                        <ul>
+                            <li>CARBONARA RM 10.00</li>
+                            <li>CHICKEN ALFRED RM 10.00</li>
+                            <li>BOLONESE RM 10.00</li>
+                            <li>PASTA VEGETARIAN RM 10.00</li>
+                            <li>MARINARA RM 12.00</li>
+                            <li>CHICKEN SPICY RM 12.00</li>
+                        </ul>
+                </div>
+                <div class="menu"> 
+                    <h3>Hot Plate</h3>
+                        <ul>
+                            <li>CHAR KUEY TIAU RM 6.00</li>
+                            <li>SIZZLING RICE RM 6.00</li>
+                            <li>MEE BANDUNG RM 6.00</li>
+                            <li>SIZZLING YEE MEE RM 6.50</li>
+                            <li>CANTONESE YEE MEE RM 7.00</li>
+                            <li>CANTONESE JUEY TIAU RM 7.00</li>
+                            <li>YING YONG RM 8.00</li>
+                        </ul>
+                    </div>
+                <div class="menu">
+                    <h3>Drinks</h3>
+                        <ul>
+                            <li>TEH TARIK RM 2.00</li>
+                            <li>TEH O RM 1.50</li>
+                            <li>TEH O LIMAU RM 2.00</li>
+                            <li>TEH O LAICI RM 3.50</li>
+                            <li>NESCAFE RM 2.50</li>
+                            <li>NESCAFE O RM 2.00</li>
+                            <li>NESLO RM 3.00</li>
+                            <li>WHITE COFFEE RM 3.00</li>
+                            <li>KOPI RM 2.00</li>
+                            <li>KOPI O RM 1.50</li>
+                            <li>MILO RM 2.50</li>
+                            <li>MILO O RM 2.50</li>
+                            <li>BARLEY RM 2.00</li>
+                            <li>HORLICKS RM 3.00</li>
+                            <li>LIMAU PANAS RM 2.00</li>
+                            <li>LAICI RM 3.00</li>
+                            <li>SIRAP BANDUNG RM 2.00</li>
+                            <li>ORANGE JUICE RM 4.00</li>
+                            <li>APPLE JUICE RM 4.00</li>
+                            <li>WATERMELON JUICE RM 4.00</li>
+                            <li>EXTRA JASS RM 3.50</li>
+                            <li>CARROT JUICE RM 4.00</li>
+                        </ul>
+                </div>
+            </div>
+        </div>
+        <div id="htc" class="allrestaurants"> 
+            <h2>              HTC              </h2>
+            <div class="restaurant">
+                <div class="menu">
+                    <h3>Goreng-Goreng</h3>
+                        <ul>
+                            <li>NASI GORENG RM4.50</li>
+                            <li>NASI GORENG DOUBLE RM6.00</li>
+                            <li>NASI GORENG CILI PADI RM6.00</li>
+                            <li>NASI GORENG CINA RM5.00</li>
+                            <li>NASI GORENG KAMPUNG RM6.00</li>
+                            <li>NASI GORENG AYAM RM8.00</li>
+                            <li>NASI GORENG KAMPUNG AYAM RM9.00</li>
+                            <li>NASI GORENG PATTAYA RM6.00</li>
+                            <li>MAGGI RM4.50</li>
+                            <li>MAGGI DOUBLE RM7.00</li>
+                            <li>MAGGI DOUBLE AYAM RM10.00</li>
+                            <li>MEE RM4.50</li>
+                            <li>BIHUN RM4.50</li>
+                            <li>KUEY TEOW RM4.50</li>
+                            <li>ROJAK RM4.50</li>
+                            <li>TELUR MATA RM1.00</li>
+                            <li>TELUR DADAR RM1.50</li>
+                        </ul>
+                </div>
+                <div class="menu"> 
+                    <h3>Mee/ Kue Teow/ Bihun</h3>
+                        <ul>
+                            <li>MEE/NASI GORENG RM4.50</li>
+                            <li>KUE TEOW/BIHUN GORENG RM4.50</li>
+                            <li>ROJAK BIASA RM5.50</li>
+                            <li>ROJAK TELUR RM5.50</li>
+                            <li>ROJAK MEE/MEE RM5.50</li>
+                        </ul>
+                </div>
+                <div class="menu"> 
+                    <h3>Roti Canai</h3>
+                        <ul>
+                            <li>BIASA RM1.20</li>
+                            <li>TELUR RM2.50</li>
+                            <li>TELUR BAWANG RM3.00</li>
+                            <li>BAWANG RM2.00</li>
+                            <li>PLANTA RM2.50</li>
+                            <li>BOOM RM2.50</li>
+                            <li>CHEESE RM3.00</li>
+                            <li>TELUR CHEESE RM4.00</li>
+                            <li>SARDINE RM4.00</li>
+                            <li>KAYA RM2.50</li>
+                            <li>MADU RM2.50</li>
+                            <li>PISANG RM3.00</li>
+                        </ul>
+                </div>
+                <div class="menu"> 
+                    <h3>Tosai</h3>
+                        <ul><li>BIASA RM2.00</li>
+                            <li>TELUR RM3.00</li>
+                            <li>BAWANG RM3.00</li>
+                            <li>MASALA RM3.50</li>
+                            <li>GHEE RM3.00</li>
+                            <li>MURTABAK RM4.50</li>
+                            <li>CAPATI RM2.00</li>
+                        </ul>
+                </div>
+                <div class="menu"> 
+                    <h3>Special</h3>
+                        <ul>
+                            <li>ROTI BAKAR RM1.50</li>
+                            <li>ROTI BAKAR TELUR RM3.00</li>
+                            <li>ROTI BAKAR SARDIN RM4.00</li>
+                        </ul>
+                </div>
+                <div class="menu"> 
+                    <h3>Minuman</h3>
+                        <ul>
+                            <li>TEH RM2.30</li>
+                            <li>TEH O RM2.00</li>
+                            <li>KOPI RM2.30</li>
+                            <li>KOPI O RM2.00</li>
+                            <li>MILO RM2.80</li>
+                            <li>MILO O RM2.50</li>
+                            <li>NESCAFE O RM2.50</li>
+                            <li>NESCAFE RM2.80</li>
+                            <li>BRU RM3.00</li>
+                            <li>HORLICKS RM3.00</li>
+                            <li>TEH LIMAU RM2.30</li>
+                            <li>AIR SIRAP RM2.30</li>
+                            <li>SIRAP LIMAU RM2.30</li>
+                        </ul>
+                </div>
+                <div class="menu"> 
+                    <h3>Jus Buah-buahan</h3>
+                        <ul>
+                            <li>OREN/EPAL RM3.50</li>
+                            <li>BELIMBING RM3.50</li>
+                            <li>MANGGA/KAROT RM3.50</li>
+                            <li>ASAM JAWA RM2.80</li>
+                            <li>BARLI RM2.80</li>
+                        </ul>
+                </div>
+            </div>  
+        </div>
+        <div id="bakery" class="allrestaurants"> 
+            <h2>  D'LIGHT BAKERY  </h2>
+            <div class="restaurant">
+                <div class="menu"> 
+                    <h3>Pastry</h3>
+                        <ul>
+                            <li>VANILLA CHOCO TWIST RM4.50</li>
+                            <li>CHICKEN CURRY PUFF RM4.50</li>
+                            <li>TUNA PUFF RM4.50</li>
+                            <li>BANANA BAR RM3.80</li>
+                            <li>CHICKEN SAUSAGE DONUT RM4.50</li>
+                            <li>GARLIC SAUSAGE ROLL RM5.50</li>
+                            <li>BBQ SAUSAGE ROLL RM5.50</li>
+                            <li>MINI CROISSANT RM2.00</li>
+                            <li>MINI CHICKEN MUSHROOM PIE RM5.50</li>
+                            <li>FIRE CRACKER SAUSAGE RM7.50</li>
+                            <li>CHOCOLATE ROLL RM3.00</li>
+                            <li>CHOCOLATE MUFFIN RM6.50</li>
+                            <li>BLUEBERRY MUFFIN RM6.50</li>
+                            <li>MINI MUFFIN RED VELVET RM2.50</li>
+                            <li>MINI MUFFIN BUTTERSCOTCH RM2.50</li>
+                            <li>CHOCOLATE CHIP COOKIES RM4.50</li>
+                            <li>DOUBLE CHOCO CHIP COOKIES RM4.50</li>
+                            <li>SPICY TUNA EGG SANDWICH RM4.00</li>
+                            <li>EGG MAYO SANDWICH RM3.50</li>
+                            <li>BIHUN GORENG RM5.00</li>
+                            <li>NASI GORENG RM5.00</li>
+                            <li>NASI LEMAK RM4.00</li>
+                        </ul>
+                </div>
+                <div class="menu"> 
+                    <h3>Coffee</h3>
+                        <ul>
+                            <li>BLACK COFFEE RM4.00</li>
+                            <li>WHITE COFFEE RM4.00</li>
+                        </ul>
+                </div>
+                <div class="menu"> 
+                    <h3>Premium Coffee</h3>
+                        <ul>
+                            <li>ESPRESSO RM5.50</li>
+                            <li>AMERICANO RM6.50</li>
+                            <li>LATTE RM7.50</li>
+                            <li>CAPPUCCINO RM7.50</li>
+                            <li>MOCHA RM8.50</li>
+                            <li>COCONUT LATTE RM8.50</li>
+                            <li>HAZELNUT LATTE RM8.50</li>
+                            <li>FRENCH VANILLA LATTE RM8.50</li>
+                            <li>SALTED CARAMEL LATTE RM8.50</li>
+                        </ul>
+                </div>
+                <div class="menu"> 
+                    <h3>Non Coffee</h3>
+                        <ul>
+                            <li>CHOCOLATE RM7.00</li>
+                            <li>MATCHA LATTE RM7.80</li>
+                            <li>MILO RM5.00</li>
+                            <li>TEH TARIK RM5.00</li>
+                            <li>MILK RM5.00</li>
+                        </ul>
+                </div>
+                <div class="menu"> 
+                    <h3>Tea</h3>
+                        <ul>
+                            <li>ENGLISH BREAKFAST RM5.00</li>
+                            <li>EARL GREY RM5.00</li>
+                            <li>CHAMOMILE RM5.00</li>
+                            <li>GREEN TEA RM5.00</li>
+                            <li>GREEN TEA & LEMON RM5.00</li>
+                            <li>PEPPERMINT RM5.00</li>
+                        </ul>
+                </div>
+                <div class="menu"> 
+                    <h3>Refreshment</h3>
+                        <ul>
+                            <li>SPARKLING LEMONADE RM5.00</li>
+                            <li>WATERMELON LEMONADE RM5.00</li>
+                            <li>MANGO PEACH RM5.00</li>
+                        </ul>
+                </div>
+            </div>
+        </div>
+        <script>
+            const allrestaurants = document.querySelectorAll(".allrestaurants");
+            
+            allrestaurants.forEach(allrestaurant => {
+              allrestaurant.addEventListener("click", () => {
+                const restaurantMenu = allrestaurant.querySelector(".restaurant");
+                restaurantMenu.classList.toggle("show"); 
+              });
+            });
+        </script>
     </main>
     
     <footer class="footer">
@@ -323,7 +374,6 @@
            
             <br>
             <br>
-            <!-- <a href="/send Order">Send Order</a> -->
             </div>
 
     </footer>
