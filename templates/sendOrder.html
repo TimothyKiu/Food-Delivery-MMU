@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="/static/style.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,7 +14,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            /* height: 100vh; */
         }
 
         p {
@@ -70,109 +71,58 @@
 
         .radio-container {
             display: flex;
-            /* flex-direction: row; */
+            flex-direction: row;
         }
         .radio-container label {
             margin-right: 20px;
         }
 
-                
-        .main{
-        background-color: bisque;
-        }
-
-        .allrestaurants {
-        display: inline-flex; 
-        flex-wrap: wrap;
-        }
-
-
-        .allrestaurants h2 {
-        font-size: 50px;
-        min-width: 100%;
-        text-align: center;
-        background-color: #cccccc;
-        padding: 10px 0;
-        margin: 5px;
-        border-bottom: 10px solid #ddd; 
-        cursor: pointer;
-        white-space: pre;
-        
-        }
-
-        .restaurant{
-        column-count: 4;
-        column-gap: 20px; 
-        display: none;
-        top: 100%; 
-        left: 0; 
-        width: 100%;
-        background-color: #fff; 
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .restaurant.show {
-        display: block;
-        }
-
-        .menu {
-        break-inside: avoid; 
-        }
-
-        .menu ul {
-        list-style-type: none;
-        padding: 0;
-        }
-
-        .menu li {
-        padding: 10px 0; 
-        border-bottom: 1px solid #ddd;
-        }
     </style>
 </head>
 <body>
-    <header class="header">
-        <h1 id="title">Food Delivery MMU</h1> 
-    </header>
-{#    <p>session: {{ customerName }}</p>#}
-
-    {% if orderSentTextDisplayForHTML %}
-        <div class="message">
-            <p>Order sent, waiting for a runner to accept...</p>
-        </div>
-    {% endif %}
-
-    {% if not orderSentTextDisplayForHTML %}
-        <form method="post">
-            <label for="orderList">Write down your order:</label>
-            <input type="text" id="orderList" name="orderList" required>
-
-            <div class="radio-container">
-                <input type="radio" id="deens" name="restaurant" value="Deen's" required>
-
-                <label for="deens">Deen's</label>
-                <input type="radio" id="hajitapah" name="restaurant" value="Haji Tapah" required>
-
-                <label for="hajitapah">Haji Tapah</label>
-                <input type="radio" id="dlightbakery" name="restaurant" value="D'light Bakery" required>
-
-                <label for="dlightbakery">D'light Bakery</label>
-            </div>
-
-
-            <button name="sendOrder" value="True">Confirm order</button>
-        </form> 
-     {% endif %}
-
-    {% if orderSentBool %}
-        <div class="message">
-            <p>You already have a pending order!</p>
-        </div>
-     {% endif %}
-
     <main>
+        <header class="header">
+            <h1 id="title">Food Delivery MMU</h1>
+        </header>
+
+        {#    <p>session: {{ customerName }}</p>#}
+
+        {% if orderSentTextDisplayForHTML %}
+            <div class="message">
+                <p>Order sent, waiting for a runner to accept...</p>
+            </div>
+        {% endif %}
+
+        {% if not orderSentTextDisplayForHTML %}
+            <form method="post">
+                <label for="orderList">Write down your order:</label>
+                <input type="text" id="orderList" name="orderList" required>
+
+                <div class="radio-container">
+                    <input type="radio" id="deens" name="restaurant" value="Deen's" required>
+
+                    <label for="deens">Deen's</label>
+                    <input type="radio" id="hajitapah" name="restaurant" value="Haji Tapah" required>
+
+                    <label for="hajitapah">Haji Tapah</label>
+                    <input type="radio" id="dlightbakery" name="restaurant" value="D'light Bakery" required>
+
+                    <label for="dlightbakery">D'light Bakery</label>
+                </div>
+
+
+                <button name="sendOrder" value="True">Confirm order</button>
+            </form> 
+        {% endif %}
+
+        {% if orderSentBool %}
+            <div class="message">
+                <p>You already have a pending order!</p>
+            </div>
+        {% endif %}<br>
+
         <div id="deen" class="allrestaurants"> 
-            <h2>             DEEN             </h2>
+            <h2>           DEEN           </h2>
             <div class="restaurant">
                 <div class="menu">
                     <h3>Western Food</h3>
@@ -317,7 +267,7 @@
             </div>
         </div>
         <div id="htc" class="allrestaurants"> 
-            <h2>              HTC              </h2>
+            <h2>            HTC            </h2>
             <div class="restaurant">
                 <div class="menu">
                     <h3>Goreng-Goreng</h3>
