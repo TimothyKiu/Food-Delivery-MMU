@@ -44,7 +44,6 @@
             border-radius: 4px;
         }
 
-
         button {
             background-color: #4CAF50;
             color: white;
@@ -71,14 +70,70 @@
 
         .radio-container {
             display: flex;
-            flex-direction: row;
+            /* flex-direction: row; */
         }
         .radio-container label {
             margin-right: 20px;
         }
+
+                
+        .main{
+        background-color: bisque;
+        }
+
+        .allrestaurants {
+        display: inline-flex; 
+        flex-wrap: wrap;
+        }
+
+
+        .allrestaurants h2 {
+        font-size: 50px;
+        min-width: 100%;
+        text-align: center;
+        background-color: #cccccc;
+        padding: 10px 0;
+        margin: 5px;
+        border-bottom: 10px solid #ddd; 
+        cursor: pointer;
+        white-space: pre;
+        
+        }
+
+        .restaurant{
+        column-count: 4;
+        column-gap: 20px; 
+        display: none;
+        top: 100%; 
+        left: 0; 
+        width: 100%;
+        background-color: #fff; 
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .restaurant.show {
+        display: block;
+        }
+
+        .menu {
+        break-inside: avoid; 
+        }
+
+        .menu ul {
+        list-style-type: none;
+        padding: 0;
+        }
+
+        .menu li {
+        padding: 10px 0; 
+        border-bottom: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
+    <header class="header">
+        <h1 id="title">Food Delivery MMU</h1> 
+    </header>
 {#    <p>session: {{ customerName }}</p>#}
 
     {% if orderSentTextDisplayForHTML %}
