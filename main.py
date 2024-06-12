@@ -309,14 +309,17 @@ def sendOrder():
                 if session.get('orderSent') == False:
                     orderList = request.form['orderList']
                     restaurant = request.form['restaurant']
+                    customerLocation = request.form['customerLocation']
 
                     orderSentTextDisplayForHTML = True
-                    mycursor = db.cursor(buffered=True)
+                    connection = get_db_connection()
+                    mycursor = connection.cursor(buffered=True)
 
-                    insert_query = "INSERT INTO webDB.orders (customerName, FoodOrdered, restaurant) VALUES (%s, %s, %s)"
-                    mycursor.execute(insert_query, (customerName, orderList,restaurant,))
-                    db.commit()  # Commit the transaction to save changes to the database
+                    insert_query = "INSERT INTO webDB.orders (customerName, FoodOrdered, restaurant, customerLocation) VALUES (%s, %s, %s, %s)"
+                    mycursor.execute(insert_query, (customerName, orderList, restaurant, customerLocation,))
+                    connection.commit()  # Commit the transaction to save changes to the database
                     mycursor.close()
+                    connection.close()
                     session['orderSent'] = True
 
                 if session.get('orderSent') == True:
@@ -357,6 +360,7 @@ def acceptOrder():
         runnerName = session.get('username')
         currentOrders = []
         acceptOrder = None
+        customerLocation = "placeholder"
         session['orderList'] = None
         session['restaurant'] = None
 
@@ -377,21 +381,22 @@ def acceptOrder():
 
             #look for order infprmation
             mycursor = db.cursor(buffered=True)
-            query2 = "SELECT restaurant,FoodOrdered FROM webDB.orders WHERE customerName = %s"
+            query2 = "SELECT restaurant,FoodOrdered,customerLocation FROM webDB.orders WHERE customerName = %s"
             mycursor.execute(query2, (acceptedOrderCustomerName,))
             orderInfo = mycursor.fetchall()
             mycursor.close()
             if orderInfo:
                 session['restaurant'] = orderInfo[0][0]
                 session['orderList'] = orderInfo[0][1]
+                customerLocation = orderInfo[0][2]
 
 
 
             mycursor = db.cursor(buffered=True)
-            insertIntoConfirmedOrders = "INSERT INTO webDB.confirmedOrders (runnerName, customerName, orderList, restaurant) VALUES (%s, %s, %s,%s)"
+            insertIntoConfirmedOrders = "INSERT INTO webDB.confirmedOrders (runnerName, customerName, orderList, restaurant, customerLocation) VALUES (%s, %s, %s,%s, %s)"
             insertIntoLocation = "INSERT INTO webDB.location (latitude, longitude, runnerName, username) VALUES (%s, %s, %s, %s)"
 
-            mycursor.execute(insertIntoConfirmedOrders, (runnerName, acceptedOrderCustomerName, session.get('orderList'), session.get('restaurant')))
+            mycursor.execute(insertIntoConfirmedOrders, (runnerName, acceptedOrderCustomerName, session.get('orderList'), session.get('restaurant'), customerLocation,))
             mycursor.execute(insertIntoLocation, (0,0,runnerName, acceptedOrderCustomerName,))
 
             db.commit()  # Commit the transaction to save changes to the database
@@ -460,12 +465,13 @@ def orderInProgressCustomer():
         restaurant = "placeholder"
         orderList = "placeholder"
         orderReceived = session.get('orderReceived')
+        customerLocation = "placeholder"
 
         connection = get_db_connection()
         mycursor = connection.cursor(buffered=True)
         #DISABLE CUSTOMER FROM FORCING BACKBUTTON
 
-        query = "SELECT runnerName, orderCompleted, restaurant,orderList FROM webDB.confirmedOrders where customerName = %s "
+        query = "SELECT runnerName, orderCompleted, restaurant,orderList, customerLocation FROM webDB.confirmedOrders where customerName = %s "
         mycursor.execute(query, (customerName,))
         orderData = mycursor.fetchall()
 
@@ -473,6 +479,7 @@ def orderInProgressCustomer():
             runnerNameHTML = orderData[0][0]
             restaurant = orderData[0][2]
             orderList = orderData[0][3]
+            customerLocation = orderData[0][4]
 
         if orderData:
             print('orderData is not null')
@@ -491,7 +498,10 @@ def orderInProgressCustomer():
         locations = mycursor.fetchall()
         mycursor.close()
         print(locations)
-        return render_template('showLocation.html', locations=locations,orderReceived=orderReceived,runnerNameHTML=runnerNameHTML, customerName=customerName, restaurant=restaurant, orderList=orderList)
+        return render_template('showLocation.html', locations=locations
+                               ,orderReceived=orderReceived,runnerNameHTML=runnerNameHTML
+                               , customerName=customerName, restaurant=restaurant,
+                               orderList=orderList, customerLocation=customerLocation)
 
     else:
         return "You have no permission to view now..."
@@ -867,6 +877,7 @@ def getLocation():
         orderList = None
         restaurant = None
         runnerName = session.get('username')
+        customerLocation = "placeholder"
 
         connection = get_db_connection()
         if connection is None:
@@ -874,7 +885,7 @@ def getLocation():
 
         try:
             mycursor = connection.cursor(buffered=True)
-            query = "SELECT customerName, runnerName, orderList, restaurant FROM webDB.confirmedOrders WHERE runnerName = %s"
+            query = "SELECT customerName, runnerName, orderList, restaurant, customerLocation FROM webDB.confirmedOrders WHERE runnerName = %s"
             mycursor.execute(query, (runnerName,))
             customerName = mycursor.fetchall()
             mycursor.close()
@@ -884,6 +895,7 @@ def getLocation():
                 customerNameHTML = customerName[0][0]
                 orderList = session.get('orderList')
                 restaurant = session.get('restaurant')
+                customerLocation = customerName[0][4]
             else:
                 return "No orders found for runner", 404
 
@@ -952,7 +964,7 @@ def getLocation():
                     connection.close()
                 return "Database update failed", 500
 
-        return render_template('getCurrentLocation.html', runnerName=runnerName, customerName=customerNameHTML, orderList=orderList, restaurant=restaurant)
+        return render_template('getCurrentLocation.html', customerLocation=customerLocation, runnerName=runnerName, customerName=customerNameHTML, orderList=orderList, restaurant=restaurant)
 
     else:
         return "You have no permission to view right now..."
@@ -998,21 +1010,22 @@ def testfile():
 
             #look for order infprmation
             mycursor = db.cursor(buffered=True)
-            query2 = "SELECT restaurant,FoodOrdered FROM webDB.orders WHERE customerName = %s"
+            query2 = "SELECT restaurant,FoodOrdered,customerLocation FROM webDB.orders WHERE customerName = %s"
             mycursor.execute(query2, (acceptedOrderCustomerName,))
             orderInfo = mycursor.fetchall()
             mycursor.close()
             if orderInfo:
                 session['restaurant'] = orderInfo[0][0]
                 session['orderList'] = orderInfo[0][1]
+                customerLocation = orderInfo[0][2]
 
 
 
             mycursor = db.cursor(buffered=True)
-            insertIntoConfirmedOrders = "INSERT INTO webDB.confirmedOrders (runnerName, customerName, orderList, restaurant) VALUES (%s, %s, %s,%s)"
+            insertIntoConfirmedOrders = "INSERT INTO webDB.confirmedOrders (runnerName, customerName, orderList, restaurant, customerLocation) VALUES (%s, %s, %s,%s, %s)"
             insertIntoLocation = "INSERT INTO webDB.location (latitude, longitude, runnerName, username) VALUES (%s, %s, %s, %s)"
 
-            mycursor.execute(insertIntoConfirmedOrders, (runnerName, acceptedOrderCustomerName, session.get('orderList'), session.get('restaurant')))
+            mycursor.execute(insertIntoConfirmedOrders, (runnerName, acceptedOrderCustomerName, session.get('orderList'), session.get('restaurant'),customerLocation))
             mycursor.execute(insertIntoLocation, (0,0,runnerName, acceptedOrderCustomerName,))
 
             db.commit()  # Commit the transaction to save changes to the database
