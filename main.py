@@ -60,8 +60,31 @@ def register():
 
 @app.route('/otherratings', methods=['GET', 'POST'])
 def otherratings():
-    loggedAsCustomer = session.get('loggedAsCustomer')
-    loggedAsRunner = session.get('loggedAsRunner')
+    loggedAsCustomer = None
+    loggedAsRunner = None
+    connection = get_db_connection()
+    mycursor = connection.cursor(buffered=True)
+    query = "SELECT type FROM webDB.registeredAccounts WHERE user_name = %s"
+
+    # Execute the SQL query with the username and password as parameters
+    # This is where user enters his credentials in the HTML page
+    mycursor.execute(query, (session.get('username'),))
+
+    # Fetch the result (assuming only one row is expected)
+    userdata = mycursor.fetchall()
+    mycursor.close()
+    connection.close()
+
+    print(userdata[0][0])
+    print('type')
+
+    if userdata[0][0] == "Runner":
+        loggedAsRunner = True
+    elif userdata[0][0] == "Customer":
+        loggedAsCustomer = True
+    else:
+        loggedAsCustomer = None
+        loggedAsRunner = None
 
     if session.get('loggedIn') == True:
 
@@ -184,6 +207,8 @@ def otherratings():
 def ratings():
     currentRateableRunner = "placeholder"
 
+
+
     if session.get("currentRateableRunner") is not None:
         currentRateableRunner = session["currentRateableRunner"]
         customerName = session.get('username')
@@ -192,12 +217,13 @@ def ratings():
             ratings = request.form.get('rating')
             review = request.form.get('writeReview')
 
-
-
-            mycursor = db.cursor(buffered=True)
+            connection = get_db_connection()
+            mycursor = connection.cursor(buffered=True)
             insert_query = "INSERT INTO webDB.reviews (user_name, review_text, rating_given) VALUES (%s, %s, %s)"
             mycursor.execute(insert_query, (currentRateableRunner, review, ratings,))
-            db.commit()  # Commit the transaction to save changes to the database
+            connection.commit()  # Commit the transaction to save changes to the database
+            connection.close()
+            mycursor.close()
 
             # mycursor.execute('''CREATE TABLE IF NOT EXISTS average_reviews (
             #         ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -540,9 +566,31 @@ def accountcreatedsuccess():
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
+    loggedAsCustomer = None
+    loggedAsRunner = None
+    connection = get_db_connection()
+    mycursor = connection.cursor(buffered=True)
+    query = "SELECT type FROM webDB.registeredAccounts WHERE user_name = %s"
 
-    loggedAsCustomer = session.get('loggedAsCustomer')
-    loggedAsRunner = session.get('loggedAsRunner')
+    # Execute the SQL query with the username and password as parameters
+    # This is where user enters his credentials in the HTML page
+    mycursor.execute(query, (session.get('username'),))
+
+    # Fetch the result (assuming only one row is expected)
+    userdata = mycursor.fetchall()
+    mycursor.close()
+    connection.close()
+
+    print(userdata[0][0])
+    print('type')
+
+    if userdata[0][0] == "Runner":
+        loggedAsRunner = True
+    elif userdata[0][0] == "Customer":
+        loggedAsCustomer = True
+    else:
+        loggedAsCustomer = None
+        loggedAsRunner = None
 
     print(session.get('loggedIn'))
 
@@ -649,8 +697,31 @@ def profile():
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
-    loggedAsCustomer = session.get('loggedAsCustomer')
-    loggedAsRunner = session.get('loggedAsRunner')
+    loggedAsCustomer = None
+    loggedAsRunner = None
+    connection = get_db_connection()
+    mycursor = connection.cursor(buffered=True)
+    query = "SELECT type FROM webDB.registeredAccounts WHERE user_name = %s"
+
+    # Execute the SQL query with the username and password as parameters
+    # This is where user enters his credentials in the HTML page
+    mycursor.execute(query, (session.get('username'),))
+
+    # Fetch the result (assuming only one row is expected)
+    userdata = mycursor.fetchall()
+    mycursor.close()
+    connection.close()
+
+    print(userdata[0][0])
+    print('type')
+
+    if userdata[0][0] == "Runner":
+        loggedAsRunner = True
+    elif userdata[0][0] == "Customer":
+        loggedAsCustomer = True
+    else:
+        loggedAsCustomer = None
+        loggedAsRunner = None
 
     print(session.get('loggedIn'))
 

@@ -43,13 +43,13 @@ class registerLogic:
                 session['orderSent'] = False
                 print(session.get('orderSent'))
 
-                if accountTypereg == "Runner":
-                    session["loggedAsRunner"] = True
-                    session['loggedAsCustomer'] = False
-
-                elif accountTypereg == "Customer":
-                    session['loggedAsCustomer'] = True
-                    session['loggedAsRunner'] = False
+                # if accountTypereg == "Runner":
+                #     # session["loggedAsRunner"] = True
+                #     # session['loggedAsCustomer'] = False
+                #
+                # elif accountTypereg == "Customer":
+                #     # session['loggedAsCustomer'] = True
+                #     # session['loggedAsRunner'] = False
 
                 return redirect(url_for("accountcreatedsuccess"))
 
