@@ -277,8 +277,35 @@ def ratingsent():
 @app.route('/sendOrder', methods=['GET', 'POST'])
 def sendOrder():
     print(session.get('loggedAsCustomer'))
+
+    loggedAsCustomer = None
+    loggedAsRunner = None
+    connection = get_db_connection()
+    mycursor = connection.cursor(buffered=True)
+    query = "SELECT type FROM webDB.registeredAccounts WHERE user_name = %s"
+
+    # Execute the SQL query with the username and password as parameters
+    # This is where user enters his credentials in the HTML page
+    mycursor.execute(query, (session.get('username'),))
+
+    # Fetch the result (assuming only one row is expected)
+    userdata = mycursor.fetchall()
+    mycursor.close()
+    connection.close()
+
+    print(userdata[0][0])
+    print('type')
+
+    if userdata[0][0] == "Runner":
+        loggedAsRunner = True
+    elif userdata[0][0] == "Customer":
+        loggedAsCustomer = True
+    else:
+        loggedAsCustomer = None
+        loggedAsRunner = None
+
     #BUG DETECTED, session['orderSent'] is being turned into true by something...
-    if session.get("loggedAsCustomer") == True:
+    if loggedAsCustomer == True:
         mycursor = db.cursor(buffered=True)
         findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.Orders WHERE customerName = %s "
         mycursor.execute(findIfOrderAccepted, (session.get('username'),))
@@ -355,8 +382,32 @@ def sendOrder():
 
 @app.route('/acceptOrder', methods=['GET', 'POST'])
 def acceptOrder():
+    print(session.get('loggedAsCustomer'))
 
-    if session.get("loggedAsRunner"):
+    loggedAsCustomer = None
+    loggedAsRunner = None
+    connection = get_db_connection()
+    mycursor = connection.cursor(buffered=True)
+    query = "SELECT type FROM webDB.registeredAccounts WHERE user_name = %s"
+
+    # Execute the SQL query with the username and password as parameters
+    # This is where user enters his credentials in the HTML page
+    mycursor.execute(query, (session.get('username'),))
+
+    # Fetch the result (assuming only one row is expected)
+    userdata = mycursor.fetchall()
+    mycursor.close()
+    connection.close()
+
+    if userdata[0][0] == "Runner":
+        loggedAsRunner = True
+    elif userdata[0][0] == "Customer":
+        loggedAsCustomer = True
+    else:
+        loggedAsCustomer = None
+        loggedAsRunner = None
+
+    if loggedAsRunner == True:
         runnerName = session.get('username')
         currentOrders = []
         acceptOrder = None
@@ -459,7 +510,32 @@ def acceptOrder():
 
 @app.route('/showLocation', methods=['GET', 'POST'])
 def orderInProgressCustomer():
-    if session.get('loggedAsCustomer'):
+
+    loggedAsCustomer = None
+    loggedAsRunner = None
+    connection = get_db_connection()
+    mycursor = connection.cursor(buffered=True)
+    query = "SELECT type FROM webDB.registeredAccounts WHERE user_name = %s"
+
+    # Execute the SQL query with the username and password as parameters
+    # This is where user enters his credentials in the HTML page
+    mycursor.execute(query, (session.get('username'),))
+
+    # Fetch the result (assuming only one row is expected)
+    userdata = mycursor.fetchall()
+    mycursor.close()
+    connection.close()
+
+    if userdata[0][0] == "Runner":
+        loggedAsRunner = True
+    elif userdata[0][0] == "Customer":
+        loggedAsCustomer = True
+    else:
+        loggedAsCustomer = None
+        loggedAsRunner = None
+
+
+    if loggedAsCustomer == True:
         customerName = session.get('username')
         runnerNameHTML = "placeholder"
         restaurant = "placeholder"
@@ -591,16 +667,16 @@ def profile():
     mycursor.close()
     connection.close()
 
-    print(userdata[0][0])
     print('type')
 
-    if userdata[0][0] == "Runner":
-        loggedAsRunner = True
-    elif userdata[0][0] == "Customer":
-        loggedAsCustomer = True
-    else:
-        loggedAsCustomer = None
-        loggedAsRunner = None
+    if userdata:
+        if userdata[0][0] == "Runner":
+            loggedAsRunner = True
+        elif userdata[0][0] == "Customer":
+            loggedAsCustomer = True
+        else:
+            loggedAsCustomer = None
+            loggedAsRunner = None
 
     print(session.get('loggedIn'))
 
@@ -872,7 +948,32 @@ def settings():
 
 @app.route('/getLocation', methods=['POST', 'GET'])
 def getLocation():
-    if session.get('loggedAsRunner'):
+
+
+    loggedAsCustomer = None
+    loggedAsRunner = None
+    connection = get_db_connection()
+    mycursor = connection.cursor(buffered=True)
+    query = "SELECT type FROM webDB.registeredAccounts WHERE user_name = %s"
+
+    # Execute the SQL query with the username and password as parameters
+    # This is where user enters his credentials in the HTML page
+    mycursor.execute(query, (session.get('username'),))
+
+    # Fetch the result (assuming only one row is expected)
+    userdata = mycursor.fetchall()
+    mycursor.close()
+    connection.close()
+
+    if userdata[0][0] == "Runner":
+        loggedAsRunner = True
+    elif userdata[0][0] == "Customer":
+        loggedAsCustomer = True
+    else:
+        loggedAsCustomer = None
+        loggedAsRunner = None
+
+    if loggedAsRunner == True:
         customerNameHTML = None
         orderList = None
         restaurant = None
@@ -893,8 +994,8 @@ def getLocation():
 
             if customerName:
                 customerNameHTML = customerName[0][0]
-                orderList = session.get('orderList')
-                restaurant = session.get('restaurant')
+                orderList = customerName[0][2]
+                restaurant =customerName[0][3]
                 customerLocation = customerName[0][4]
             else:
                 return "No orders found for runner", 404
