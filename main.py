@@ -222,8 +222,6 @@ def ratings():
             insert_query = "INSERT INTO webDB.reviews (user_name, review_text, rating_given) VALUES (%s, %s, %s)"
             mycursor.execute(insert_query, (currentRateableRunner, review, ratings,))
             connection.commit()  # Commit the transaction to save changes to the database
-            connection.close()
-            mycursor.close()
 
             # mycursor.execute('''CREATE TABLE IF NOT EXISTS average_reviews (
             #         ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -260,6 +258,7 @@ def ratings():
             # Commit changes and close connection
             db.commit()
             mycursor.close()
+            connection.close()
 
             session['currentRateableRunner'] = None
             return redirect(url_for("profile"))
@@ -563,8 +562,12 @@ def orderInProgressCustomer():
 
             if orderData[0][1] == 1:
                 session['orderReceived'] = True
-                print("redirected")
-
+                connection = get_db_connection()
+                mycursor = connection.cursor(buffered=True)
+                delete_query2 = "DELETE FROM webDB.confirmedorders WHERE customerName = %s"
+                mycursor.execute(delete_query2, (customerName,))
+                mycursor.close()
+                connection.close()
                 return redirect(url_for("orderCompletedCustomer"))
         mycursor.close()
 
