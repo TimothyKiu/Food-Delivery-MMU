@@ -221,7 +221,7 @@ def ratings():
             mycursor = connection.cursor(buffered=True)
             insert_query = "INSERT INTO webDB.reviews (user_name, review_text, rating_given) VALUES (%s, %s, %s)"
             mycursor.execute(insert_query, (currentRateableRunner, review, ratings,))
-            connection.commit()  # Commit the transaction to save changes to the database
+              # Commit the transaction to save changes to the database
 
             # mycursor.execute('''CREATE TABLE IF NOT EXISTS average_reviews (
             #         ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -256,7 +256,7 @@ def ratings():
                     ''')
 
             # Commit changes and close connection
-            db.commit()
+            connection.commit()
             mycursor.close()
             connection.close()
 
@@ -598,7 +598,7 @@ def orderCompletedCustomer():
 
         customerName = session.get('username')
         session.setdefault('currentRateableRunner', None)
-        session["currentRateableRunner"] = False
+
 
         mycursor = db.cursor(buffered=True)
         query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
@@ -610,9 +610,10 @@ def orderCompletedCustomer():
 
             runnerNameHTML = orderData[0][0]
             session['orderSent'] = False
+            session["currentRateableRunner"] = runnerNameHTML
 
         session['orderSent'] = False
-        session["currentRateableRunner"] = runnerNameHTML
+
 
 
     #Now, do the yes or no, if yes, send customer to review him
@@ -689,11 +690,14 @@ def profile():
 
         errorText = "placeholder"
 
-        mycursor = db.cursor(buffered=True)
+        connection = get_db_connection()
+        mycursor = connection.cursor(buffered=True)
         query = "SELECT average_rating FROM webDB.average_reviews WHERE username = %s "
         mycursor.execute(query, (usernameP,))
         ratingsArray = mycursor.fetchall()
         mycursor.close()
+        connection.close()
+
 
         if ratingsArray:  # Check if ratingsArray is not empty
             ratings = round(float(ratingsArray[0][0]), 2)
@@ -704,7 +708,8 @@ def profile():
         # This is where user enters his credentials in the HTML page, the parameter values then are run into the
         # query, if it finds a match it returns something back, if not then it returns null
 
-        mycursor = db.cursor(buffered=True)
+        connection = get_db_connection()
+        mycursor = connection.cursor(buffered=True)
         query2 = "SELECT review_text, rating_given, timestamp FROM webDB.reviews WHERE user_name = %s"
         mycursor.execute(query2, (usernameP,))
         reviewsArray = mycursor.fetchall()
