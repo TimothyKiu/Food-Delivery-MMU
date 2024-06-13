@@ -365,6 +365,9 @@ def sendOrder():
                         mycursor = db.cursor(buffered=True)
                         delete_query = "DELETE FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted = TRUE"
                         mycursor.execute(delete_query, (customerName,))
+
+                        delete_query2 = "DELETE FROM webDB.orders WHERE customerName = %s"
+                        mycursor.execute(delete_query2, (customerName,))
                         db.commit()
                         mycursor.close()
                         #Delete pending order, then transfer to new page
