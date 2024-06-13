@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script>
+        setInterval(function() {
+            location.reload();
+        }, 5000);
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -116,6 +121,10 @@
 
 
                 <button name="sendOrder" value="True">Confirm order</button>
+                <a href="showLocation" style="text-decoration: none;">
+                    <button type="button" name="sendOrder" value="True">Go to current order (If you already ordered)</button>
+                </a>
+
             </form> 
         {% endif %}
 
