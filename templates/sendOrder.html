@@ -5,9 +5,16 @@
     <title>Title</title>
     <link rel="stylesheet" href="/static/style.css">
     <script>
-        setInterval(function() {
-            location.reload();
-        }, 5000);
+        // Assuming orderSentHTML is a boolean or some condition you want to check
+        var orderSent = {{ orderSentHTML | tojson }};
+
+        // Check if orderSent is true
+        if (orderSent) {
+            // Reload the page every 5 seconds
+            setInterval(function() {
+                location.reload();
+            }, 5000);
+        }
     </script>
     <style>
         body {

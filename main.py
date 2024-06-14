@@ -283,7 +283,7 @@ def ratingsent():
 @app.route('/sendOrder', methods=['GET', 'POST'])
 def sendOrder():
     print(session.get('loggedAsCustomer'))
-
+    orderSentHTML = request.form.get('sendOrder')
     loggedAsCustomer = None
     loggedAsRunner = None
     connection = get_db_connection()
@@ -342,55 +342,62 @@ def sendOrder():
 
             #THE IF ISNT RUNNING
             if request.form['sendOrder'] == "True":
-                if session.get('orderSent') == False:
-                    orderList = request.form['orderList']
-                    restaurant = request.form['restaurant']
-                    customerLocation = request.form['customerLocation']
+                connection = get_db_connection()
+                mycursor = connection.cursor(buffered=True)
+                alter_query = "UPDATE webDB.registeredAccounts SET firstOrderSent = 1 WHERE user_name = %s"
 
-                    orderSentTextDisplayForHTML = True
+                mycursor.execute(alter_query, (session.get('username'),))
+                connection.commit()
+                mycursor.close()
+                connection.close()
+
+                orderList = request.form['orderList']
+                restaurant = request.form['restaurant']
+                customerLocation = request.form['customerLocation']
+
+                orderSentTextDisplayForHTML = True
+                connection = get_db_connection()
+                mycursor = connection.cursor(buffered=True)
+
+                insert_query = "INSERT INTO webDB.orders (customerName, FoodOrdered, restaurant, customerLocation) VALUES (%s, %s, %s, %s)"
+                mycursor.execute(insert_query, (customerName, orderList, restaurant, customerLocation,))
+                connection.commit()  # Commit the transaction to save changes to the database
+                mycursor.close()
+                connection.close()
+                session['orderSent'] = True
+
+
+
+                #FIND IF ORDER ACCEPTED
+                connection = get_db_connection()
+                mycursor = connection.cursor(buffered=True)
+                findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
+                mycursor.execute(findIfOrderAccepted, (customerName,))
+                test1 = mycursor.fetchall()
+                sentValue = mycursor.fetchall()
+                mycursor.close()
+                connection.close()
+
+                if test1:
+                    #THIS LINE OF CODE ISNT RUNNING
                     connection = get_db_connection()
                     mycursor = connection.cursor(buffered=True)
+                    delete_query = "DELETE FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted = TRUE"
+                    mycursor.execute(delete_query, (customerName,))
 
-                    insert_query = "INSERT INTO webDB.orders (customerName, FoodOrdered, restaurant, customerLocation) VALUES (%s, %s, %s, %s)"
-                    mycursor.execute(insert_query, (customerName, orderList, restaurant, customerLocation,))
-                    connection.commit()  # Commit the transaction to save changes to the database
                     mycursor.close()
                     connection.close()
-                    session['orderSent'] = True
+                    #Delete pending order, then transfer to new page
 
-                if session.get('orderSent') == True:
-
-
-                    #FIND IF ORDER ACCEPTED
-                    connection = get_db_connection()
-                    mycursor = connection.cursor(buffered=True)
-                    findIfOrderAccepted = "SELECT runnerName, customerName FROM webDB.confirmedOrders WHERE customerName = %s "
-                    mycursor.execute(findIfOrderAccepted, (customerName,))
-                    test1 = mycursor.fetchall()
-                    sentValue = mycursor.fetchall()
-                    mycursor.close()
-                    connection.close()
-
-                    if test1:
-                        #THIS LINE OF CODE ISNT RUNNING
-                        connection = get_db_connection()
-                        mycursor = connection.cursor(buffered=True)
-                        delete_query = "DELETE FROM webDB.confirmedOrders WHERE customerName = %s AND orderCompleted = TRUE"
-                        mycursor.execute(delete_query, (customerName,))
-
-                        mycursor.close()
-                        connection.close()
-                        #Delete pending order, then transfer to new page
-
-                    if test1:
-                        return redirect(url_for("showLocation"))
+                if test1:
+                    return redirect(url_for("showLocation"))
 
     else:
         return "You have no permission to send orders."
 
 
     return render_template('sendOrder.html', customerName=customerName, orderSentTextDisplayForHTML=orderSentTextDisplayForHTML
-                           , orderSentBool=orderSentBool)
+                           , orderSentBool=orderSentBool, orderSentHTML=orderSentHTML)
 
 @app.route('/acceptOrder', methods=['GET', 'POST'])
 def acceptOrder():
@@ -478,7 +485,7 @@ def acceptOrder():
             mycursor.close()
             connection.close()
 
-
+            print("acceptedcustomername is")
             print(acceptedOrderCustomerName)
 
             return redirect("getLocation")
@@ -555,6 +562,28 @@ def showLocation():
     if loggedAsCustomer:
         connection = get_db_connection()
         mycursor = connection.cursor(buffered=True)
+        query = "SELECT firstOrderSent FROM webDB.registeredAccounts WHERE user_name = %s"
+
+        # Execute the SQL query with the username and password as parameters
+        # This is where user enters his credentials in the HTML page
+        mycursor.execute(query, (customerName,))
+
+        # Fetch the result (assuming only one row is expected)
+        firstOrderSent = mycursor.fetchall()
+        mycursor.close()
+        connection.close()
+
+        if firstOrderSent:
+            connection = get_db_connection()
+            mycursor = connection.cursor(buffered=True)
+            query = "DELETE FROM webDB.orders WHERE customerName = %s"
+            mycursor.execute(query, (customerName,))
+            connection.commit()  # Commit the transaction to save changes to the database
+            mycursor.close()
+            connection.close()
+
+        connection = get_db_connection()
+        mycursor = connection.cursor(buffered=True)
 
         # Fetch order details from confirmedOrders
         query = "SELECT runnerName, orderCompleted, restaurant, orderList, customerLocation FROM webDB.confirmedOrders WHERE customerName = %s"
@@ -605,32 +634,53 @@ def showLocation():
 
 @app.route('/orderCompleted', methods=['GET', 'POST'])
 def orderCompletedCustomer():
+    connection = get_db_connection()
+    mycursor = connection.cursor(buffered=True)
+    query = "SELECT firstOrderSent FROM webDB.registeredAccounts WHERE user_name = %s"
+
+    # Execute the SQL query with the username and password as parameters
+    # This is where user enters his credentials in the HTML page
+    mycursor.execute(query, (session.get('username'),))
+
+    # Fetch the result (assuming only one row is expected)
+    firstOrderSent = mycursor.fetchall()
+    mycursor.close()
+    connection.close()
+
+    if firstOrderSent:
+        connection = get_db_connection()
+        mycursor = connection.cursor(buffered=True)
+        query = "DELETE FROM webDB.orders WHERE customerName = %s"
+        mycursor.execute(query, (session.get('username'),))
+        connection.commit()  # Commit the transaction to save changes to the database
+        mycursor.close()
+        connection.close()
+
     session['orderReceived'] = False
 
     customerName = "placeholder"
     runnerNameHTML = "placeholder"
 
-    if session.get('orderSent') == True:
 
-        customerName = session.get('username')
-        session.setdefault('currentRateableRunner', None)
+    customerName = session.get('username')
+    session.setdefault('currentRateableRunner', None)
 
-        connection = get_db_connection()
-        mycursor = connection.cursor(buffered=True)
-        query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
-        mycursor.execute(query, (customerName,))
-        orderData = mycursor.fetchall()
-        mycursor.close()
-        connection.close()
+    connection = get_db_connection()
+    mycursor = connection.cursor(buffered=True)
+    query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
+    mycursor.execute(query, (customerName,))
+    orderData = mycursor.fetchall()
+    mycursor.close()
+    connection.close()
 
-        if orderData:
+    if orderData:
 
-            runnerNameHTML = orderData[0][0]
-            session['orderSent'] = False
-            session["currentRateableRunner"] = runnerNameHTML
-
+        runnerNameHTML = orderData[0][0]
         session['orderSent'] = False
         session["currentRateableRunner"] = runnerNameHTML
+
+    session['orderSent'] = False
+    session["currentRateableRunner"] = runnerNameHTML
 
 
 
@@ -674,6 +724,8 @@ def accountcreatedsuccess():
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
+
+
     loggedAsCustomer = None
     loggedAsRunner = None
     connection = get_db_connection()
@@ -1017,6 +1069,8 @@ def getLocation():
         loggedAsRunner = None
 
     if loggedAsRunner == True:
+
+
         customerNameHTML = None
         orderList = None
         restaurant = None
@@ -1046,6 +1100,13 @@ def getLocation():
             restaurant =customerName[0][3]
             customerLocation = customerName[0][4]
 
+        connection = get_db_connection()
+        mycursor = connection.cursor(buffered=True)
+        query = "DELETE FROM webDB.orders WHERE customerName = %s"
+        mycursor.execute(query, (customerNameHTML,))
+        connection.commit()  # Commit the transaction to save changes to the database
+        mycursor.close()
+        connection.close()
 
 
 
@@ -1067,6 +1128,33 @@ def getLocation():
                 session['restaurant'] = None
                 mycursor.close()
                 connection.close()
+
+                connection = get_db_connection()
+                mycursor = connection.cursor(buffered=True)
+                query = "SELECT firstOrderSent FROM webDB.registeredAccounts WHERE user_name = %s"
+
+                # Execute the SQL query with the username and password as parameters
+                # This is where user enters his credentials in the HTML page
+                mycursor.execute(query, (customerNameHTML,))
+
+                # Fetch the result (assuming only one row is expected)
+                firstOrderSent = mycursor.fetchall()
+                mycursor.close()
+                connection.close()
+
+                print(customerNameHTML)
+                print('customernamehtmlabove')
+
+                if firstOrderSent:
+                    connection = get_db_connection()
+                    mycursor = connection.cursor(buffered=True)
+                    query = "DELETE FROM webDB.orders WHERE customerName = %s"
+                    mycursor.execute(query, (customerNameHTML,))
+                    connection.commit()  # Commit the transaction to save changes to the database
+                    mycursor.close()
+                    connection.close()
+
+
 
                 return redirect('profile')
 
