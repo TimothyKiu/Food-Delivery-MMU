@@ -1,1 +1,0 @@
-1) MYSQL doesnt allow both querying and calculating average/sum

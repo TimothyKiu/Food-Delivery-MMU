@@ -24,12 +24,14 @@ DROP TABLE IF EXISTS `orders`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `orders` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `customerName` varchar(255) DEFAULT NULL,
+  `customerName` varchar(50) DEFAULT NULL,
   `RunnerName` varchar(255) DEFAULT NULL,
   `FoodOrdered` varchar(255) DEFAULT NULL,
-  `restaurant` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=255 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `restaurant` varchar(50) DEFAULT NULL,
+  `customerLocation` varchar(60) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `unique_order` (`customerName`,`FoodOrdered`,`restaurant`,`customerLocation`)
+) ENGINE=InnoDB AUTO_INCREMENT=561 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +40,7 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
-INSERT INTO `orders` VALUES (251,'cus3',NULL,'asd','Deen\'s');
+INSERT INTO `orders` VALUES (560,'xr109',NULL,'asd','Deen\'s','asd');
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-12  2:44:47
+-- Dump completed on 2024-06-15  6:29:16

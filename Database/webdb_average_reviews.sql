@@ -33,7 +33,7 @@ CREATE TABLE `average_reviews` (
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `username_2` (`username`),
   UNIQUE KEY `username_3` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=94 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,7 @@ CREATE TABLE `average_reviews` (
 
 LOCK TABLES `average_reviews` WRITE;
 /*!40000 ALTER TABLE `average_reviews` DISABLE KEYS */;
-INSERT INTO `average_reviews` VALUES (27,'2024-05-16 14:31:05','john',37,11,3.36364),(28,'2024-05-16 14:31:05','asdas',2,1,2),(29,'2024-05-16 14:31:05','asdsa',8,2,4),(30,'2024-05-16 14:31:05','DR GRIEF',4,1,4),(31,'2024-05-16 14:31:05','superna',10,2,5),(32,'2024-05-16 14:31:05','bartholomew',12,4,3),(33,'2024-05-16 14:31:05','joh',3,1,3),(34,'2024-05-16 14:31:05','johnsada',3,1,3),(35,'2024-05-16 14:31:05','megajon',9,3,3),(36,'2024-05-16 14:31:05','adf',4,1,4),(37,'2024-05-16 14:31:05','jon1',15,7,2.14286),(44,'2024-05-16 14:59:35','reviews',10,2,5),(46,'2024-05-16 15:02:41','review1',16,6,2.66667),(57,'2024-05-23 16:32:21','runner1',67,15,4.46667),(70,'2024-05-30 09:34:16','customer1',10,2,5),(74,'2024-06-02 15:25:32','run1',23,6,3.83333),(81,'2024-06-07 17:05:30','primer1',23,6,3.83333),(88,'2024-06-07 19:17:19','run2',26,6,4.33333);
+INSERT INTO `average_reviews` VALUES (27,'2024-05-16 14:31:05','john',37,11,3.36364),(28,'2024-05-16 14:31:05','asdas',2,1,2),(29,'2024-05-16 14:31:05','asdsa',8,2,4),(30,'2024-05-16 14:31:05','DR GRIEF',4,1,4),(31,'2024-05-16 14:31:05','superna',10,2,5),(32,'2024-05-16 14:31:05','bartholomew',12,4,3),(33,'2024-05-16 14:31:05','joh',3,1,3),(34,'2024-05-16 14:31:05','johnsada',3,1,3),(35,'2024-05-16 14:31:05','megajon',9,3,3),(36,'2024-05-16 14:31:05','adf',4,1,4),(37,'2024-05-16 14:31:05','jon1',15,7,2.14286),(44,'2024-05-16 14:59:35','reviews',10,2,5),(46,'2024-05-16 15:02:41','review1',16,6,2.66667),(57,'2024-05-23 16:32:21','runner1',67,15,4.46667),(70,'2024-05-30 09:34:16','customer1',10,2,5),(74,'2024-06-02 15:25:32','run1',48,13,3.69231),(81,'2024-06-07 17:05:30','primer1',23,6,3.83333),(88,'2024-06-07 19:17:19','run2',35,8,4.375),(97,'2024-06-13 03:52:46','run691',17,5,3.4),(101,'2024-06-13 09:50:52','rok1',9,2,4.5),(103,'2024-06-13 11:05:15','placeholder',20,6,3.33333),(114,'2024-06-14 21:36:06','newrun99',5,1,5);
 /*!40000 ALTER TABLE `average_reviews` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -55,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-12  2:44:47
+-- Dump completed on 2024-06-15  6:29:17
