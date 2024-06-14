@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script>
+        // Assuming orderSentHTML is a boolean or some condition you want to check
+        var orderSent = {{ orderSentHTML | tojson }};
+
+        // Check if orderSent is true
+        if (orderSent) {
+            // Reload the page every 5 seconds
+            setInterval(function() {
+                location.reload();
+            }, 5000);
+        }
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -116,6 +128,10 @@
 
 
                 <button name="sendOrder" value="True">Confirm order</button>
+                <a href="showLocation" style="text-decoration: none;">
+                    <button type="button" name="sendOrder" value="True">Go to current order (If you already ordered)</button>
+                </a>
+
             </form> 
         {% endif %}
 
