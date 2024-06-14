@@ -610,7 +610,7 @@ def orderCompletedCustomer():
     customerName = "placeholder"
     runnerNameHTML = "placeholder"
 
-    if session['orderSent'] == True:
+    if session.get('orderSent') == True:
 
         customerName = session.get('username')
         session.setdefault('currentRateableRunner', None)
