@@ -212,9 +212,6 @@ def otherratings():
 #This is where the template will be stored in the url
 @app.route('/ratings', methods=['GET', 'POST'])
 def ratings():
-    currentRateableRunner = "placeholder"
-
-
 
     if session.get("currentRateableRunner") is not None:
         currentRateableRunner = session["currentRateableRunner"]
@@ -318,6 +315,8 @@ def sendOrder():
         mycursor.execute(findIfOrderAccepted, (session.get('username'),))
         mycursor.close()
         connection.close()
+
+
 
         test1 = mycursor.fetchall()
         if test1:
@@ -593,6 +592,8 @@ def showLocation():
         mycursor.close()
         connection.close()
 
+        session['currentRateableRunner'] = orderData[0][0]
+
         if orderData:
             runnerNameHTML = orderData[0][0]
             restaurant = orderData[0][2]
@@ -663,12 +664,11 @@ def orderCompletedCustomer():
 
 
     customerName = session.get('username')
-    session.setdefault('currentRateableRunner', None)
 
     connection = get_db_connection()
     mycursor = connection.cursor(buffered=True)
-    query = "SELECT runnerName, orderCompleted FROM webDB.confirmedOrders where customerName = %s "
-    mycursor.execute(query, (customerName,))
+    query = "SELECT runnerName FROM webDB.confirmedOrders where customerName = %s "
+    mycursor.execute(query, (session.get('username'),))
     orderData = mycursor.fetchall()
     mycursor.close()
     connection.close()
@@ -677,15 +677,13 @@ def orderCompletedCustomer():
 
         runnerNameHTML = orderData[0][0]
         session['orderSent'] = False
-        session["currentRateableRunner"] = runnerNameHTML
 
     session['orderSent'] = False
-    session["currentRateableRunner"] = runnerNameHTML
 
 
 
     #Now, do the yes or no, if yes, send customer to review him
-    if request.method == 'POST' and session["currentRateableRunner"] is not None:
+    if request.method == 'POST' and session.get("currentRateableRunner") is not None:
         yesButton = request.form.get("yesButton")
         noButton = request.form.get("noButton")
 
